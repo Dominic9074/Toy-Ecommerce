@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheelz - Shop</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+    
+    <!-- Reuse Header from Home -->
+    <!-- Partial include removed as file does not exist. Using inline header below. -->
+    <!-- Since we might not have partials set up yet, I'll paste the header code. 
+         Ideally we should refactor to partials, but for now I will duplicate to ensure it works immediately 
+         without refactoring the whole generic structure. 
+         Wait, I see the user has `views/user/home.ejs`. I'll copy the header structure from earlier viewings.
+    -->
+    
+    <header>
+        <ul class="nav-links" style="justify-content: flex-start;"> <!-- Left align nav links -->
+            <li><a href="/">Home</a></li>
+            <li><a href="/shop" class="active">Shop</a></li>
+            <li><a href="/categories">Categories</a></li>
+        </ul>
+        
+        <div class="logo">
+            Wheelz
+        </div>
+
+        <div class="user-actions">
+           <a href="#">Order</a> <!-- Matches 'Order' in image? Image says 'Order' -->
+           <a href="#">Cart</a>
+           <a href="#">Wish List</a>
+           <a href="/signin" class="sign-in-btn">Sign In</a>
+        </div>
+    </header>
+
+    <div class="shop-page-container">
+        
+        <!-- Categories Header Section -->
+        <div class="shop-categories-header">
+            <h1 class="categories-title">Categories</h1> <!-- Image says Catagories, using Categories -->
+            <div class="categories-line"></div>
+        </div>
+
+        <div class="shop-content-wrapper">
+            <!-- Left Side: Category Pills -->
+            <div class="category-pills">
+                <button class="cat-pill active">All</button>
+                <button class="cat-pill">HotWheels</button>
+                <button class="cat-pill">Rc Cars</button>
+                <button class="cat-pill">Lego</button>
+            </div>
+
+            <!-- Right Side: Filter -->
+            <div class="filter-box">
+                <h3>FILTER</h3>
+                <div class="filter-options">
+                    <span class="filter-label">PRICE:</span>
+                    <button class="filter-btn active">ALL</button>
+                    <button class="filter-btn">LOW TO HIGH</button>
+                    <button class="filter-btn">HIGH TO LOW</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="user-product-grid">
+            
+            <!-- Product 1 -->
+            <div class="user-product-card">
+                <div class="upc-heart">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <div class="upc-image">
+                    <!-- Placeholder as requested -->
+                    <img src="/images/hotwheel category image.jpg" alt="HotWheels"> 
+                </div>
+                <div class="upc-details">
+                    <div class="upc-header">
+                        <span class="upc-title">HotWheels</span>
+                        <span class="upc-discount">23%OFF</span>
+                    </div>
+                    <p class="upc-desc">Toy Car, Fast & Furious Nissan Silvia S15 Custom 1:64 Scale Vehicle With Elevated Deco Execution</p>
+                    <div class="upc-footer">
+                        <span class="upc-price">₹609</span>
+                        <button class="upc-order-btn">Order Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="user-product-card">
+                <div class="upc-heart">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <div class="upc-image">
+                    <img src="/images/RC PRO2.jpg" alt="Remote Control">
+                </div>
+                <div class="upc-details">
+                     <div class="upc-header">
+                        <span class="upc-title">Remote Control</span>
+                        <span class="upc-discount">13%OFF</span>
+                    </div>
+                    <p class="upc-desc">Traxxas X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</p>
+                    <div class="upc-footer">
+                        <span class="upc-price">₹8,099</span>
+                        <button class="upc-order-btn">Order Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="user-product-card">
+                <div class="upc-heart">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <div class="upc-image">
+                    <img src="/images/Hotwheel product.jpg" alt="HotWheels">
+                </div>
+                <div class="upc-details">
+                     <div class="upc-header">
+                        <span class="upc-title">HotWheels</span>
+                        <span class="upc-discount">32%OFF</span>
+                    </div>
+                    <p class="upc-desc">Hot Wheels 1:64 Scale Audi 90 Quattro Peak Pursuit Ages 3 Years And Up 199/250 (Black)</p>
+                    <div class="upc-footer">
+                        <span class="upc-price">₹499</span>
+                        <button class="upc-order-btn">Order Now</button>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Product 4 -->
+             <div class="user-product-card">
+                <div class="upc-heart">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <div class="upc-image">
+                    <img src="/images/Bugatti LEGO.jpg" alt="LEGO">
+                </div>
+                <div class="upc-details">
+                     <div class="upc-header">
+                        <span class="upc-title">LEGO</span>
+                        <span class="upc-discount"></span> 
+                    </div>
+                    <p class="upc-desc">LEGO Technic Ford Bronco SUV Model Car Kit, STEM Building Set 42213 Toys For 9+ Gift For Boys And Girls</p>
+                    <div class="upc-footer">
+                        <span class="upc-price">₹8,450</span>
+                        <button class="upc-order-btn">Order Now</button>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Product 5 -->
+             <div class="user-product-card">
+                <div class="upc-heart">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <div class="upc-image">
+                    <img src="/images/Bugatti LEGO.jpg" alt="LEGO">
+                </div>
+                <div class="upc-details">
+                     <div class="upc-header">
+                        <span class="upc-title">LEGO</span>
+                        <span class="upc-discount"></span>
+                    </div>
+                    <p class="upc-desc">LEGO Speed Champions Bugatti Vision Gran Turismo Hyper Sports Car Model Kit And Building Set 77253</p>
+                    <div class="upc-footer">
+                        <span class="upc-price">₹3,299</span>
+                        <button class="upc-order-btn">Order Now</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Reuse Footer if needed, but the design image doesn't show it. keeping it minimal or standard -->
+</body>
+</html>

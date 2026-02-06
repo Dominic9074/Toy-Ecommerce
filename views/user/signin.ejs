@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheelz - Login</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body class="signin-body">
+    <div class="signin-wrapper">
+        <div class="signin-card">
+            <h2 class="signin-title">Login</h2>
+            <p class="signin-subtitle">Glad you're back.!</p>
+            
+            <form action="/login" method="POST" class="signin-form">
+                <div class="input-group">
+                    <input type="email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Password" required>
+                    <i class="fa-regular fa-eye-slash toggle-password"></i>
+                </div>
+                
+                <div class="forgot-password">
+                    <a href="#">FORGET PASSWORD?</a>
+                </div>
+
+                <button type="submit" class="signin-btn">Login</button>
+            </form>
+
+            <div class="signup-link">
+                <p>Don't have an account ? <a href="/signup">Signup</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
