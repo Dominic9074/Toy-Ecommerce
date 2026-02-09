@@ -126,6 +126,35 @@ header {
   white-space: nowrap;
 }
 
+.resent-otp{
+    display: flex;
+    margin-left: 80px;
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #111;       /* dark background */
+  color: #fff;                 /* letter color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.profile-avatar:hover {
+  background-color: #ff3b3b;   /* accent color */
+  transform: scale(1.05);
+}
+
+
 .hero-content {
   position: relative;
   z-index: 2;
@@ -1076,6 +1105,15 @@ footer {
     color: #7251cd;
     font-weight: 600;
     text-decoration: none;
+    border: none;
+    outline: none;
+    background-color: white;
+    cursor: pointer;
+}
+.timerText{
+    color: #7251cd;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .resend-link:hover {

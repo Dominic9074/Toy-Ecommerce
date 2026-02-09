@@ -1,19 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wheelz - Buy Your Dream Toys</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <!-- Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-  </head>
-  <body>
-    <!-- Header -->
-    <header>
+
+      <header>
       <ul class="nav-links">
         <li><a href="#">Home</a></li>
         <li><a href="#">Shop</a></li>
@@ -24,8 +10,14 @@
         <span>Order</span>
         <span>Cart</span>
         <span>Wish List</span>
-        <a href="#" class="sign-in-btn">Sign In</a>
-        <i class="fa-regular fa-user"></i>
+        <% if (user) { %>
+  <a href="/profile" class="profile-avatar">
+    <%= user.username.charAt(0).toUpperCase() %>
+  </a>
+<% } else { %>
+  <a href="/signin" class="sign-in-btn">Sign In</a>
+<% } %>
+
       </div>
     </header>
 
@@ -187,5 +179,4 @@
         <span>Terms of Service Privacy Policy</span>
       </div>
     </footer>
-  </body>
-</html>
+

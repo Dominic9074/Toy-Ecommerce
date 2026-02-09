@@ -1,0 +1,129 @@
+
+    <div class="otp-container">
+        <div class="otp-card">
+            <div class="otp-logo">
+                <i class="fa-solid fa-hurricane"></i> Wheelz
+            </div>
+            
+            <h2 class="otp-title">Enter OTP</h2>
+            <p class="otp-subtitle">We have sent a OTP to your mobile Email</p>
+
+            <form action="/verify-otp" method="POST" class="otp-form" onsubmit="validateOtpForm(event)">
+                <div class="otp-inputs">
+                    <input type="text" maxlength="1" class="otp-field" >
+                    <span class="otp-dash">-</span>
+                    <input type="text" maxlength="1" class="otp-field" >
+                    <span class="otp-dash">-</span>
+                    <input type="text" maxlength="1" class="otp-field" >
+                    <span class="otp-dash">-</span>
+                    <input type="text" maxlength="1" class="otp-field" >
+                </div>
+
+               <input type="hidden" name="otp" id="OtpValue">
+
+                <button type="submit" class="otp-btn">Verify</button>
+                <div class="resent-otp">
+                <p class="resend-text">Didn't receive code?</p> 
+                <button type="button" onclick="resentOtp(event)" class="resend-link" id="resend-btn">Resend OTP</button>
+                <p id="timerText" style="display:none;" class="timerText">Resend OTP in <span id="timer">60</span>s</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Simple auto-focus script for OTP inputs
+        const inputs = document.querySelectorAll('.otp-field');
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1) {
+                    if (index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value.length === 0) {
+                    if (index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                }
+            });
+        });
+
+        function validateOtpForm(event){
+            event.preventDefault();
+            const inputs=document.querySelectorAll('.otp-field');
+            let otp='';
+            for(let input of inputs){
+                if(!input.value){
+                    showError('Please Enter Complete Otp')
+                    return;
+                }
+                otp+=input.value;
+            }
+            
+            
+
+            fetch('/verify-otp',{
+                method:"post",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({otp})
+            }).then(res=>res.json())
+            .then(data=>{
+                if(data.success){
+                    showSuccess(data.message)
+                    setTimeout(() => {
+                    window.location.href = "/signin";
+                }, 1000);
+                }else{
+                    showError(data.message)
+                }
+            })
+            .catch(()=>showError('something went wrong'))
+            
+        }
+        let timeInterval;
+
+        function resentOtp(event){
+
+            fetch('/resendOtp',{
+                method:'post'
+            }).then(res=>res.json())
+            .then(data=>{
+                if(data.success){
+                    showSuccess(data.message);
+                    startTimer();
+                }else{
+                    showError(data.message)
+                }
+            })
+
+
+            function startTimer(){
+                let timeLeft=60;
+            console.log('working')
+
+            document.getElementById('resend-btn').style.display='none';
+            document.getElementById('timerText').style.display='block'
+
+            timeInterval=setInterval(()=>{
+                timeLeft--;
+                document.getElementById('timer').innerText=timeLeft;
+
+                if(timeLeft<=0){
+                    clearInterval(timeInterval);
+                   document.getElementById('resend-btn').style.display='inline-block';
+                   document.getElementById('timerText').style.display='none'
+                }
+
+            },1000)
+            }
+
+
+        }
+
+    </script>
