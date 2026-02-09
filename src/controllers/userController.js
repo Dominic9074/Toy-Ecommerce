@@ -36,7 +36,6 @@ async function sentVerificationEmail(email,otp){
 }
 
 
-
 const loadSignin=(req,res)=>{
     res.render('user/authentication/signin',{title:'signin',bodyClass:'signin-body'})
 }
@@ -62,7 +61,7 @@ const signup=async (req,res,next)=>{
         req.session.userdata={username,email,password}
 
         console.log('OTP SENT:',otp)
-       return res.render('user/authentication/otp',{title: "OTP verification",bodyClass: "otp-body"})
+       return res.render('user/authentication/otp',{title: "OTP verification",bodyClass: "otp-body",purpose:'signin'})
 
     }catch(err){
         console.log('signup ',err);
@@ -119,34 +118,134 @@ const loadHome=(req,res,next)=>{
     res.render('user/home',{title:'Home',bodyClass:''})
 }
 
-const resendOtp=async (req,res)=>{
-    
-    if(!req.session.userdata){
-        return res.json({
-            success:false,
-            message:'Session Expired'
-        })
+const resendOtp = async (req, res) => {
+  try {
+    let email;
+    let otpKey;
+
+   
+    if (req.session.userdata?.email) {
+      email = req.session.userdata.email;
+    } else if (req.session.resetdata?.email) {
+      email = req.session.resetdata.email;
+    } else {
+      return res.json({
+        success: false,
+        message: "Session expired"
+      });
     }
 
+    const otp = generateOtp();
 
-    const otp=generateOtp();
-    
-    const emailSent=await sentVerificationEmail(req.session.userdata.email,otp)
-    if(!emailSent){
-        return res.json({
-            success:false,
-            message:'OTP Not Sended.SomeThing Went Wrong'
-        })
+    const emailSent = await sentVerificationEmail(email, otp);
+    if (!emailSent) {
+      return res.json({
+        success: false,
+        message: "OTP not sent. Something went wrong"
+      });
     }
-        req.session.userOtp=otp;
+
+    req.session.forgotOtp = otp;
+
+    console.log("RESEND OTP:", otp, "FOR:", email);
+
+    return res.json({
+      success: true,
+      message: "OTP sent successfully"
+    });
+
+  } catch (error) {
+    console.log("Resend OTP error:", error);
+    return res.json({
+      success: false,
+      message: "Something went wrong"
+    });
+  }
+};
+
+
+const loadForget=(req,res)=>{
+    res.render('user/authentication/forgot-password',{title:'forget-password',bodyClass:'otp-body'})
+}
+
+const loadForgetOtp=async (req,res)=>{
+    try{
+        const {email}=req.body;
         
-        return res.json({
-            success:true,
-            message:'OTP Send Successfully'
-        })
-    
 
+        const user=await userServices.checkUser(email)
+        const otp=generateOtp();
+
+        const emailSent=await sentVerificationEmail(email,otp)
+        if(!emailSent){
+            res.render('user/authentication/forgot-password',{title:'forget-password',bodyClass:'otp-body',error:'OTP Not Send Something Went Wrong'})
+        }
+
+        req.session.forgotOtp=otp;
+        req.session.resetdata={email}
+
+        res.render('user/authentication/otp',{title:'Otp-Verification',bodyClass:'otp-body',purpose:'forgot'})
+
+    }catch(error){
+        console.log(error)
+        res.render('user/authentication/forgot-password',{title:'forget-password',bodyClass:'otp-body',error:error.message})
+    }
+}
+
+const verifyForgotOtp=(req,res)=>{
+   const {otp}=req.body;
+    if(otp!=req.session.forgotOtp){
+        return res.json({
+            success:false,
+            message:'OTP does not match'
+        })
+    }
+    if(!otp){
+        return res.json({
+            success:false,
+            message:'OTP required'
+        })
+    }
+
+    return res.json({
+        success:true,
+        message:'OTP Verified Successfully'
+    })
+}
+
+const loadNewPassword=(req,res)=>{
+    if(!req.session.resetdata){
+        return res.redirect('/signin');
+    }
+    res.render('user/authentication/new-password',{title:'new-password',bodyClass:'otp-body'})
+}
+
+const resetPassword=async (req,res)=>{
+    try{
+        const {password}=req.body;
+        const email=req.session.resetdata.email;
+        console.log(email,password)
+
+    await userServices.resetPassword(password,email)
+
+    req.session.resetdata=null;
+    req.session.forgotOtp = null;
+
+    return res.json({
+        success:true,
+        message:'Password Changed Successfully'
+    })
+    
+    }catch(error){
+        console.log(error)
+        return res.json({
+            success:false,
+            message:error.message
+        })
+
+    }
 
 }
 
-export default {loadSignin,loadSignup,signup,verifyOtp,signIn,loadHome,resendOtp}
+export default {loadSignin,loadSignup,signup,verifyOtp,signIn,loadHome,resendOtp,loadForget,
+    loadForgetOtp,verifyForgotOtp,loadNewPassword,resetPassword}

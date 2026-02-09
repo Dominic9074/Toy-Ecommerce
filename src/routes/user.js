@@ -14,11 +14,14 @@ router.post('/verify-otp',userController.verifyOtp)
 
 router.get('/home',userController.loadHome)
 
-router.get('/otp',(req,res)=>{
-    res.render('user/authentication/otp',{title:'otp',bodyClass:'otp-body'})
-})
-
 router.post('/resendOtp',userController.resendOtp)
+
+router.get('/forgot-password',userController.loadForget)
+router.post('/forgot-password',userController.loadForgetOtp)
+router.post('/verify-forgot',userController.verifyForgotOtp)
+router.get('/new-password',userController.loadNewPassword)
+router.post('/reset-password',userController.resetPassword)
+
 
 
 

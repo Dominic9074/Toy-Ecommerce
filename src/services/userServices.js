@@ -43,7 +43,24 @@ const signIn=async(data)=>{
 
 }
 
+const checkUser=async (email)=>{
+    const user=await User.findOne({email})
+    if(!user){
+        throw new Error('Email does not Exist')
+    }
+    return user;
+}
+
+const resetPassword=async(password,email)=>{
+
+    const hashedPassword=await bcrypt.hash(password,saltround)
+
+    const user=await User.updateOne({email},{password:hashedPassword})
+    if(user.matchedCount===0){
+        throw new Error('User Not Found')
+    }
+    
+}
 
 
-
-export default {signup,createUserAfterVerification,signIn}
+export default {signup,createUserAfterVerification,signIn,checkUser,resetPassword}
