@@ -37,16 +37,16 @@ async function sentVerificationEmail(email,otp){
 
 
 const loadSignin=(req,res)=>{
-    res.render('user/authentication/signin',{title:'signin',bodyClass:'signin-body'})
+    res.render('user/authentication/signin',{title:'signin',bodyClass:'signin-body',cssFile: "style.css"})
 }
 
 const loadOtp=(req,res)=>{
     const purpose=req.query.purpose;
-    res.render('user/authentication/otp',{title: "OTP verification",bodyClass: "otp-body",purpose});
+    res.render('user/authentication/otp',{title: "OTP verification",bodyClass: "otp-body",purpose,cssFile: "style.css"});
 }
 
 const loadSignup=(req,res)=>{
-    res.render('user/authentication/register',{title: "Register",bodyClass: "register-body"})
+    res.render('user/authentication/register',{title: "Register",bodyClass: "register-body",cssFile: "style.css"})
 }
 
 const signup=async (req,res,next)=>{
@@ -70,7 +70,7 @@ const signup=async (req,res,next)=>{
 
     }catch(err){
         console.log('signup ',err);
-        return res.render('user/authentication/register',{title:'SignUp',error:err.message,bodyClass: "signup-body"})
+        return res.render('user/authentication/register',{title:'SignUp',error:err.message,bodyClass: "signup-body",cssFile: "style.css"})
     }
 }
 
@@ -116,12 +116,12 @@ const signIn=async (req,res,next)=>{
 
     }catch(error){
         console.log(error)
-        res.render('user/authentication/signin',{title:'signin',bodyClass:'signin-body',error:error.message})
+        res.render('user/authentication/signin',{title:'signin',bodyClass:'signin-body',error:error.message,cssFile: "style.css"})
     }
 }
 
 const loadHome=(req,res,next)=>{
-    res.render('user/home',{title:'Home',bodyClass:''})
+    res.render('user/home',{title:'Home',bodyClass:'',cssFile: "style.css"})
 }
 
 const resendOtp = async (req, res) => {
@@ -169,7 +169,7 @@ const resendOtp = async (req, res) => {
 
 
 const loadForget=(req,res)=>{
-    res.render('user/authentication/forgot-password',{title:'forget-password',bodyClass:'otp-body'})
+    res.render('user/authentication/forgot-password',{title:'forget-password',bodyClass:'otp-body',cssFile: "style.css"})
 }
 
 const loadForgetOtp=async (req,res)=>{
@@ -182,7 +182,7 @@ const loadForgetOtp=async (req,res)=>{
 
         const emailSent=await sentVerificationEmail(email,otp)
         if(!emailSent){
-            res.render('user/authentication/forgot-password',{title:'forget-password',bodyClass:'otp-body',error:'OTP Not Send Something Went Wrong'})
+            res.render('user/authentication/forgot-password',{title:'forget-password',bodyClass:'otp-body',error:'OTP Not Send Something Went Wrong',cssFile: "style.css"})
         }
 
         req.session.forgotOtp=otp;
@@ -192,7 +192,7 @@ const loadForgetOtp=async (req,res)=>{
 
     }catch(error){
         console.log(error)
-        res.render('user/authentication/forgot-password',{title:'forget-password',bodyClass:'otp-body',error:error.message})
+        res.render('user/authentication/forgot-password',{title:'forget-password',bodyClass:'otp-body',error:error.message,cssFile: "style.css"})
     }
 }
 
@@ -221,7 +221,7 @@ const loadNewPassword=(req,res)=>{
     if(!req.session.resetdata){
         return res.redirect('/signin');
     }
-    res.render('user/authentication/new-password',{title:'new-password',bodyClass:'otp-body'})
+    res.render('user/authentication/new-password',{title:'new-password',bodyClass:'otp-body',cssFile: "style.css"})
 }
 
 const resetPassword=async (req,res)=>{
@@ -258,7 +258,7 @@ const loadProfile=async(req,res)=>{
 
         const user=await userServices.findUserById(userId);
 
-    res.render('user/profile',{title:'profile',bodyClass:'profile-body',address:user.address});
+    res.render('user/profile',{title:'profile',bodyClass:'profile-body',address:user.address,cssFile: "style.css"});
     }catch(error){
         console.log(error);
     }
@@ -271,6 +271,12 @@ const updateProfile=async (req,res)=>{
     const user=await userServices.findUser(req.session.user.email);
     let update={}
     let emailChanged=false;
+    if (user.googleId) {
+    return res.json({
+        success: false,
+        message: "Google login users cannot update profile manually"
+    })}
+
     if(name && name!==user.name){
         update.name=name;
     }
@@ -387,7 +393,7 @@ const changePassword=async (req,res)=>{
 }
 
 const loadAddress=(req,res)=>{
-    res.render('user/addAddress',{title:'Add Address',bodyClass:'address-body'})
+    res.render('user/addAddress',{title:'Add Address',bodyClass:'address-body',cssFile: "style.css"})
 }
 
 const addAddress=async (req,res)=>{

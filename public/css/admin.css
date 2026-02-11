@@ -34,7 +34,7 @@ body {
     font-weight: 800;
     color: #1a1a1a;
     border-bottom: 1px solid var(--border-color);
-    background-color: #111; /* Dark header match screenshot sidebar top? */
+    background-color: #100E34; /* Updated to requested dark blue */
     color: #fff;
     display: flex;
     align-items: center;
@@ -107,13 +107,63 @@ body {
     border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
+    justify-content: space-between; /* Adjusted for search bar */
+    position: relative; /* For absolute centering if needed, but flex space-between works with middle element if balanced, or we use absolute centering */
+}
+
+.search-bar-container {
+    position: absolute;
+    left: 50%;
+    top: 5px; /* Move up as requested */
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    background: #f1f3f5;
+    padding: 0; /* No padding on container */
+    border-radius: 20px;
+    width: 400px;
+    border: 1px solid #e9ecef;
+    height: 40px; /* Slightly taller for better touch */
+    overflow: hidden;
+}
+
+.search-bar-container input {
+    border: none;
+    background: transparent;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    color: #333;
+    padding: 0 15px; /* Input padding */
+    height: 100%;
+}
+
+.search-bar-container button {
+    background: #100E34;
+    border: none;
+    color: #ffffff !important; /* Force white color */
+    cursor: pointer;
+    padding: 0 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+    margin: 0;
+    flex-shrink: 0; /* Prevent shrinking */
+    font-size: 16px; /* Explicit size */
+    z-index: 2; /* Ensure on top */
+}
+
+.search-bar-container button i {
+    color: #ffffff; /* Explicit icon color */
 }
 
 .admin-header h2 {
     font-size: 18px;
     font-weight: 700;
     margin: 0;
-    color: #1a1a1a;
+    color: #100E34;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -129,7 +179,7 @@ body {
 .page-title {
     font-size: 28px;
     font-weight: 800;
-    color: #1a1a1a;
+    color: #100E34;
     margin: 0 0 5px 0;
     text-transform: uppercase;
 }
@@ -148,6 +198,10 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.02);
     border: 1px solid var(--border-color);
     overflow: hidden;
+    min-height: 700px; /* Ensure space for 10 users */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes pagination to bottom */
 }
 
 .custom-table {
@@ -176,7 +230,7 @@ body {
 }
 
 .user-name {
-    color: #1c2e4a; /* Dark blue from profile for names */
+    color: #100E34; /* Updated to requested dark blue */
     font-weight: 600;
 }
 
@@ -217,7 +271,7 @@ body {
     align-items: center;
     justify-content: center;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 4px; /* Slight radius or 0 for square */
     color: #666;
     text-decoration: none;
     font-size: 14px;

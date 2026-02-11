@@ -1,0 +1,52 @@
+<div class="signin-wrapper">
+        <div class="signin-card">
+            <h2 class="signin-title">Admin Login</h2>
+            <p class="signin-subtitle">Glad you're back.!</p>
+            
+            <form action="/admin/signin" method="POST" class="signin-form" onsubmit="validationForm(event)">
+                <div class="input-group">
+                    <input type="email" placeholder="Email" name="email" id="email">
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Password" name="password" id="password">
+                    <i class="fa-regular fa-eye-slash toggle-password"></i>
+                </div>
+                
+
+                <button type="submit" class="signin-btn">Login</button>
+            </form>
+
+
+        </div>
+    </div>
+
+    <script>
+
+        function validationForm(event){
+            const email=document.getElementById('email').value;
+            const password=document.getElementById('password').value;
+
+            if(!email||!password){
+                event.preventDefault();
+                showError('All Fields Are Required')
+                return;
+            }
+                if(password.includes(" ")){
+                    event.preventDefault();
+                    showError('Password Must Not Contain Any Space')
+                    return;
+                }
+                if(email.includes(" ")){
+                    event.preventDefault();
+                    showError('Email Must Not Contain Any Space')
+                    return;
+                }
+                if(!/[A-Z]/.test(password)){
+                    event.preventDefault();
+                    showError('Password Must Contain Atleast One Uppercase')
+                    return;
+                }
+
+            }
+        
+    </script>
