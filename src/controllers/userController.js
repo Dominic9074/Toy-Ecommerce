@@ -40,6 +40,11 @@ const loadSignin=(req,res)=>{
     res.render('user/authentication/signin',{title:'signin',bodyClass:'signin-body'})
 }
 
+const loadOtp=(req,res)=>{
+    const purpose=req.query.purpose;
+    res.render('user/authentication/otp',{title: "OTP verification",bodyClass: "otp-body",purpose});
+}
+
 const loadSignup=(req,res)=>{
     res.render('user/authentication/register',{title: "Register",bodyClass: "register-body"})
 }
@@ -61,7 +66,7 @@ const signup=async (req,res,next)=>{
         req.session.userdata={username,email,password}
 
         console.log('OTP SENT:',otp)
-       return res.render('user/authentication/otp',{title: "OTP verification",bodyClass: "otp-body",purpose:'signin'})
+       return res.redirect('/otppage?purpose=signup')
 
     }catch(err){
         console.log('signup ',err);
@@ -103,6 +108,7 @@ const signIn=async (req,res,next)=>{
     const user=await userServices.signIn(req.body);
     
     req.session.user={
+        userId:user._id,
         email:user.email,
         username:user.name
     }
@@ -121,8 +127,6 @@ const loadHome=(req,res,next)=>{
 const resendOtp = async (req, res) => {
   try {
     let email;
-    let otpKey;
-
    
     if (req.session.userdata?.email) {
       email = req.session.userdata.email;
@@ -184,7 +188,7 @@ const loadForgetOtp=async (req,res)=>{
         req.session.forgotOtp=otp;
         req.session.resetdata={email}
 
-        res.render('user/authentication/otp',{title:'Otp-Verification',bodyClass:'otp-body',purpose:'forgot'})
+        res.redirect('/otppage?purpose=forgot')
 
     }catch(error){
         console.log(error)
@@ -247,5 +251,188 @@ const resetPassword=async (req,res)=>{
 
 }
 
+
+const loadProfile=async(req,res)=>{
+    try{
+        const userId=req.session.user.userId;
+
+        const user=await userServices.findUserById(userId);
+
+    res.render('user/profile',{title:'profile',bodyClass:'profile-body',address:user.address});
+    }catch(error){
+        console.log(error);
+    }
+}
+
+const updateProfile=async (req,res)=>{
+   try{
+     const {email,name}=req.body;
+
+    const user=await userServices.findUser(req.session.user.email);
+    let update={}
+    let emailChanged=false;
+    if(name && name!==user.name){
+        update.name=name;
+    }
+
+    if(email && email!==user.email){
+        emailChanged=true;
+        update.email=email;
+    }
+
+    if(Object.keys(update).length===0){
+        return res.json({
+            success:false,
+            message:'No Changes Detected'
+        })
+    }
+
+    if(emailChanged){
+        req.session.pendingProfileUpdates=update;
+        const emailExists = await userServices.findUser(email);
+        if (emailExists) {
+            return res.json({
+            success: false,
+            message: "Email already in use"
+            });
+        }
+        const otp=generateOtp();
+        console.log(otp)
+        const emailSend=await sentVerificationEmail(email,otp);
+        if(!emailSend){
+            return res.json({
+                success:false,
+                message:'OTP Not Send Something Went Wrong'
+            });
+        }
+        req.session.emailOtp=otp;
+        return res.json({
+            success:true,
+            message:'Verify New Email To Continue',
+            redirect:'/otppage?purpose=email'
+        })
+    }
+    await userServices.updateUserName(req.session.user.userId,update)
+
+    req.session.user.username=update.name;
+
+    return res.json({
+        success:true,
+        message:'Profile Updated Successfully'
+    })
+    
+
+   }catch(error){
+    console.log(error);
+   }
+}
+
+
+const verifyEmail=async (req,res)=>{
+   try{
+     const {otp}=req.body;
+    if(!otp){
+        return res.json({
+            success:false,
+            message:'Otp Not Found'
+        })
+    }
+    if(otp!=req.session.emailOtp){
+        return res.json({
+            success:false,
+            message:'OTP Does Not Match'
+        })
+    }
+
+    req.session.emailOtp=null;
+    const userId=req.session.user.userId
+    await userServices.updateProfile(req.session.pendingProfileUpdates,userId)
+    req.session.user.email=req.session.pendingProfileUpdates.email;
+    return res.json({
+        success:true,
+        message:'Email Changed Successfully'
+    })
+   }catch(error){
+    console.log(error);
+    return res.json({
+        success:false,
+        message:error.message
+    })
+   }
+}
+
+const changePassword=async (req,res)=>{
+    try{
+        const {currentPassword,newPassword}=req.body;
+    const userId=req.session.user.userId;
+    if (!currentPassword || !newPassword) {
+      return res.json({
+        success: false,
+        message: "All fields are required"
+      });
+    }
+    await userServices.comparePasswordAndUpdate(userId,currentPassword,newPassword)
+
+      return res.json({
+      success: true,
+      message: "Password changed successfully"});
+
+    }catch(error){
+        console.log(error);
+        return res.json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+const loadAddress=(req,res)=>{
+    res.render('user/addAddress',{title:'Add Address',bodyClass:'address-body'})
+}
+
+const addAddress=async (req,res)=>{
+    try{
+        console.log('con wrk')
+        const userId=req.session.user.userId;
+        const address=await userServices.addAddress(userId,req.body)
+
+        return res.json({
+            success:true,
+            message:'Address Added Successfully',
+            address
+        })
+
+    }catch(error){
+        console.log(error);
+        return res.json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+const removeAddress=async (req,res)=>{
+    try{
+        const userId=req.session.user.userId;
+        const addressId=req.query.addressId;
+        console.log(userId,addressId)
+        await userServices.removeAddress(userId,addressId);
+
+        return res.json({
+            success:true,
+            message:'Address Removed Successfully'
+        })
+
+    }catch(error){
+        console.log(error);
+        return res.json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
 export default {loadSignin,loadSignup,signup,verifyOtp,signIn,loadHome,resendOtp,loadForget,
-    loadForgetOtp,verifyForgotOtp,loadNewPassword,resetPassword}
+    loadForgetOtp,verifyForgotOtp,loadNewPassword,resetPassword,loadProfile,updateProfile,verifyEmail,loadOtp,
+    changePassword,loadAddress,addAddress,removeAddress
+}

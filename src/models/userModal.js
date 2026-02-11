@@ -4,6 +4,39 @@ function generateReferralCode() {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
+const addressSchema=new mongoose.Schema({
+  fullname:{
+    type:String,
+    required:true,
+    trim:true
+  },
+  phone:{
+    type:String,
+    required:true
+  },
+  pincode:{
+    type:String,
+    required:true
+  },
+  street:{
+    type:String,
+    required:true
+  },
+  state:{
+    type:String,
+    required:true
+  },
+  city:{
+    type:String,
+    required:true
+  },
+  addressType: {
+    type: String,
+    enum: ["home", "work"],
+    default: "home"
+  }
+},{_id:true});
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -21,13 +54,19 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true
+      required: false
+    },
+
+    googleId:{
+        type:String,
+        unique:true
     },
 
     referralCode: {
       type: String,
       unique: true
     },
+    address:[addressSchema],
 
     status: {
       type: String,

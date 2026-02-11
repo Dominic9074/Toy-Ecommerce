@@ -1365,3 +1365,405 @@ footer {
 .upc-order-btn:hover {
     background-color: #000;
 }
+
+.google-login {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.google-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.google-btn img {
+    width: 18px;
+    height: 18px;
+}
+
+.google-btn:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+/* ===========================
+   Profile Page Styles
+   =========================== */
+
+/* Profile Header Section (User Info) */
+.profile-user-info-section {
+    background-color: #fff;
+    padding: 40px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-user-info-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.user-info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-avatar-circle {
+    width: 80px;
+    height: 80px;
+    background-color: #00bfff; /* Deep Sky Blue matching screenshot */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 32px;
+}
+
+.user-text h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1c2e4a;
+}
+
+.user-text p {
+    margin: 5px 0 0;
+    color: #999;
+    font-size: 14px;
+}
+
+/* Layout Grid */
+.profile-layout {
+    display: flex;
+    max-width: 1600px; /* Moved sidebar more to the left */
+    margin: 0 auto 50px auto;
+    padding: 0 40px;
+    gap: 150px; /* Increased gap to keep content in place */
+}
+
+/* Sidebar */
+.profile-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.menu-item {
+    display: block;
+    padding: 12px 20px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    color: #999;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+}
+
+.menu-item:hover {
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.menu-item.active {
+    background-color: #1c2e4a; /* Dashboard Active Color */
+    color: #fff;
+    border-color: #1c2e4a;
+}
+
+.btn-logout-sidebar {
+    margin-top: 30px;
+    background-color: #a00;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 14px;
+    display: block;
+}
+
+.btn-logout-sidebar:hover {
+    background-color: #cc0000;
+}
+
+/* Main Content Area */
+.profile-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.content-box {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 30px;
+    border-radius: 0; /* Boxy look per screenshot */
+}
+
+/* Typo & Headings */
+.box-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.box-title-muted {
+    font-size: 14px;
+    font-weight: 700;
+    color: #aaa;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.box-header-large {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1c2e4a;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    font-family: inherit;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box; /* Important for width */
+}
+
+.form-control:focus {
+    border-color: #1c2e4a;
+    outline: none;
+}
+
+/* Buttons */
+.btn-action {
+    padding: 12px 25px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    border: none;
+    transition: background 0.3s;
+}
+
+.btn-red {
+    background-color: #a00; /* Deep Red */
+    color: white;
+}
+
+.btn-red:hover {
+    background-color: #c00;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    color: #333;
+    margin-left: 10px;
+}
+
+.btn-outline:hover {
+    border-color: #333;
+    background-color: #f9f9f9;
+}
+
+.btn-wide {
+    width: 200px;
+}
+
+.btn-small {
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    background-color: #a00;
+    color: white;
+}
+
+/* Address List */
+.address-item {
+    border: 1px solid #eee;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.address-text p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.add-address-wrapper {
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .profile-layout {
+        flex-direction: column;
+    }
+    .profile-sidebar {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    .address-item {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+.btn-logout-header {
+    margin-left: auto; /* Pushes to the far right */
+    background-color: #a00;
+    color: white;
+    padding: 10px 20px;
+    font-weight: 700;
+    border-radius: 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: background 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+
+/* ===========================
+   Add Address Page Styles
+   =========================== */
+
+.add-address-page {
+    max-width: 900px; /* Constrain width for form */
+    margin: 50px auto 100px auto;
+    padding: 0 20px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1c2e4a;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.address-form-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 40px;
+}
+
+.form-row {
+    margin-bottom: 25px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.two-col {
+    display: flex;
+    gap: 30px;
+}
+
+.col-group {
+    flex: 1;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to right as per typical form, or check screenshot. Screenshot shows them right aligned usually. User didn't specify, but layout suggests right or center. Left aligned? Re-checking screenshot visually... buttons are at bottom right. */
+    gap: 15px;
+    margin-top: 40px;
+}
+
+/* Adjusting justification because screenshot looked like buttons were maybe on the right or just below. I'll stick to right alignment or maybe flow. 
+   Wait, looking at screenshot again (mentally), "SAVE ADDRESS" and "CANCEL" are at the bottom right.
+*/
+
+.btn-save-address {
+    background-color: #a00;
+    color: white;
+    padding: 12px 30px;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-save-address:hover {
+    background-color: #cc0000;
+}
+
+.btn-cancel-address {
+    background-color: #fff;
+    color: #1c2e4a;
+    border: 1px solid #1c2e4a;
+    padding: 12px 30px;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancel-address:hover {
+    background-color: #1c2e4a;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .two-col {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+

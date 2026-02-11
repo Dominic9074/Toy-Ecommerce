@@ -6,6 +6,7 @@ import userRoute from './src/routes/user.js'
 import connectDB from "./src/config/db.js";
 import expressLayouts from "express-ejs-layouts";
 import session from "express-session";
+import passport from "./src/config/passport.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -40,6 +41,10 @@ app.use(session({
     maxAge:24*60*60*1000
   }
 }))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 //global
 app.use((req, res, next) => {
   res.locals.error = null;

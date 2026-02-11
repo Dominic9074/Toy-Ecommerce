@@ -65,9 +65,20 @@
                 otp+=input.value;
             }
             
-            let url=purpose==='forgot'?'/verify-forgot':'/verify-otp';
+            let url;
+            // purpose==='forgot'?'/verify-forgot':'/verify-otp';
+            switch(purpose){
+                case 'forgot':
+                    url='/verify-forgot';
+                    break;
+                case 'email':
+                    url='/verify-email';
+                    break;
+                default:
+                    url='/verify-otp';
+            }
             
-
+            
             fetch(url,{
                 method:"post",
                 headers:{
@@ -81,8 +92,10 @@
                     setTimeout(() => {
                    if(purpose==='forgot'){
                      window.location.href = "/new-password";
-                   }else{
+                   }else if(purpose==='signup'){
                      window.location.href = "/signin";
+                   }else if(purpose==='email'){
+                    window.location.href='/user/profile'
                    }
                 }, 1000);
                 }else{

@@ -62,5 +62,72 @@ const resetPassword=async(password,email)=>{
     
 }
 
+const findUser=async (email)=>{
+        const user=await User.findOne({email});
+        return user;
+}
 
-export default {signup,createUserAfterVerification,signIn,checkUser,resetPassword}
+const updateProfile=async(update,userId)=>{
+    const user=await User.findByIdAndUpdate(userId,update);
+    if(!user){
+        throw new Error('User Not Found');
+    }
+    return;
+}
+
+const updateUserName=async (userId,update)=>{
+    const user=await User.findByIdAndUpdate(userId,update);
+    if(!user){
+        throw new Error('User Not Found');
+    }
+    return;
+}
+
+const comparePasswordAndUpdate=async (userId,currentPassword,newPassword)=>{
+    const user=await User.findById(userId)
+    if(!user){
+        throw new Error('User Not Found')
+    }
+    const isMatched=await bcrypt.compare(currentPassword,user.password)
+    if(!isMatched){
+        throw new Error('Current Password Does Not Match')
+    }
+    const hashedPassword=await bcrypt.hash(newPassword,saltround)
+    await User.findByIdAndUpdate(userId,{password:hashedPassword})
+}
+
+const addAddress=async (userId,addressData)=>{
+    const user=await User.findById(userId);
+    if(!user){
+        throw new Error("User Does Not Exist")
+    }
+    user.address.push(addressData);
+    await user.save();
+    console.log('serv wrk');
+    return user.address;
+}
+
+const findUserById=async (userId)=>{
+    const user=await User.findById(userId);
+    if(!user){
+        throw new Error('User Not Found');
+    }
+    return user;
+}
+
+const removeAddress=async (userId,addressId)=>{
+    const result = await User.updateOne(
+    { _id: userId },
+    { $pull: { address: { _id: addressId } } }
+  );
+
+  if (result.modifiedCount === 0) {
+    throw new Error("Address not found or already removed");
+  }
+
+  return true;
+}
+
+export default {signup,createUserAfterVerification,signIn,checkUser,resetPassword,findUser,updateProfile,updateUserName,
+    comparePasswordAndUpdate,addAddress,findUserById,removeAddress
+}

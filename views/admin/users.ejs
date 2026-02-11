@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - User Management</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="/css/admin.css">
+    <!-- Notyf CSS (if needed) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            Wheelz
+        </div>
+        
+        <nav class="sidebar-menu">
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-border-all"></i>
+                Dashboard
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-box"></i>
+                Products
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-list"></i>
+                Categories
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Orders
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-money-bill-trend-up"></i>
+                Sales & Revenue
+            </a>
+            <a href="#" class="nav-item active"> <!-- Active Class for User Mgmt -->
+                <i class="fa-solid fa-users"></i>
+                Users
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="/admin/logout" class="logout-link">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+        <!-- Top Header -->
+        <header class="admin-header">
+            <h2>ADMIN PANEL</h2>
+        </header>
+
+        <!-- Page Content -->
+        <div class="content-body">
+            
+            <div class="page-header">
+                <h1 class="page-title">USER MANAGEMENT</h1>
+                <p class="page-subtitle">SEE ALL YOUR USER AND ADD NEW USERS</p>
+            </div>
+
+            <!-- Users Table -->
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>USER DETAILS</th>
+                            <th>EMAIL ADDRESS</th>
+                            <th>REGISTRATION DATE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Placeholder Data matching screenshot -->
+                        <tr>
+                            <td><span class="user-name">Johnathan Doe</span></td>
+                            <td>john.doe@example.com</td>
+                            <td>Oct 12, 2023</td>
+                            <td>
+                                <button class="btn-action-text btn-block">Block</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="user-name">Jane Smith</span></td>
+                            <td>jane.smith@webmail.com</td>
+                            <td>Nov 05, 2023</td>
+                            <td>
+                                <button class="btn-action-text btn-unblock">Unblock</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="user-name">Michael Ross</span></td>
+                            <td>m.ross@toycar.com</td>
+                            <td>Dec 01, 2023</td>
+                            <td>
+                                <button class="btn-action-text btn-block">Block</button>
+                            </td>
+                        </tr>
+                         <!-- Adding dynamic loop if needed, but for now specific hardcoded as requested 'like this' -->
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <a href="#" class="page-link"><i class="fa-solid fa-chevron-left"></i></a>
+                    <a href="#" class="page-link active">1</a>
+                    <a href="#" class="page-link">2</a>
+                    <span class="page-link">...</span>
+                    <a href="#" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

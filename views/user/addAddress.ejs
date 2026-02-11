@@ -1,0 +1,102 @@
+
+<header>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="#">Categories</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions">
+    <span>Order</span>
+    <span>Cart</span>
+    <span>Wish List</span>
+
+    <a href="/profile" class="profile-avatar">
+       <i class="fa-solid fa-user"></i>
+    </a>
+  </div>
+</header>
+
+<div class="container add-address-page">
+    <h1 class="page-title">ADD NEW ADDRESS</h1>
+
+    <div class="address-form-box">
+        <form>
+            <div class="form-row full-width">
+                <label class="form-label">FULL NAME</label>
+                <input type="text" id="fullname" class="form-control" name="fullName">
+            </div>
+
+            <div class="form-row two-col">
+                <div class="col-group">
+                    <label class="form-label">PHONE NUMBER</label>
+                    <input type="text" id="phone" class="form-control" name="phone">
+                </div>
+                <div class="col-group">
+                    <label class="form-label">PIN CODE</label>
+                    <input type="text" id="pincode" class="form-control" name="pincode">
+                </div>
+            </div>
+
+            <div class="form-row full-width">
+                <label class="form-label">STREET ADDRESS</label>
+                <input type="text" id="streetAddress" class="form-control" name="streetAddress">
+            </div>
+
+            <div class="form-row two-col">
+                <div class="col-group">
+                    <label class="form-label">STATE</label>
+                    <input type="text" id="state" class="form-control" name="state">
+                </div>
+                <div class="col-group">
+                    <label class="form-label">CITY/DISTRICT/TOWN</label>
+                    <input type="text" id="city" class="form-control" name="city">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-save-address" onclick="formValidation(event)">SAVE ADDRESS</button>
+                <button type="button" class="btn-cancel-address">CANCEL</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+console.log('script wrk');
+  function formValidation(e){
+    console.log('form Wrk')
+    const fullname=document.getElementById('fullname').value;
+    const phone=document.getElementById('phone').value;
+    const pincode=document.getElementById('pincode').value;
+    const street=document.getElementById('streetAddress').value;
+    const state=document.getElementById('state').value;
+    const city=document.getElementById('city').value;
+
+    if(!fullname||!phone||!pincode||!street||!state){
+      showError('All Fields Are Required');
+      return;
+    }
+
+    fetch('/addAddress',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({fullname,phone,pincode,street,state,city})
+    }).then(res=>res.json())
+    .then(data=>{
+      if(data.success){
+        showSuccess(data.message)
+        setTimeout(()=>{
+          window.location.href='/user/profile'
+        })
+      }else{
+        showError(data.message);
+      }
+    })
+  }
+
+</script>
