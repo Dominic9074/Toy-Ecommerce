@@ -7,14 +7,22 @@ const checkUserSession=(req,res,next)=>{
     next();
 }
 
-const islogedIn=(req,res,next)=>{
-    if(!req.session.user){
-        return res.redirect('/home')
+
+const isLoggedIn = (req, res, next) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
     }
     next();
-}
+};
+
+const isLoggedOut = (req, res, next) => {
+    if (req.session.user) {
+        return res.redirect("/");
+    }
+    next();
+};
 
 
-export default {checkUserSession,islogedIn}
+export default {checkUserSession,isLoggedIn,isLoggedOut}
 
 

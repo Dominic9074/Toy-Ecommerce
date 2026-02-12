@@ -114,7 +114,6 @@ body {
 .search-bar-container {
     position: absolute;
     left: 50%;
-    top: 5px; /* Move up as requested */
     transform: translateX(-50%);
     display: flex;
     align-items: center;

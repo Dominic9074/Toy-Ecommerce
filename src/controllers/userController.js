@@ -8,7 +8,7 @@ function generateOtp(){
 //emailverification
 async function sentVerificationEmail(email,otp){
     try {
-        const transpoter=nodemailer.createTransport({
+        const transporter=nodemailer.createTransport({
             service:'gmail',
             port:587,
             sequre:false,
@@ -19,13 +19,30 @@ async function sentVerificationEmail(email,otp){
             }
         })
 
-        const info=await transpoter.sendMail({
-            from:process.env.NODEMAILER_EMAIL,
-            to:email,
-            subject:"Otp Verification For Accound Creation In Wheelz",
-            text:`your otp is ${otp}`,
-            html:`<b>Your OTP For Verification Is:${otp}</b>`
-        })
+        const info = await transporter.sendMail({
+        from: process.env.NODEMAILER_EMAIL,
+        to: email,
+        subject: "OTP Verification - Wheelz",
+
+        text: `Your OTP is ${otp}. It expires in 5 minutes. Do not share this OTP with anyone.`,
+
+        html: `
+            <p>Hello,</p>
+
+            <p>Your OTP for verification is:</p>
+
+            <h2>${otp}</h2>
+
+            <p><strong>This OTP will expire in 5 minutes.</strong></p>
+
+            <p style="color: red;">
+                Please do NOT share this OTP with anyone.
+            </p>
+
+            <p>If you did not request this, please ignore this email.</p>
+
+            <p>– Team Wheelz</p>`
+    });
 
         return info.accepted.length>0
 
@@ -63,6 +80,7 @@ const signup=async (req,res,next)=>{
         }
 
         req.session.userOtp=otp;
+        req.session.otpExpires = Date.now() + (5 * 60 * 1000);
         req.session.userdata={username,email,password}
 
         console.log('OTP SENT:',otp)
@@ -76,6 +94,22 @@ const signup=async (req,res,next)=>{
 
 const verifyOtp=async (req,res,next)=>{
     const {otp}=req.body;
+    if (!req.session.userOtp || !req.session.otpExpires) {
+    return res.json({
+        success: false,
+        message: "OTP session expired. Please request again."
+        });
+    }
+
+    if (Date.now() > req.session.otpExpires) {
+            req.session.emailOtp = null;
+            req.session.otpExpires = null;
+
+            return res.json({
+                success: false,
+                message: "OTP has expired. Please request a new one."
+            });
+    }
     if(otp!=req.session.userOtp){
         return res.json({
             success:false,
@@ -95,6 +129,7 @@ const verifyOtp=async (req,res,next)=>{
 
     req.session.userOtp=null;
     req.session.userdata=null;
+    req.session.otpExpires=null;
 
     return res.json({
         success:true,
@@ -112,7 +147,7 @@ const signIn=async (req,res,next)=>{
         email:user.email,
         username:user.name
     }
-    res.redirect('/home')
+    res.redirect('/')
 
     }catch(error){
         console.log(error)
@@ -150,6 +185,7 @@ const resendOtp = async (req, res) => {
     }
 
     req.session.forgotOtp = otp;
+    req.session.otpExpires=Date.now()+(5*60*1000)
 
     console.log("RESEND OTP:", otp, "FOR:", email);
 
@@ -198,6 +234,22 @@ const loadForgetOtp=async (req,res)=>{
 
 const verifyForgotOtp=(req,res)=>{
    const {otp}=req.body;
+   if (!req.session.forgotOtp || !req.session.otpExpires) {
+    return res.json({
+        success: false,
+        message: "OTP session expired. Please request again."
+        });
+    }
+
+    if (Date.now() > req.session.otpExpires) {
+            req.session.emailOtp = null;
+            req.session.otpExpires = null;
+
+            return res.json({
+                success: false,
+                message: "OTP has expired. Please request a new one."
+            });
+    }
     if(otp!=req.session.forgotOtp){
         return res.json({
             success:false,
@@ -210,6 +262,8 @@ const verifyForgotOtp=(req,res)=>{
             message:'OTP required'
         })
     }
+    req.session.forgotOtp=null;
+    req.session.otpExpires=null;
 
     return res.json({
         success:true,
@@ -438,7 +492,21 @@ const removeAddress=async (req,res)=>{
     }
 }
 
+const logoutUser = (req, res) => {
+
+    req.session.destroy((err) => {
+        if (err) {
+            return res.redirect("/"); 
+        }
+        res.clearCookie("connect.sid");
+
+        return res.redirect("/signin");
+    });
+
+};
+
+
 export default {loadSignin,loadSignup,signup,verifyOtp,signIn,loadHome,resendOtp,loadForget,
     loadForgetOtp,verifyForgotOtp,loadNewPassword,resetPassword,loadProfile,updateProfile,verifyEmail,loadOtp,
-    changePassword,loadAddress,addAddress,removeAddress
+    changePassword,loadAddress,addAddress,removeAddress,logoutUser
 }

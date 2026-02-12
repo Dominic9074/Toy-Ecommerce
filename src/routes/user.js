@@ -6,35 +6,35 @@ import userMiddleware from "../middleware/userMiddleware.js";
 import passport from "../config/passport.js";
 
 // local auth
-router.get("/signin", userMiddleware.checkUserSession, userController.loadSignin);
-router.post("/signin", userController.signIn);
+router.get("/", userController.loadHome);
 
-router.get("/signup", userController.loadSignup);
-router.post("/signup", userController.signup);
+router.get("/signin", userMiddleware.isLoggedOut, userController.loadSignin);
+router.post("/signin", userMiddleware.isLoggedOut, userController.signIn);
 
-router.get('/otppage',userController.loadOtp)
+router.get("/signup", userMiddleware.isLoggedOut, userController.loadSignup);
+router.post("/signup", userMiddleware.isLoggedOut, userController.signup);
 
+router.get("/forgot-password", userMiddleware.isLoggedOut, userController.loadForget);
+router.post("/forgot-password", userMiddleware.isLoggedOut, userController.loadForgetOtp);
+router.post("/verify-forgot", userMiddleware.isLoggedOut, userController.verifyForgotOtp);
+router.get("/new-password", userMiddleware.isLoggedOut, userController.loadNewPassword);
+router.post("/reset-password", userMiddleware.isLoggedOut, userController.resetPassword);
+
+router.get("/otppage", userController.loadOtp);
 router.post("/verify-otp", userController.verifyOtp);
-
-router.get("/home", userController.loadHome);
-
 router.post("/resendOtp", userController.resendOtp);
 
-router.get("/forgot-password", userController.loadForget);
-router.post("/forgot-password", userController.loadForgetOtp);
-router.post("/verify-forgot", userController.verifyForgotOtp);
-router.get("/new-password", userController.loadNewPassword);
-router.post("/reset-password", userController.resetPassword);
+router.get("/user/profile", userMiddleware.isLoggedIn, userController.loadProfile);
+router.post("/updateProfile", userMiddleware.isLoggedIn, userController.updateProfile);
+router.post("/verify-email", userMiddleware.isLoggedIn, userController.verifyEmail);
+router.post("/changePassword", userMiddleware.isLoggedIn, userController.changePassword);
 
-router.get('/user/profile',userMiddleware.islogedIn,userController.loadProfile)
-router.post('/updateProfile',userController.updateProfile)
-router.post('/verify-email',userController.verifyEmail)
+router.get("/addAddress", userMiddleware.isLoggedIn, userController.loadAddress);
+router.post("/addAddress", userMiddleware.isLoggedIn, userController.addAddress);
+router.post("/removeAddress", userMiddleware.isLoggedIn, userController.removeAddress);
 
-router.post('/changePassword',userController.changePassword)
+router.get("/logout", userMiddleware.isLoggedIn, userController.logoutUser);
 
-router.get('/addAddress',userController.loadAddress)
-router.post('/addAddress',userController.addAddress)
-router.post('/removeAddress',userController.removeAddress)
 
 // 🔐 Google Auth
 router.get("/auth/google",passport.authenticate("google", {scope: ["profile", "email"]}));

@@ -6,7 +6,13 @@
 
 
 <header>
-  <ul class="nav-links">
+
+  <!-- Hamburger -->
+  <div class="hamburger" id="hamburger">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <ul class="nav-links" id="mobileNav">
     <li><a href="/">Home</a></li>
     <li><a href="/shop">Shop</a></li>
     <li><a href="#">Categories</a></li>
@@ -19,7 +25,7 @@
     <span>Cart</span>
     <span>Wish List</span>
 
-    <a href="/profile" class="profile-avatar">
+    <a href="/user/profile" class="profile-avatar">
       <%= avatarLetter %>
     </a>
   </div>
@@ -57,6 +63,8 @@
     </div>
 
   </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 
   <!-- MAIN CONTENT -->
   <main class="profile-content">
