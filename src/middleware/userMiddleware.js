@@ -7,7 +7,7 @@ const isLoggedIn = async (req, res, next) => {
     }
     const user =await userServices.findUserById(req.session.user.userId)
     if(user.status!=='active'){
-        req.session.destroy();
+        delete req.session.user
         res.redirect('/');
     }
     next();

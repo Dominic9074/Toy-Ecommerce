@@ -75,7 +75,7 @@ const adminSignin=(req,res)=>{
         return res.render('admin/signin',{title:'admin signin',bodyClass:'signin-body',cssFile:'style.css',error:'Password Does Not Match'})
     }
     req.session.admin={
-        admin:true
+        email:email
     }
     
     return res.redirect('/admin/users')
