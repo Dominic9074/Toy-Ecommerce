@@ -5,13 +5,15 @@ const loadUsers = async (req,res) => {
   try {
 
     const search = req.query.search || "";
+    const status=req.query.status || 'all';
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
 
-    const { users, totalUsers } = await adminServices.getUsersService(
+    const { users, totalUsers ,totalPages } = await adminServices.getUsersService(
       search,
       page,
-      limit
+      limit,
+      status
     );
 
     res.render('admin/users', {
@@ -19,7 +21,10 @@ const loadUsers = async (req,res) => {
       bodyClass:'admin-body',
       cssFile: "admin.css",
       users,
-      search
+      search,
+      status,
+      page,
+      totalPages
     });
 
   } catch(error) {
@@ -76,6 +81,7 @@ const adminSignin=(req,res)=>{
     return res.redirect('/admin/users')
 
 }
+
 
 export default {
     loadUsers,toggleUserStatus,loadSignin,adminSignin

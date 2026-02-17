@@ -32,6 +32,8 @@ router.post("/changePassword", userMiddleware.isLoggedIn, userController.changeP
 router.get("/addAddress", userMiddleware.isLoggedIn, userController.loadAddress);
 router.post("/addAddress", userMiddleware.isLoggedIn, userController.addAddress);
 router.post("/removeAddress", userMiddleware.isLoggedIn, userController.removeAddress);
+router.get('/editAddress/:id',userController.loadEditAddress)
+router.post('/updateAddress/:addressId',userController.updateAddress)
 
 router.get("/logout", userMiddleware.isLoggedIn, userController.logoutUser);
 
@@ -39,10 +41,10 @@ router.get("/logout", userMiddleware.isLoggedIn, userController.logoutUser);
 // 🔐 Google Auth
 router.get("/auth/google",passport.authenticate("google", {scope: ["profile", "email"]}));
 
-router.get("/auth/google/callback",passport.authenticate("google", {failureRedirect: "/signup"}),
+router.get("/auth/google/callback",passport.authenticate("google", {failureRedirect: "/signup"}),userMiddleware.googleUserStatus,
   (req, res) => {
     req.session.user = {userId: req.user._id,email: req.user.email,username: req.user.name};
-    res.redirect("/home");
+    res.redirect("/");
   }
 );
 

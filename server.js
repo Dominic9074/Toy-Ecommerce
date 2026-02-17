@@ -8,6 +8,7 @@ import expressLayouts from "express-ejs-layouts";
 import session from "express-session";
 import passport from "./src/config/passport.js";
 import adminRoute from './src/routes/admin.js'
+import nocache from "nocache";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -42,6 +43,7 @@ app.use(session({
     maxAge:24*60*60*1000
   }
 }))
+app.use(nocache())
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -67,6 +69,6 @@ app.use('/',adminRoute)
 connectDB();
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT,() => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

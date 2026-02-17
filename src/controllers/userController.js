@@ -80,7 +80,7 @@ const signup=async (req,res,next)=>{
         }
 
         req.session.userOtp=otp;
-        req.session.otpExpires = Date.now() + (5 * 60 * 1000);
+        req.session.otpExpires = Date.now() + (2 * 60 * 1000);
         req.session.userdata={username,email,password}
 
         console.log('OTP SENT:',otp)
@@ -92,7 +92,7 @@ const signup=async (req,res,next)=>{
     }
 }
 
-const verifyOtp=async (req,res,next)=>{
+const verifyOtp=async (req,res)=>{
     const {otp}=req.body;
     if (!req.session.userOtp || !req.session.otpExpires) {
     return res.json({
@@ -162,6 +162,8 @@ const loadHome=(req,res,next)=>{
 const resendOtp = async (req, res) => {
   try {
     let email;
+    let purpose=req.query.purpose
+    console.log(purpose)
    
     if (req.session.userdata?.email) {
       email = req.session.userdata.email;
@@ -184,8 +186,14 @@ const resendOtp = async (req, res) => {
       });
     }
 
-    req.session.forgotOtp = otp;
-    req.session.otpExpires=Date.now()+(5*60*1000)
+    if(purpose==='signup'){
+        req.session.userOtp=otp
+    }else if(purpose=='forgot'){
+        req.session.forgotOtp=otp
+    }else{
+        req.session.emailOtp=otp
+    }
+    req.session.otpExpires=Date.now()+(2*60*1000)
 
     console.log("RESEND OTP:", otp, "FOR:", email);
 
@@ -425,6 +433,13 @@ const changePassword=async (req,res)=>{
     try{
         const {currentPassword,newPassword}=req.body;
     const userId=req.session.user.userId;
+    const user =await userServices.findUserById(userId)
+    if(user.googleId){
+        return res.json({
+            success:false,
+            message:'Google Users Cannot Change Password'
+        })
+    }
     if (!currentPassword || !newPassword) {
       return res.json({
         success: false,
@@ -447,15 +462,13 @@ const changePassword=async (req,res)=>{
 }
 
 const loadAddress=(req,res)=>{
-    res.render('user/addAddress',{title:'Add Address',bodyClass:'address-body',cssFile: "style.css"})
+    res.render('user/addAddress',{title:'Add Address',bodyClass:'address-body',cssFile: "style.css",isEdit:false,address:undefined})
 }
 
 const addAddress=async (req,res)=>{
     try{
-        console.log('con wrk')
         const userId=req.session.user.userId;
         const address=await userServices.addAddress(userId,req.body)
-
         return res.json({
             success:true,
             message:'Address Added Successfully',
@@ -505,8 +518,66 @@ const logoutUser = (req, res) => {
 
 };
 
+const loadEditAddress=async (req,res)=>{
+    const userId=req.session.user.userId
+    const addressId=req.params.id;
+    const user=await userServices.findUserById(userId)
+    const address=user.address.id(addressId)
+    console.log(addressId,address)
+    if(!user){
+        return res.json({
+            success:false,
+            message:'User Not Found'
+        })
+    }
+    return res.render('user/addAddress',{address,addressId,isEdit:true,title:'Edit Address',bodyClass:'address-body',cssFile:'style.css'})
+}
+
+const updateAddress=async (req,res)=>{
+    const userId=req.session.user.userId
+    const addressId=req.params.addressId;
+
+    const user=await userServices.findUserById(userId)
+    const address=user.address.id(addressId)
+    if(!user){
+        return res.json({
+            success:false,
+            message:'User Not Found'
+        })
+    }
+
+     const { fullname, phone, pincode, street, state, city,addressType} = req.body;
+
+     if(address.fullname===fullname&&address.phone===phone&&address.pincode===pincode&&address.street===street
+        &&address.state===state&&address.city===city&&address.addressType===addressType){
+            return res.json({
+                success:false,
+                message:'No Changes Detected'
+            })
+     }
+
+        address.fullname=fullname;
+        address.phone = phone;
+        address.pincode = pincode;
+        address.street = street;
+        address.state = state;
+        address.city = city;
+        address.addressType=addressType;
+
+        user.save();
+
+        return res.json({
+            success:true,
+            message:'Address Updated Successfully'
+        })
+
+
+}
+
+
+
 
 export default {loadSignin,loadSignup,signup,verifyOtp,signIn,loadHome,resendOtp,loadForget,
     loadForgetOtp,verifyForgotOtp,loadNewPassword,resetPassword,loadProfile,updateProfile,verifyEmail,loadOtp,
-    changePassword,loadAddress,addAddress,removeAddress,logoutUser
+    changePassword,loadAddress,addAddress,removeAddress,logoutUser,updateAddress,loadEditAddress
 }

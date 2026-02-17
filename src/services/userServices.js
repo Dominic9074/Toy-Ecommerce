@@ -34,7 +34,7 @@ const signIn=async(data)=>{
         throw new Error('User Does Not Exist');
     }
     if(user.status!=='active'){
-        throw  new Error('This Email Is Blocked Cant Signin')
+        throw  new Error('Your account has been blocked by admin')
     }
 
     const isMatched=await bcrypt.compare(password,user.password);

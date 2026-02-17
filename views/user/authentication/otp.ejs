@@ -5,8 +5,10 @@
                 <i class="fa-solid fa-hurricane"></i> Wheelz
             </div>
             
-            <h2 class="otp-title">Enter OTP</h2>
+            <h2 class="otp-title">Enter OTP</h2> 
             <p class="otp-subtitle">We have sent a OTP to your mobile Email</p>
+            <p class="otp-expiry-text">OTP expires in:<span id="expiryTimer">2:00</span></p>
+
 
             <form action="/verify-otp" method="POST" class="otp-form" onsubmit="validateOtpForm(event)">
                 <div class="otp-inputs">
@@ -55,6 +57,11 @@
 
         function validateOtpForm(event){
             event.preventDefault();
+            if (otpExpired) {
+            event.preventDefault();
+            showError("OTP has expired. Please request a new OTP.")
+            return;
+        }
             const inputs=document.querySelectorAll('.otp-field');
             let otp='';
             for(let input of inputs){
@@ -109,13 +116,15 @@
 
         function resentOtp(event){
 
-            fetch('/resendOtp',{
+            fetch(`/resendOtp?purpose=${purpose}`,{
                 method:'post'
             }).then(res=>res.json())
             .then(data=>{
                 if(data.success){
                     showSuccess(data.message);
                     startTimer();
+                    clearInterval(expiryInterval);
+                    startOtpExpiryTimer();
                 }else{
                     showError(data.message)
                 }
@@ -144,5 +153,43 @@
 
 
         }
+
+        let expiryTime = 120; // 2 minutes
+let expiryInterval;
+let otpExpired = false;
+
+const expiryDisplay = document.getElementById("expiryTimer");
+const otpForm = document.querySelector(".otp-form");
+
+function startOtpExpiryTimer() {
+    expiryTime = 120;
+    otpExpired = false;
+
+    expiryInterval = setInterval(() => {
+
+        let minutes = Math.floor(expiryTime / 60);
+        let seconds = expiryTime % 60;
+
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        expiryDisplay.innerText = `${minutes}:${seconds}`;
+
+        expiryTime--;
+
+        if (expiryTime < 0) {
+            clearInterval(expiryInterval);
+            expiryDisplay.innerText = "Expired";
+            otpExpired = true;
+        }
+
+    }, 1000);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    startOtpExpiryTimer();
+});
+
+
+</script>
 
     </script>
