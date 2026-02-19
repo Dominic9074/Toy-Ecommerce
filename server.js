@@ -2,6 +2,14 @@ import express from "express"
 import path from "path"
 import 'dotenv/config'
 import { fileURLToPath } from 'url';
+import userRoute from './src/routes/user.js'
+import connectDB from "./src/config/db.js";
+import expressLayouts from "express-ejs-layouts";
+import session from "express-session";
+import passport from "./src/config/passport.js";
+import adminRoute from './src/routes/admin.js'
+import nocache from "nocache";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,41 +23,52 @@ const PORT=process.env.PORT;
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+//layout 
+app.use(expressLayouts);
+app.set("layout", "layout/layout.ejs");
+
 // Static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Routes
-app.get("/", (req, res) => {
-  res.render("user/home", { title: "Wheelz - Home" });
+
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+app.use(session({
+  secret:process.env.SESSION_SECRET,
+  resave:false,
+  saveUninitialized:true,
+  cookie:{
+    secure:false,
+    httpOnly:true,
+    maxAge:24*60*60*1000
+  }
+}))
+app.use(nocache())
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+//global
+app.use((req, res, next) => {
+  res.locals.error = null;
+  res.locals.success = null;
+  next();
 });
 
+app.use((req,res,next)=>{
+  res.locals.user=req.session.user||null;
+  next();
+})
 
-app.get("/signin", (req, res) => {
-    res.render("user/signin");
-});
 
-app.get("/signup", (req, res) => {
-    res.render("user/register");
-});
+//routes
+app.use('/',userRoute)
+app.use('/',adminRoute)
 
-app.get("/otp", (req, res) => {
-    res.render("user/otp");
-});
-
-app.get("/forgot-password", (req, res) => {
-    res.render("user/forgot-password");
-});
-
-app.get("/new-password", (req, res) => {
-    res.render("user/new-password");
-});
-
-app.get("/shop", (req, res) => {
-    res.render("user/shop");
-});
-
+//db connect
+connectDB();
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT,() => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

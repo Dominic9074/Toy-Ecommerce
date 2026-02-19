@@ -1,0 +1,275 @@
+<%
+  const username = user && user.username ? user.username : '';
+  const email = user && user.email ? user.email : '';
+  const avatarLetter = username ? username.charAt(0).toUpperCase() : '';
+%>
+
+
+<header>
+
+  <!-- Hamburger -->
+  <div class="hamburger" id="hamburger">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <ul class="nav-links" id="mobileNav">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="#">Categories</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions">
+    <span>Order</span>
+    <span>Cart</span>
+    <span>Wish List</span>
+
+    <a href="/user/profile" class="profile-avatar">
+      <%= avatarLetter %>
+    </a>
+  </div>
+</header>
+
+
+<div class="profile-user-info-section">
+  <div class="container">
+    <div class="user-info-wrapper">
+      <div class="user-avatar-circle">
+        <%= avatarLetter %>
+        
+      </div>
+
+      <div class="user-text">
+        <h1><%= username ? username.toUpperCase() : '' %></h1>
+        <p><%= email %></p>
+      </div>
+      <a href="/logout" class="btn-logout-header">LOGOUT</a>
+    </div>
+  </div>
+</div>
+
+<div class="container profile-layout">
+
+
+  <aside class="profile-sidebar">
+    <div class="sidebar-menu">
+      <a href="#" class="menu-item active">DASHBOARD</a>
+      <a href="#" class="menu-item">MY ORDERS</a>
+      <a href="#" class="menu-item">MY COUPON</a>
+      <a href="#" class="menu-item">WALLET</a>
+      <a href="#" class="menu-item">WISHLIST</a>
+      <a href="#" class="menu-item">REFER AND EARN</a>
+    </div>
+
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+
+  <!-- MAIN CONTENT -->
+  <main class="profile-content">
+
+   
+    <div class="content-box">
+      <h3 class="box-title">FULL NAME</h3>
+      <div class="form-group">
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          value="<%= username %>"
+        >
+      </div>
+
+      <h3 class="box-title">EMAIL</h3>
+      <div class="form-group">
+        <input
+          type="text"
+          id="email"
+          class="form-control"
+          value="<%= email %>"
+        >
+      </div>
+
+      <button
+        class="btn-action btn-red"
+        type="button"
+        onclick="updateProfile()"
+      >
+        SAVE CHANGES
+      </button>
+    </div>
+
+    <!-- CHANGE PASSWORD (UI ONLY FOR NOW) -->
+    <div class="content-box">
+      <h3 class="box-title-muted">CHANGE PASSWORD</h3>
+
+      <label class="form-label">CURRENT PASSWORD</label>
+      <div class="form-group">
+        <input type="password" id="currentPassword" class="form-control">
+      </div>
+
+      <label class="form-label">NEW PASSWORD</label>
+      <div class="form-group">
+        <input type="password" id="newPassword" class="form-control">
+      </div>
+
+      <div class="btn-group">
+        <button class="btn-action btn-red" type='button' onclick="changePassword()">UPDATE PASSWORD</button>
+        <button class="btn-action btn-outline">CANCEL</button>
+      </div>
+    </div>
+
+    <!-- ADDRESS (PLACEHOLDER) -->
+   <div class="content-box">
+  <h2 class="box-header-large">SAVED ADDRESS</h2>
+
+  <% if (address.length === 0) { %>
+      <p>No saved addresses.</p>
+  <% } %>
+
+  <% address.forEach(function(address) { %>
+
+    <div class="address-item">
+      <div class="address-text">
+        <p><strong>Full Name:</strong> <%= address.fullname %></p>
+        <p><strong>Phone Number:</strong> <%= address.phone %></p>
+        <p><strong>Street Address:</strong> <%= address.street %></p>
+        <p><strong>District:</strong> <%= address.city %></p>
+        <p><strong>State:</strong> <%= address.state %></p>
+        <p><strong>PIN Code :</strong> <%= address.pincode %></p>
+        <p><strong>Type :</strong> <%= address.addressType %></p>
+      </div>
+
+      <form>
+        <button onclick="removeAddress(event, '<%= address._id %>')" class="btn-small btn-red" type="button" >REMOVE</button>
+        <button onclick="window.location.href=`/editAddress/<%= address._id %>`" class="btn-small btn-edit"  type="button">EDIT</button>
+      </form>
+    </div>
+
+  <% }) %>
+
+</div>
+
+      <div class="add-address-wrapper">
+        <button class="btn-action btn-red btn-wide" onclick="window.location.href='/addAddress'">ADD ADDRESS</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+
+
+<script>
+  console.log("profile page script loaded");
+
+  window.updateProfile = function () {
+    console.log("updateProfile clicked");
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+
+    fetch("/updateProfile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name, email })
+    }).then(res => res.json())
+      .then(data => {
+        if(data.success){
+          showSuccess(data.message);
+          if (data.redirect) {
+          setTimeout(() => {
+            window.location.href = data.redirect;
+          }, 1200);}
+        }else{
+          showError(data.message)
+        }
+      })
+      .catch(() => showError("Something went wrong"));
+  };
+
+  function changePassword(){
+    const currentPassword=document.getElementById('currentPassword').value;
+    const newPassword=document.getElementById('newPassword').value;
+    if(currentPassword.length<=6||newPassword.length<=6){
+        showError("password length should be above 6")
+        return;
+    }
+    if(currentPassword.includes(" ")||newPassword.includes(' ')){
+        showError('Password Must Not Contain Any Space')
+        return;
+    }
+    if(!/[A-Z]/.test(currentPassword)){
+        showError('Password Must Contain Atleast One Uppercase')
+        return;
+    }
+    if(!/[A-Z]/.test(newPassword)){
+        showError('Password Must Contain Atleast One Uppercase')
+        return;
+    }
+
+    fetch('/changePassword',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({currentPassword,newPassword})
+    }).then(res=>res.json())
+    .then(data=>{
+      if(data.success){
+        showSuccess(data.message)
+      }else{
+        showError(data.message)
+      }
+    })
+  }
+
+  function removeAddress(event,addressId){
+
+  Swal.fire({
+  title: "Are you sure?",
+  text: "You won't be able to revert this!",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Yes, delete it!"
+}).then((result) => {
+  if (result.isConfirmed) {
+
+    fetch(`/removeAddress?addressId=${addressId}`, {
+    method: "POST"
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      Swal.fire({
+      title: "Deleted!",
+      text: "Your file has been deleted.",
+      icon: "success"
+    });
+      showSuccess(data.message)
+      setTimeout(()=>{
+        window.location.reload();
+      },1500)
+    } else {
+      showError(data.message);
+      Swal.fire({
+            title: "Error",
+            text: data.message,
+            icon: "error"
+          });
+    }
+  });
+
+    
+  }
+});
+  }
+
+  
+
+</script>

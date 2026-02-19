@@ -126,6 +126,35 @@ header {
   white-space: nowrap;
 }
 
+.resent-otp{
+    display: flex;
+    margin-left: 80px;
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #100E34;       /* dark background */
+  color: #fff;                 /* letter color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.profile-avatar:hover {
+  background-color: #ff3b3b;   /* accent color */
+  transform: scale(1.05);
+}
+
+
 .hero-content {
   position: relative;
   z-index: 2;
@@ -771,6 +800,45 @@ footer {
     color: #fff;
 }
 
+#passwordDiv,
+#confirmDiv {
+  position: relative;
+}
+
+/* Add space inside input for the eye icon */
+#passwordDiv input,
+#confirmDiv input {
+  padding-right: 45px !important;
+}
+
+/* Eye icon positioning */
+#passwordDiv .toggle-signUpPassword,
+#confirmDiv .toggle-signUpPassword {
+  position: absolute;
+  right: 15px;
+  top: 65%;
+  transform: translateY(-35%);
+  font-size: 16px;
+  color: #777;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+/* Hover effect */
+#passwordDiv .toggle-signUpPassword:hover,
+#confirmDiv .toggle-signUpPassword:hover {
+  color: #1c2e4a;
+}
+
+/* OTP Expiry Timer */
+.otp-expiry-text {
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #d32f2f;
+}
+
+
 .signin-btn {
     width: 100%;
     padding: 15px;
@@ -1076,6 +1144,15 @@ footer {
     color: #7251cd;
     font-weight: 600;
     text-decoration: none;
+    border: none;
+    outline: none;
+    background-color: white;
+    cursor: pointer;
+}
+.timerText{
+    color: #7251cd;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .resend-link:hover {
@@ -1101,6 +1178,55 @@ footer {
     border-color: #7251cd;
     background: #fff;
 }
+
+.address-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background: #fff;
+}
+
+.address-text p {
+    margin: 4px 0;
+}
+
+.address-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-small {
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-red {
+    background-color: #e53935;
+    color: #fff;
+}
+
+.btn-red:hover {
+    background-color: #c62828;
+}
+
+.btn-edit {
+    background-color: #100E34;
+    color: #fff;
+}
+
+.btn-edit:hover {
+    background-color: #100E34;
+}
+
 
 /* User Shop Page Styles */
 .shop-page-container {
@@ -1326,4 +1452,829 @@ footer {
 
 .upc-order-btn:hover {
     background-color: #000;
+}
+
+.google-login {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.google-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.google-btn img {
+    width: 18px;
+    height: 18px;
+}
+
+.google-btn:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+/* ===========================
+   Profile Page Styles
+   =========================== */
+
+/* Profile Header Section (User Info) */
+.profile-user-info-section {
+    background-color: #fff;
+    padding: 40px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-user-info-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.user-info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-avatar-circle {
+    width: 80px;
+    height: 80px;
+    background-color: #100E34; /* Deep Sky Blue matching screenshot */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 32px;
+}
+
+.user-text h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #100E34;
+}
+
+.user-text p {
+    margin: 5px 0 0;
+    color: #999;
+    font-size: 14px;
+}
+
+/* Layout Grid */
+.profile-layout {
+    display: flex;
+    max-width: 1600px; /* Moved sidebar more to the left */
+    margin: 0 auto 50px auto;
+    padding: 0 40px;
+    gap: 150px; /* Increased gap to keep content in place */
+}
+
+/* Sidebar */
+.profile-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.menu-item {
+    display: block;
+    padding: 12px 20px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    color: #999;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+}
+
+/* Address Type Dropdown Styling */
+#typeDiv {
+    margin-top: 15px;
+}
+
+
+#typeDiv select.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+/* Focus effect */
+#typeDiv select.form-control:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
+}
+
+/* Dropdown arrow clean look */
+#typeDiv select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%23666' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+/* Error state (optional if you want red border on error) */
+#typeDiv.error select.form-control {
+    border: 1px solid red;
+}
+
+
+.menu-item:hover {
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.menu-item.active {
+    background-color: #1c2e4a; /* Dashboard Active Color */
+    color: #fff;
+    border-color: #1c2e4a;
+}
+
+.btn-logout-sidebar {
+    margin-top: 30px;
+    background-color: #a00;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 14px;
+    display: block;
+}
+
+.btn-logout-sidebar:hover {
+    background-color: #cc0000;
+}
+
+/* Main Content Area */
+.profile-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.content-box {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 30px;
+    border-radius: 0; /* Boxy look per screenshot */
+}
+
+/* Typo & Headings */
+.box-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.box-title-muted {
+    font-size: 14px;
+    font-weight: 700;
+    color: #aaa;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.box-header-large {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1c2e4a;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    font-family: inherit;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box; /* Important for width */
+}
+
+.form-control:focus {
+    border-color: #1c2e4a;
+    outline: none;
+}
+
+/* Buttons */
+.btn-action {
+    padding: 12px 25px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    border: none;
+    transition: background 0.3s;
+}
+
+.btn-red {
+    background-color: #a00; /* Deep Red */
+    color: white;
+}
+
+.btn-red:hover {
+    background-color: #c00;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    color: #333;
+    margin-left: 10px;
+}
+
+.btn-outline:hover {
+    border-color: #333;
+    background-color: #f9f9f9;
+}
+
+.btn-wide {
+    width: 200px;
+}
+.input-error {
+    background: #ffe6e6;
+    border: 1px solid red;
+}
+
+
+.btn-small {
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    background-color: #a00;
+    color: white;
+}
+
+/* Address List */
+.address-item {
+    border: 1px solid #eee;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.address-text p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+/* FIX PROMO SECTION HORIZONTAL SCROLL */
+.promo {
+  overflow-x: hidden;
+  flex-wrap: wrap;
+}
+
+.promo-image,
+.promo-content {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.promo-content {
+  padding: 40px 20px;  /* reduced from 60px */
+  box-sizing: border-box;
+}
+
+.promo-image img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+.add-address-wrapper {
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .profile-layout {
+        flex-direction: column;
+    }
+    .promo {
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.promo-content {
+  width: 100%;
+  padding: 25px 15px;
+}
+
+.promo-image {
+  width: 100%;
+}
+    .profile-sidebar {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    .address-item {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+.btn-logout-header {
+    margin-left: auto; /* Pushes to the far right */
+    background-color: #a00;
+    color: white;
+    padding: 10px 20px;
+    font-weight: 700;
+    border-radius: 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: background 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+
+/* ===========================
+   Add Address Page Styles
+   =========================== */
+
+.add-address-page {
+    max-width: 900px; /* Constrain width for form */
+    margin: 50px auto 100px auto;
+    padding: 0 20px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1c2e4a;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.address-form-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 40px;
+}
+
+.form-row {
+    margin-bottom: 25px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.two-col {
+    display: flex;
+    gap: 30px;
+}
+
+.col-group {
+    flex: 1;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to right as per typical form, or check screenshot. Screenshot shows them right aligned usually. User didn't specify, but layout suggests right or center. Left aligned? Re-checking screenshot visually... buttons are at bottom right. */
+    gap: 15px;
+    margin-top: 40px;
+}
+
+/* Adjusting justification because screenshot looked like buttons were maybe on the right or just below. I'll stick to right alignment or maybe flow. 
+   Wait, looking at screenshot again (mentally), "SAVE ADDRESS" and "CANCEL" are at the bottom right.
+*/
+
+.btn-save-address {
+    background-color: #a00;
+    color: white;
+    padding: 12px 30px;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-save-address:hover {
+    background-color: #cc0000;
+}
+
+.btn-cancel-address {
+    background-color: #fff;
+    color: #1c2e4a;
+    border: 1px solid #1c2e4a;
+    padding: 12px 30px;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancel-address:hover {
+    background-color: #1c2e4a;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .two-col {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+/* =========================
+   MOBILE HEADER RESPONSIVE
+   ========================= */
+
+.hamburger {
+  display: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #1c2e4a;
+}
+
+/* Mobile View */
+@media (max-width: 768px) {
+
+  header {
+    position: relative;
+    padding: 15px 20px;
+  }
+
+  /* Show hamburger */
+  .hamburger {
+    display: block;
+    position: absolute;
+    left: 20px;
+  }
+
+  /* Center logo */
+  .logo {
+    margin: 0 auto;
+  }
+
+  /* Hide nav & user actions initially */
+  .nav-links,
+  .user-actions {
+    display: none;
+  }
+
+  /* Mobile dropdown menu */
+  .mobile-active {
+    display: flex !important;
+    flex-direction: column;
+    gap: 20px;
+    background: #fff;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    z-index: 999;
+  }
+
+}
+/* =====================================
+   MOBILE HEADER + PROFILE RESPONSIVE
+   ===================================== */
+
+.hamburger {
+  display: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #1c2e4a;
+  z-index: 1001;
+}
+
+/* ================= HEADER MOBILE ================= */
+@media (max-width: 768px) {
+
+  header {
+    position: relative;
+    padding: 15px 20px;
+    justify-content: center;
+  }
+
+  .hamburger {
+    display: block;
+    position: absolute;
+    left: 20px;
+  }
+
+  .logo {
+    margin: 0 auto;
+  }
+
+  .nav-links,
+  .user-actions {
+    display: none;
+  }
+
+  .mobile-open {
+    display: flex !important;
+    flex-direction: column;
+    gap: 20px;
+    background: #fff;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  }
+
+}
+
+/* ================= PROFILE SIDEBAR MOBILE ================= */
+
+@media (max-width: 768px) {
+
+  .profile-layout {
+    flex-direction: column;
+    padding: 0 20px;
+    gap: 30px;
+  }
+
+  .profile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 250px;
+    height: 100%;
+    background: #fff;
+    padding: 80px 20px 20px;
+    box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
+    z-index: 1000;
+  }
+
+  .profile-sidebar.sidebar-open {
+    left: 0;
+  }
+
+  .profile-content {
+    width: 100%;
+  }
+
+  .user-info-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .btn-logout-header {
+    align-self: flex-start;
+    margin-top: 10px;
+  }
+
+  .address-item {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+}
+/* =====================================
+   CLEAN MOBILE SIDEBAR FIX
+   ===================================== */
+
+@media (max-width: 768px) {
+
+  /* Remove sidebar from layout completely */
+  .profile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 260px;
+    height: 100%;
+    background: #fff;
+    padding: 80px 20px 20px;
+    box-shadow: 3px 0 20px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
+    z-index: 2000;
+  }
+
+  /* When open */
+  .profile-sidebar.sidebar-open {
+    left: 0;
+  }
+
+  /* Overlay */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    z-index: 1500;
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+  }
+
+  /* Make profile layout column */
+  .profile-layout {
+    flex-direction: column;
+    padding: 0 20px;
+    gap: 30px;
+  }
+
+}
+
+/* ===========================
+   SIGNIN PAGE RESPONSIVE FIX
+   =========================== */
+
+.signin-body {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;   /* stop horizontal scroll */
+  padding: 20px;        /* space on mobile */
+  box-sizing: border-box;
+}
+
+.signin-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signin-card {
+  width: 100%;
+  max-width: 420px;     /* keeps it nice on PC */
+  padding: 40px 25px;   /* reduced padding */
+  box-sizing: border-box;
+}
+
+/* Make inputs always fit inside */
+.signin-form input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix eye icon overlap */
+.toggle-password {
+  right: 15px;
+}
+
+/* Google button should not overflow */
+.google-btn {
+  width: 100%;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* Mobile improvements */
+@media (max-width: 480px) {
+
+  .signin-body {
+    padding: 15px;
+  }
+
+  .signin-card {
+    padding: 30px 18px;
+  }
+
+  .signin-title {
+    font-size: 26px;
+  }
+}
+
+.signin-body {
+  overflow-y: hidden;
+}
+
+/* ==============================
+   FORGOT PASSWORD RESPONSIVE FIX
+   ============================== */
+
+.otp-body {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.otp-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.otp-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 35px 22px;
+  box-sizing: border-box;
+}
+
+/* Make input always fit */
+.forgot-email-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Button full width already, just safe */
+.otp-btn {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Mobile improvements */
+@media (max-width: 480px) {
+  .otp-body {
+    padding: 15px;
+  }
+
+  .otp-card {
+    padding: 28px 18px;
+  }
+
+  .otp-title {
+    font-size: 18px;
+  }
+
+  .otp-subtitle {
+    font-size: 13px;
+    margin-bottom: 25px;
+  }
+}
+/* Hide left image section on mobile */
+@media (max-width: 768px) {
+  .register-left {
+    display: none;
+  }
+
+  .register-container {
+    flex-direction: column;
+  }
+
+  .register-right {
+    width: 100%;
+    flex: 1;
+    padding: 20px;
+  }
 }

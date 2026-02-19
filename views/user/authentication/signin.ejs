@@ -1,0 +1,116 @@
+
+    <div class="signin-wrapper">
+        <div class="signin-card">
+            <h2 class="signin-title">Login</h2>
+            <p class="signin-subtitle">Glad you're back.!</p>
+            
+            <form action="/signin" method="POST" class="signin-form" onsubmit="validationForm(event)">
+                <div id="emailDiv" class="input-group">
+                    <input type="email" placeholder="Email" name="email" id="email">
+                    <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;margin-bottom: 0;">Email Required</p>
+                </div>
+                <div id="passwordDiv" class="input-group">
+                    <input type="password" placeholder="Password" name="password" id="password">
+                    <i class="fa-regular fa-eye-slash toggle-password" onclick="togglePassword()"></i>
+                    <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;margin-bottom: 0;">Password Required</p>
+                </div>
+                
+                <div class="forgot-password">
+                    <a href="/forgot-password">FORGET PASSWORD?</a>
+                </div>
+
+                <button type="submit" class="signin-btn">Login</button>
+            </form>
+
+            <div class="signup-link">
+                <p>Don't have an account ? <a href="/signup">Signup</a></p>
+            </div>
+            <div class="google-login">
+            <a href="/auth/google" class="google-btn" type="button">
+            <img src="/images/google-logo.webp" alt="Google">
+            <span>Continue with Google</span>
+            </a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+
+        function validationForm(event){
+            event.preventDefault();
+            const email=document.getElementById('email').value;
+            const password=document.getElementById('password').value;
+
+            if(!email){
+            emailDiv.querySelector('input').style.border='1px solid red'
+            emailDiv.querySelector('p').style.display='block';
+            }else{
+                emailDiv.querySelector('input').style.border='1px solid gray'
+                emailDiv.querySelector('p').style.display='none'
+            }
+            if(!password){
+            passwordDiv.querySelector('input').style.border='1px solid red'
+            passwordDiv.querySelector('p').style.display='block';
+            }else{
+                passwordDiv.querySelector('input').style.border='1px solid gray'
+                passwordDiv.querySelector('p').style.display='none'
+            }
+
+            if(!email||!password){
+                event.preventDefault();
+                showError('All Fields Are Required')
+                return;
+            }
+            if(password.length<=6){
+        event.preventDefault();
+         passwordDiv.querySelector('input').style.border='1px solid red'
+         passwordDiv.querySelector('p').style.display='block';
+         passwordDiv.querySelector('p').innerText='password length should be above 6';
+        showError("password length should be above 6")
+        return;
+        }
+        if(password.includes(" ")){
+            event.preventDefault();
+            passwordDiv.querySelector('input').style.border='1px solid red'
+         passwordDiv.querySelector('p').style.display='block';
+         passwordDiv.querySelector('p').innerText='Password Must Not Contain Any Space';
+            showError('Password Must Not Contain Any Space')
+            return;
+        }
+        if(email.includes(" ")){
+            event.preventDefault();
+            emailDiv.querySelector('input').style.border='1px solid red'
+            emailDiv.querySelector('p').style.display='block';
+            emailDiv.querySelector('p').innerText='Email Must Not Contain Any Space';
+            showError('Email Must Not Contain Any Space')
+            return;
+        }
+        if(!/[A-Z]/.test(password)){
+            event.preventDefault();
+            passwordDiv.querySelector('input').style.border='1px solid red'
+            passwordDiv.querySelector('p').style.display='block';
+            passwordDiv.querySelector('p').innerText='Password Must Contain Atleast One Uppercase';
+            showError('Password Must Contain Atleast One Uppercase')
+            return;
+        }
+        event.target.submit();
+
+            }
+
+function togglePassword() {
+    const passwordInput = document.getElementById("password");
+    const icon = document.getElementById("togglePassword");
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        passwordInput.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+}
+        
+    </script>

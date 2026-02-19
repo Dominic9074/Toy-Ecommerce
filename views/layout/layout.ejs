@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= title || "Toy Ecommerce" %></title>
+
+    <!-- Main project CSS -->
+    <link rel="stylesheet" href="/css/<%= cssFile || 'style.css' %>">
+
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Notyf CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body class="<%= bodyClass || '' %>">
+
+    <!-- PAGE CONTENT COMES HERE -->
+    <%- body %>
+
+    <!-- Notyf JS -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+    <!-- sweet alert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Toast helper -->
+    <script src="/js/toast.js"></script>
+    <script src="/js/index.js" ></script>
+    <script>
+    <% if (error) { %>
+    showError(<%- JSON.stringify(error) %>);
+    <% } %>
+
+    <% if (success) { %>
+    showSuccess(<%- JSON.stringify(success) %>);
+    <% } %>
+</script>
+</body>
+</html>
