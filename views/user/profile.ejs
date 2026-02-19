@@ -68,27 +68,26 @@
 
   <!-- MAIN CONTENT -->
   <main class="profile-content">
-
    
-    <div class="content-box">
+    <div class="content-box" id="nameDiv">
       <h3 class="box-title">FULL NAME</h3>
       <div class="form-group">
         <input
           type="text"
           id="name"
           class="form-control"
-          value="<%= username %>"
-        >
+          value="<%= username %>">
+          <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
       </div>
 
       <h3 class="box-title">EMAIL</h3>
-      <div class="form-group">
+      <div class="form-group" >
         <input
           type="text"
           id="email"
           class="form-control"
-          value="<%= email %>"
-        >
+          value="<%= email %>">
+          
       </div>
 
       <button
@@ -165,10 +164,16 @@
   console.log("profile page script loaded");
 
   window.updateProfile = function () {
-    console.log("updateProfile clicked");
-
+    
+    const nameDiv=document.getElementById('nameDiv')
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
+    if(name.length<3){
+      nameDiv.querySelector('input').style.border='1px solid red'
+      nameDiv.querySelector('p').style.display='block'
+      nameDiv.querySelector('p').innerText='Length Should Be Above 3'
+      return;
+    }
 
     fetch("/updateProfile", {
       method: "POST",

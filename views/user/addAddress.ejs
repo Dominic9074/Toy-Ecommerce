@@ -117,6 +117,12 @@
       nameDiv.querySelector('p').innerText='FullName Required'
       isValid=false
     }
+    if(fullname.length<3){
+      nameDiv.querySelector('input').style.border='1px solid red'
+      nameDiv.querySelector('p').style.display='block'
+      nameDiv.querySelector('p').innerText='Length Should Be Above 3'
+      isValid=false
+    }
     if(!phone){
       numberDiv.querySelector('input').style.border='1px solid red'
       numberDiv.querySelector('p').style.display='block'

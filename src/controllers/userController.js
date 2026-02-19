@@ -571,7 +571,7 @@ const updateAddress=async (req,res)=>{
 }
 
 const loadShop=(req,res)=>{
-    res.render('user/shop',{title:'shop',bodyClass:''})
+    res.render('user/shop',{title:'shop',bodyClass:'',cssFile:'style.css'})
 }
 
 

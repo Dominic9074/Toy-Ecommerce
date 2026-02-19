@@ -36,6 +36,9 @@ const signIn=async(data)=>{
     if(user.status!=='active'){
         throw  new Error('Your account has been blocked by admin')
     }
+    if(user.googleId){
+        throw new Error('Try Login Using Google')
+    }
 
     const isMatched=await bcrypt.compare(password,user.password);
 
@@ -134,3 +137,18 @@ const removeAddress=async (userId,addressId)=>{
 export default {signup,createUserAfterVerification,signIn,checkUser,resetPassword,findUser,updateProfile,updateUserName,
     comparePasswordAndUpdate,addAddress,findUserById,removeAddress
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
