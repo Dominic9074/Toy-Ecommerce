@@ -1,5 +1,8 @@
 
     <header>
+        <button class="hamburger" id="hamburger">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         <ul class="nav-links" style="justify-content: flex-start;"> <!-- Left align nav links -->
             <li><a href="/">Home</a></li>
             <li><a href="/shop" class="active">Shop</a></li>
@@ -14,7 +17,13 @@
            <a href="#">Order</a> <!-- Matches 'Order' in image? Image says 'Order' -->
            <a href="#">Cart</a>
            <a href="#">Wish List</a>
-           <a href="/signin" class="sign-in-btn">Sign In</a>
+           <% if (user) { %>
+      <a href="/user/profile" class="profile-avatar">
+        <%= user.username.charAt(0).toUpperCase() %>
+      </a>
+    <% } else { %>
+      <a href="/signin" class="sign-in-btn">Sign In</a>
+    <% } %>
         </div>
     </header>
 
@@ -125,7 +134,7 @@
                 <div class="upc-details">
                      <div class="upc-header">
                         <span class="upc-title">LEGO</span>
-                        <span class="upc-discount"></span> 
+                        <span class="upc-discount">32%OFF</span>
                     </div>
                     <p class="upc-desc">LEGO Technic Ford Bronco SUV Model Car Kit, STEM Building Set 42213 Toys For 9+ Gift For Boys And Girls</p>
                     <div class="upc-footer">
@@ -146,7 +155,7 @@
                 <div class="upc-details">
                      <div class="upc-header">
                         <span class="upc-title">LEGO</span>
-                        <span class="upc-discount"></span>
+                        <span class="upc-discount">14%</span>
                     </div>
                     <p class="upc-desc">LEGO Speed Champions Bugatti Vision Gran Turismo Hyper Sports Car Model Kit And Building Set 77253</p>
                     <div class="upc-footer">
@@ -159,3 +168,13 @@
         </div>
     </div>
 
+    <script>
+        const hamburger = document.getElementById("hamburger");
+        const navLinks = document.querySelector(".nav-links");
+        const userActions = document.querySelector(".user-actions");
+
+        hamburger.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+            userActions.classList.toggle("active");
+        });
+    </script>

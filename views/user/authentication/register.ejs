@@ -104,6 +104,12 @@
       showError("All fields are required");
       return;
     }
+    if(username.length<3){
+        e.preventDefault();
+        userDiv.querySelector('p').style.display='block'
+        userDiv.querySelector('p').innerText='Length Should Be Above 3'
+      return;
+    }
 
     if (password !== confirm) {
       e.preventDefault();
