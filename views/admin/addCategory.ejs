@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Category | Wheelz Admin</title>
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">Wheelz</div>
+      <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="nav-item">
+          <i class="fa-solid fa-qrcode"></i> Dashboard
+        </a>
+        <a href="/admin/products" class="nav-item">
+          <i class="fa-solid fa-box"></i> Products
+        </a>
+        <a href="/admin/categories" class="nav-item active">
+          <i class="fa-solid fa-layer-group"></i> Categories
+        </a>
+        <a href="/admin/orders" class="nav-item">
+          <i class="fa-solid fa-cart-shopping"></i> Orders
+        </a>
+        <a href="/admin/sales" class="nav-item">
+            <i class="fa-solid fa-money-bill-wave"></i> Sales & Revenue
+        </a>
+        <a href="/admin/users" class="nav-item">
+          <i class="fa-solid fa-user-group"></i> Users
+        </a>
+        <a href="/admin/coupons" class="nav-item">
+           <i class="fa-solid fa-ticket"></i> Coupons
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="/admin/logout" class="logout-link">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+      <!-- Header -->
+      <header class="admin-header">
+        <button class="admin-hamburger" id="adminHamburger">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <h2>ADMIN PANEL</h2>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- Title Section -->
+        <div class="page-title-block">
+            <h1 class="page-main-title">ADD NEW CATEGORY</h1>
+            <p class="page-sub-title">Organize your toy car inventory by creating a new category.</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <h2 class="form-card-title">Add Category</h2>
+            
+            <form action="/admin/add-category" method="POST" class="add-category-form">
+                <div class="form-main-layout">
+                    <!-- Left Column: Inputs -->
+                    <div class="form-inputs-column">
+                        <div class="form-group">
+                            <label for="categoryName">Category Name</label>
+                            <input type="text" id="categoryName" name="name" placeholder="e.g. Vintage Racing" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="categoryDescription">Description</label>
+                            <textarea id="categoryDescription" name="description" placeholder="Provide a small overview of this category..." required></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-create-category">
+                                <i class="fa-solid fa-circle-plus"></i> Create Category
+                            </button>
+                            <a href="/admin/categories" class="btn-cancel-form">Cancel</a>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Image Upload -->
+                    <div class="form-upload-column">
+                        <div class="drag-drop-zone" id="dropZone">
+                            <div class="upload-icon">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            <p class="upload-text">Drag and drop images here</p>
+                            <p class="upload-support">Support: JPG, PNG, WEBP (Max 5MB)</p>
+                            <button type="button" class="btn-browse-files">BROWSE FILES</button>
+                            <input type="file" id="categoryImage" name="image" hidden accept="image/*">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Sidebar Toggle Logic
+      const hamburger = document.getElementById("adminHamburger");
+      const sidebar = document.getElementById("adminSidebar");
+      const overlay = document.getElementById("adminOverlay");
+
+      hamburger.addEventListener("click", () => {
+        sidebar.classList.add("sidebar-open");
+        overlay.classList.add("active");
+      });
+
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("sidebar-open");
+        overlay.classList.remove("active");
+      });
+
+      // Simple click-to-upload for the drop zone
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('categoryImage');
+      const browseBtn = document.querySelector('.btn-browse-files');
+
+      [dropZone, browseBtn].forEach(el => {
+          el.addEventListener('click', () => fileInput.click());
+      });
+
+      fileInput.addEventListener('change', (e) => {
+          if (e.target.files.length > 0) {
+              const fileName = e.target.files[0].name;
+              document.querySelector('.upload-text').textContent = `Selected: ${fileName}`;
+          }
+      });
+    </script>
+  </body>
+</html>

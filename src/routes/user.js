@@ -40,6 +40,17 @@ router.get("/logout", userMiddleware.isLoggedIn, userController.logoutUser);
 //shop
 router.get('/shop',userController.loadShop)
 
+//productDetails
+router.get('/product',userController.loadProductDetails)
+
+//cartpage
+router.get('/cart',userController.loadCartPage)
+
+//wishlist
+router.get('/wishlist',userController.loadWishlist)
+
+
+
 // 🔐 Google Auth
 router.get("/auth/google",passport.authenticate("google", {scope: ["profile", "email"]}));
 

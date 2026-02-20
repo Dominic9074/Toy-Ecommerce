@@ -1,0 +1,283 @@
+
+    <!-- Header (Consistent with Shop Page) -->
+    <header>
+      <button class="hamburger" id="hamburger">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <ul class="nav-links" style="justify-content: flex-start">
+        <li><a href="/">Home</a></li>
+        <li><a href="/shop">Shop</a></li>
+        <li><a href="/categories">Categories</a></li>
+      </ul>
+
+      <div class="logo">Wheelz</div>
+
+      <div class="user-actions">
+        <a href="#">Order</a>
+        <a href="#">Cart</a>
+        <a href="#">Wish List</a>
+        <% if (user) { %>
+        <a href="/user/profile" class="profile-avatar">
+          <%= user.username.charAt(0).toUpperCase() %>
+        </a>
+        <% } else { %>
+        <a href="/signin" class="sign-in-btn">Sign In</a>
+        <% } %>
+      </div>
+    </header>
+
+    <!-- Product Details Main Container -->
+    <div class="pd-container">
+      
+      <!-- Breadcrumbs -->
+      <nav class="pd-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> 
+        <a href="/shop">Shop</a> <span>/</span> 
+        <a href="#">Categories</a> <span>/</span> 
+        <span class="current">Blue Monster Truck</span>
+      </nav>
+
+      <!-- Top Section: Gallery & Info -->
+      <div class="pd-top-section">
+        
+        <!-- Left: Gallery -->
+        <div class="pd-gallery">
+            <div class="pd-thumbnails">
+                <div class="pd-thumb active">
+                    <img src="https://placehold.co/100x100" alt="Thumb 1">
+                </div>
+                <div class="pd-thumb">
+                    <img src="https://placehold.co/100x100" alt="Thumb 2">
+                </div>
+                <div class="pd-thumb">
+                    <img src="https://placehold.co/100x100" alt="Thumb 3">
+                </div>
+            </div>
+            <div class="pd-main-image">
+                <img src="https://placehold.co/500x350" alt="Main Product Image" id="mainImage">
+            </div>
+        </div>
+
+        <!-- Right: Info -->
+        <div class="pd-info">
+            <h1 class="pd-title">Traxxas 8S X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</h1>
+            
+            <ul class="pd-features">
+                <li>Extreme VXL-8s speed control takes up to 33.6 volts and powers monster 1200XL brushless motor for 50+mph speed</li>
+                <li>Traxxas Stability Management for control over virtually any terrain and self-righting. (LiPo batteries sold separately)</li>
+                <li>All metal gear drivetrain with strengthened axles, Cush Drive, and Torque Biasing Center Drive</li>
+            </ul>
+
+            <div class="pd-price-row">
+                <span class="pd-price">₹18,999</span>
+                <span class="pd-old-price">₹21,837</span>
+                <span class="pd-discount">13%OFF</span>
+            </div>
+
+            <div class="pd-meta-row">
+                <span class="pd-stock">Stock Left: <span class="stock-count">23</span></span>
+                <span class="pd-rating">Rating: 4.6 <i class="fa-solid fa-star"></i></span>
+            </div>
+
+            <div class="pd-actions">
+                <button class="pd-btn btn-order">Order Now</button>
+                <button class="pd-btn btn-cart">Add To Cart</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Section (Full Width Dark) -->
+    <section class="pd-description-section">
+        <div class="section-title-center">Description</div>
+        <div class="pd-desc-content">
+            <p>Defy Physics With The Traxxas 8S X-Maxx Experience The Ultimate Monster Truck. Engineered With 30+ Volts Of 8S Power And A Massive 4WD Drivetrain, The X-Maxx Is Built To Crush Any Terrain. Featuring A Waterproof Brushless Motor And A "Self-Righting" System, This RTR (Ready-To-Race) Beast Delivers 50+ MPH Speeds In A Striking Blue Finish. Scale Doesn't Get Bigger Than This.</p>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="pd-reviews-section">
+        <div class="section-title-center">REVIEWS</div>
+        <div class="pd-reviews-grid">
+            <!-- Review Card 1 -->
+            <div class="pd-review-card">
+                <div class="review-header">
+                    <img src="https://placehold.co/40x40" alt="User" class="review-avatar">
+                    <div class="review-user">
+                        <h4>Ethan Russell</h4>
+                        <span>Freelancer</span>
+                    </div>
+                </div>
+                <div class="review-stars">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="review-text">Took days to get a response, and the agent didn't provide a clear solution. Very frustrating experience.</p>
+            </div>
+            <!-- Review Card 2 -->
+            <div class="pd-review-card">
+                <div class="review-header">
+                    <img src="https://placehold.co/40x40" alt="User" class="review-avatar">
+                    <div class="review-user">
+                        <h4>Ethan Russell</h4>
+                        <span>Freelancer</span>
+                    </div>
+                </div>
+                <div class="review-stars">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="review-text">Took days to get a response, and the agent didn't provide a clear solution. Very frustrating experience.</p>
+            </div>
+             <!-- Review Card 3 -->
+             <div class="pd-review-card">
+                <div class="review-header">
+                    <img src="https://placehold.co/40x40" alt="User" class="review-avatar">
+                    <div class="review-user">
+                        <h4>Ethan Russell</h4>
+                        <span>Freelancer</span>
+                    </div>
+                </div>
+                <div class="review-stars">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="review-text">Took days to get a response, and the agent didn't provide a clear solution. Very frustrating experience.</p>
+            </div>
+             <!-- Review Card 4 -->
+             <div class="pd-review-card">
+                <div class="review-header">
+                    <img src="https://placehold.co/40x40" alt="User" class="review-avatar">
+                    <div class="review-user">
+                        <h4>Ethan Russell</h4>
+                        <span>Freelancer</span>
+                    </div>
+                </div>
+                <div class="review-stars">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="review-text">Took days to get a response, and the agent didn't provide a clear solution. Very frustrating experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Products -->
+    <section class="pd-related-section">
+        <h2 class="related-title">RELATED PRODUCT</h2>
+        <div class="user-product-grid">
+            <!-- Product 1 -->
+            <div class="user-product-card">
+                <div class="upc-heart"><i class="fa-solid fa-heart"></i></div>
+                <div class="upc-image"><img src="https://placehold.co/200x150" alt="Related"></div>
+                <div class="upc-details">
+                    <div class="upc-header"><span class="upc-title">Remote Control</span><span class="upc-discount">13%OFF</span></div>
+                    <p class="upc-desc">Traxxas 8S X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</p>
+                    <div class="upc-footer"><span class="upc-price">₹8,099</span><button class="upc-order-btn">Order Now</button></div>
+                </div>
+            </div>
+             <!-- Product 2 -->
+             <div class="user-product-card">
+                <div class="upc-heart"><i class="fa-solid fa-heart"></i></div>
+                <div class="upc-image"><img src="https://placehold.co/200x150" alt="Related"></div>
+                <div class="upc-details">
+                    <div class="upc-header"><span class="upc-title">Remote Control</span><span class="upc-discount">13%OFF</span></div>
+                    <p class="upc-desc">Traxxas 8S X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</p>
+                    <div class="upc-footer"><span class="upc-price">₹8,099</span><button class="upc-order-btn">Order Now</button></div>
+                </div>
+            </div>
+             <!-- Product 3 -->
+             <div class="user-product-card">
+                <div class="upc-heart"><i class="fa-solid fa-heart"></i></div>
+                <div class="upc-image"><img src="https://placehold.co/200x150" alt="Related"></div>
+                <div class="upc-details">
+                    <div class="upc-header"><span class="upc-title">Remote Control</span><span class="upc-discount">13%OFF</span></div>
+                    <p class="upc-desc">Traxxas 8S X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</p>
+                    <div class="upc-footer"><span class="upc-price">₹8,099</span><button class="upc-order-btn">Order Now</button></div>
+                </div>
+            </div>
+             <!-- Product 4 -->
+             <div class="user-product-card">
+                <div class="upc-heart"><i class="fa-solid fa-heart"></i></div>
+                <div class="upc-image"><img src="https://placehold.co/200x150" alt="Related"></div>
+                <div class="upc-details">
+                    <div class="upc-header"><span class="upc-title">Remote Control</span><span class="upc-discount">13%OFF</span></div>
+                    <p class="upc-desc">Traxxas 8S X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</p>
+                    <div class="upc-footer"><span class="upc-price">₹8,099</span><button class="upc-order-btn">Order Now</button></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="related-arrows" id="related-arrows" style="display: none;">
+            <button class="related-arrow-btn" id="relatedPrev">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="related-arrow-btn" id="relatedNext">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </section>
+  
+
+    <script>
+      const hamburger = document.getElementById("hamburger");
+const navLinks = document.querySelector(".nav-links");
+const userActions = document.querySelector(".user-actions");
+
+hamburger.addEventListener("click", () => {
+  navLinks.classList.toggle("active");
+  userActions.classList.toggle("active");
+});
+
+/* ================= MOBILE CAROUSELS ================= */
+
+if (window.innerWidth <= 768) {
+
+  /* ===== AUTO REVIEW SCROLL ===== */
+  const reviewContainer = document.querySelector(".pd-reviews-grid");
+  const reviewCards = document.querySelectorAll(".pd-review-card");
+
+  let reviewIndex = 0;
+
+  setInterval(() => {
+
+    reviewIndex++;
+    if (reviewIndex >= reviewCards.length) {
+      reviewIndex = 0;
+    }
+
+    const cardWidth = reviewCards[0].offsetWidth;
+
+    reviewContainer.scrollTo({
+      left: reviewIndex * cardWidth +20,
+      behavior: "smooth"
+    });
+
+  }, 2500); // changed from 800 (800 is too fast)
+
+  /* ===== RELATED PRODUCTS ARROWS ===== */
+  const relatedContainer = document.querySelector(".pd-related-section .user-product-grid");
+  const relatedCards = document.querySelectorAll(".pd-related-section .user-product-card");
+  const relatedArrows=document.getElementById('related-arrows')
+  relatedArrows.style.display='block';
+  let relatedIndex = 0;
+
+  const cardWidth = relatedCards[0].offsetWidth;
+
+  document.getElementById("relatedNext").addEventListener("click", () => {
+    if (relatedIndex < relatedCards.length - 1) {
+      relatedIndex++;
+    }
+    relatedContainer.scrollTo({
+      left: relatedIndex * cardWidth,
+      behavior: "smooth"
+    });
+  });
+
+  document.getElementById("relatedPrev").addEventListener("click", () => {
+    if (relatedIndex > 0) {
+      relatedIndex--;
+    }
+    relatedContainer.scrollTo({
+      left: relatedIndex * cardWidth,
+      behavior: "smooth"
+    });
+  });
+}
+    </script>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Management | Wheelz Admin</title>
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">Wheelz</div>
+      <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="nav-item">
+          <i class="fa-solid fa-qrcode"></i> Dashboard
+        </a>
+        <a href="/admin/products" class="nav-item active">
+          <i class="fa-solid fa-box"></i> Products
+        </a>
+        <a href="/admin/categories" class="nav-item">
+          <i class="fa-solid fa-layer-group"></i> Categories
+        </a>
+        <a href="/admin/orders" class="nav-item">
+          <i class="fa-solid fa-cart-shopping"></i> Orders
+        </a>
+        <a href="/admin/sales" class="nav-item">
+            <i class="fa-solid fa-money-bill-wave"></i> Sales & Revenue
+        </a>
+        <a href="/admin/users" class="nav-item">
+          <i class="fa-solid fa-user-group"></i> Users
+        </a>
+        <a href="/admin/coupons" class="nav-item">
+           <i class="fa-solid fa-ticket"></i> Coupons
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="/admin/logout" class="logout-link">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+      <!-- Header -->
+      <header class="admin-header">
+        <button class="admin-hamburger" id="adminHamburger">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <h2>ADMIN PANEL</h2>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- Title & Add Button Section -->
+        <div class="product-header-row">
+            <div class="page-title-block">
+                <h1 class="page-main-title">PRODUCT</h1>
+                <p class="page-sub-title">MANAGE YOUR CAR INVENTORY TOYS</p>
+            </div>
+            
+            <a href="/admin/add-product" class="btn-add-product">
+                <i class="fa-solid fa-circle-plus"></i> ADD PRODUCT
+            </a>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-bar-container">
+                <input type="hidden" name="status">
+                <input 
+                    type="text" 
+                    name="search"
+                    placeholder="Search users..."
+                    id="searchInput">
+                    
+                <button type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button type="button" class="clearSearch" onclick="clearSearch()" >Clear</button>
+                </div>
+
+        <!-- Table -->
+        <div class="product-table-container">
+          <table class="custom-table product-table">
+            <thead>
+              <tr>
+                <th style="width: 25%;">PRODUCT NAME</th>
+                <th style="width: 20%;">CATORY</th>
+                <th style="width: 15%;">PRICE</th>
+                <th style="width: 15%;">STOCK</th>
+                <th style="width: 15%;">STATUS</th>
+                <th style="width: 10%; text-align: right;">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Row 1 -->
+              <tr>
+                <td class="product-name-cell">Traxxas 8S X-Maxx</td>
+                <td>Remote Control</td>
+                <td>₹8099</td>
+                <td>8 Unit</td>
+                <td class="status-active-text">ACTIVE</td>
+                <td style="text-align: right;">
+                    <div class="product-action-group">
+                        <button class="btn-icon-delete"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-icon-edit"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                    </div>
+                </td>
+              </tr>
+              <!-- Row 2 -->
+              <tr>
+                <td class="product-name-cell">Fast & Furious Nissan Silvia S15</td>
+                <td>HotWheels</td>
+                <td>₹609</td>
+                <td>47 Unit</td>
+                <td class="status-active-light">ACTIVE</td>
+                <td style="text-align: right;">
+                    <div class="product-action-group">
+                        <button class="btn-icon-delete"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-icon-edit"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                    </div>
+                </td>
+              </tr>
+              <!-- Row 3 -->
+              <tr>
+                <td class="product-name-cell">LEGO Speed Champions Bugatti</td>
+                <td>LEGO</td>
+                <td>₹3299</td>
+                <td>0 Unit</td>
+                <td class="status-inactive-text">INACTIVE</td>
+                <td style="text-align: right;">
+                    <div class="product-action-group">
+                        <button class="btn-icon-delete"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-icon-edit"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                    </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div class="product-pagination">
+             <button class="pagination-btn disabled"><i class="fa-solid fa-chevron-left"></i></button>
+             <button class="pagination-btn active">1</button>
+             <button class="pagination-btn">2</button>
+             <span class="pagination-dots">...</span>
+             <button class="pagination-btn"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Sidebar Toggle Logic
+      const hamburger = document.getElementById("adminHamburger");
+      const sidebar = document.getElementById("adminSidebar");
+      const overlay = document.getElementById("adminOverlay");
+
+      hamburger.addEventListener("click", () => {
+        sidebar.classList.add("sidebar-open");
+        overlay.classList.add("active");
+      });
+
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("sidebar-open");
+        overlay.classList.remove("active");
+      });
+    </script>
+  </body>
+</html>

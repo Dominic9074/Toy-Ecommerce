@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Category Management | Wheelz Admin</title>
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">Wheelz</div>
+      <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="nav-item">
+          <i class="fa-solid fa-qrcode"></i> Dashboard
+        </a>
+        <a href="/admin/products" class="nav-item">
+          <i class="fa-solid fa-box"></i> Products
+        </a>
+        <a href="/admin/categories" class="nav-item active">
+          <i class="fa-solid fa-layer-group"></i> Categories
+        </a>
+        <a href="/admin/orders" class="nav-item">
+          <i class="fa-solid fa-cart-shopping"></i> Orders
+        </a>
+        <a href="/admin/sales" class="nav-item" style="color: white;"> <! -- Using inline style to mimic screenshot active state logic if needed, but usually handled by class -->
+            <i class="fa-solid fa-money-bill-wave"></i> Sales & Revenue
+        </a>
+        <a href="/admin/users" class="nav-item">
+          <i class="fa-solid fa-user-group"></i> Users
+        </a>
+        <a href="/admin/coupons" class="nav-item">
+           <i class="fa-solid fa-ticket"></i> Coupons
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="/admin/logout" class="logout-link">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+      <!-- Header -->
+      <header class="admin-header">
+        <button class="admin-hamburger" id="adminHamburger">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <h2>ADMIN PANEL</h2>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- Title Section -->
+        <div class="category-header-row">
+            <div class="page-title-block">
+                <h1 class="page-main-title">CATEGORY MANANGENMENT</h1>
+                <p class="page-sub-title">MANAGE YOUR CATEGORY HERE</p>
+            </div>
+            
+            <a href="/admin/add-category" class="btn-add-category">
+                <i class="fa-solid fa-circle-plus"></i> ADD CATEGORY
+            </a>
+        </div>
+
+        <!-- Search Bar (Full Widthish) -->
+        <div class="search-bar-container">
+                <input type="hidden" name="status">
+                <input 
+                    type="text" 
+                    name="search"
+                    placeholder="Search users..."
+                    id="searchInput">
+                    
+                <button type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button type="button" class="clearSearch" onclick="clearSearch()" >Clear</button>
+                </div>
+
+        <!-- Table -->
+        <div class="table-container">
+          <div class="table-scroll">
+            <table class="custom-table table-dark-header">
+              <thead>
+                <tr>
+                  <th style="width: 20%;">CATEGORY ANME</th> <!-- Typo intentional to match screenshot "ANME" if desired, or correct to NAME. Screenshot says "ANME" -->
+                  <th style="width: 35%;">DISCRIPTION</th> <!-- Typo intentional to match screenshot "DISCRIPTION" -->
+                  <th style="width: 15%;">STOCK</th>
+                  <th style="width: 15%;">STATUS</th>
+                  <th style="width: 15%; text-align: right;">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Row 1 -->
+                <tr>
+                  <td class="user-name">HotWheels</td>
+                  <td>Fast, Collectible Die-Cast Cars</td>
+                  <td>8 Unit</td>
+                  <td class="status-inactive">INACTIVE</td>
+                  <td style="text-align: right;">
+                    <div class="action-btn-group" style="justify-content: flex-end;">
+                        <button class="action-icon icon-delete"><i class="fa-solid fa-trash-can"></i></button>
+                        <button class="action-icon icon-edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- Row 2 -->
+                <tr>
+                  <td class="user-name">Remote Control</td>
+                  <td>Fun, Easy-To-Control Remote Toys.</td>
+                  <td>47 Unit</td>
+                  <td class="status-active">ACTIVE</td>
+                  <td style="text-align: right;">
+                    <div class="action-btn-group" style="justify-content: flex-end;">
+                        <button class="action-icon icon-delete"><i class="fa-solid fa-trash-can"></i></button>
+                        <button class="action-icon icon-edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- Row 3 -->
+                <tr>
+                  <td class="user-name">LEGO</td>
+                  <td>Build, Create, And Learn</td>
+                  <td>0 Unit</td>
+                  <td class="status-inactive">INACTIVE</td>
+                  <td style="text-align: right;">
+                    <div class="action-btn-group" style="justify-content: flex-end;">
+                        <button class="action-icon icon-delete"><i class="fa-solid fa-trash-can"></i></button>
+                        <button class="action-icon icon-edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-wrapper">
+             <div class="pagination">
+                <a href="#" class="page-link"><i class="fa-solid fa-chevron-left"></i></a>
+                <a href="#" class="page-link active">1</a>
+                <a href="#" class="page-link">2</a>
+                <span style="display:flex; align-items:center; color:#999;">..</span>
+                <a href="#" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
+             </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Sidebar Toggle Logic
+      const hamburger = document.getElementById("adminHamburger");
+      const sidebar = document.getElementById("adminSidebar");
+      const overlay = document.getElementById("adminOverlay");
+
+      hamburger.addEventListener("click", () => {
+        sidebar.classList.add("sidebar-open");
+        overlay.classList.add("active");
+      });
+
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("sidebar-open");
+        overlay.classList.remove("active");
+      });
+    </script>
+  </body>
+</html>

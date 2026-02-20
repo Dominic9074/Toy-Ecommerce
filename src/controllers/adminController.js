@@ -82,9 +82,12 @@ const adminSignin=(req,res)=>{
 
 }
 
+const loadCategory=(req,res)=>{
+  res.render('admin/categoryManagement',{title:'Category',bodyClass:'',cssFile:'admin.css'})
+}
 
 export default {
-    loadUsers,toggleUserStatus,loadSignin,adminSignin
+    loadUsers,toggleUserStatus,loadSignin,adminSignin,loadCategory
 }
 
 
