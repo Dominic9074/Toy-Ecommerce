@@ -1,5 +1,6 @@
 import userServices from "../services/userServices.js"
 import nodemailer from "nodemailer"
+import productServices from "../services/productServices.js"
 
 //otp generation
 function generateOtp(){
@@ -155,8 +156,14 @@ const signIn=async (req,res,next)=>{
     }
 }
 
-const loadHome=(req,res,next)=>{
-    res.render('user/home',{title:'Home',bodyClass:'',cssFile: "style.css"})
+const loadHome=async (req,res)=>{
+    try {
+    const categories = await productServices.getAllActiveCategories(); // Get only active ones
+    res.render('user/home', {title:'Home',bodyClass:'',cssFile: "style.css",categories,user: req.user || null});
+  } catch (error) {
+    console.log(error)
+    res.render('user/home', {title:'Home',bodyClass:'',cssFile: "style.css",categories: [] });
+  }
 }
 
 const resendOtp = async (req, res) => {
@@ -569,25 +576,9 @@ const updateAddress=async (req,res)=>{
 
 
 }
-//shop
-const loadShop=(req,res)=>{
-    res.render('user/shop',{title:'shop',bodyClass:'',cssFile:'style.css'})
-}
-//product details
-const loadProductDetails=(req,res)=>{
-    res.render('user/productDetails',{title:'Product',bodyClass:"",cssFile:'style.css'})
-}
-//cart
-const loadCartPage=(req,res)=>{
-    res.render('user/cart',{title:'Cart',bodyClass:"",cssFile:'style.css'})
-}
-//wishlist
-const loadWishlist=(req,res)=>{
-    res.render('user/wishlist',{title:'WishList',bodyClass:"",cssFile:'style.css'})
-}
+
 
 export default {loadSignin,loadSignup,signup,verifyOtp,signIn,loadHome,resendOtp,loadForget,
     loadForgetOtp,verifyForgotOtp,loadNewPassword,resetPassword,loadProfile,updateProfile,verifyEmail,loadOtp,
-    changePassword,loadAddress,addAddress,removeAddress,logoutUser,updateAddress,loadEditAddress,loadShop,loadProductDetails,
-    loadCartPage,loadWishlist
+    changePassword,loadAddress,addAddress,removeAddress,logoutUser,updateAddress,loadEditAddress
 }

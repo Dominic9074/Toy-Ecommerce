@@ -64,34 +64,26 @@
     <!-- Explore Section -->
     <section class="explore">
       <div class="section-title">Explore</div>
-      <div class="explore-grid">
-        <div class="explore-card">
-          <h3>HotWheels</h3>
-          <div class="card-image-box">
-            <img
-              src="images/hotwheel category image.jpg"
-              alt="Hot Wheels Car"
-            />
-          </div>
-        </div>
-        <div class="explore-card">
-          <h3>Remote Control Toys</h3>
-          <div class="card-image-box">
-            <img
-              src="images/remote Category.jpg"
-              alt="RC Car"
-            />
-          </div>
-        </div>
-        <div class="explore-card">
-          <h3>Building Toys(Lego)</h3>
-          <div class="card-image-box">
-            <img
-              src="images/LOGO Categoryy.png"
-              alt="Lego Car"
-            />
-          </div>
-        </div>
+      <div class="explore-wrapper">
+      <div class="explore-grid" id="categoryScroller">
+        <% if (categories && categories.length > 0) { %>
+          <% categories.forEach(category => { %>
+            <div class="explore-card">
+              <h3><%= category.name %></h3>
+              <div class="card-image-box">
+                <img 
+                  src="<%= category.imageUrl || '/images/default-category.jpg' %>" 
+                  alt="<%= category.name %>"
+                  onerror="this.src='/images/default-category.jpg'"
+                />
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <!-- Fallback if no categories -->
+          <p>No categories available</p>
+        <% } %>
+      </div>
       </div>
     </section>
 
@@ -188,4 +180,55 @@
         <span>Terms of Service Privacy Policy</span>
       </div>
     </footer>
+
+    <script>
+     document.addEventListener('DOMContentLoaded', function() {
+  const scroller = document.getElementById('categoryScroller');
+  const cards = Array.from(scroller.children);
+    
+  if (scroller && scroller.children.length > 0) {
+    // Simply duplicate the existing content inside the scroller once
+    scroller.innerHTML += scroller.innerHTML;
+  }
+});
+
+  if (cards.length > 4) {
+    // 1. Clone the items to create the illusion of infinity
+    cards.forEach(card => {
+      const clone = card.cloneNode(true);
+      scroller.appendChild(clone);
+    });
+
+    // 2. Calculate the true "Halfway" point
+    // We use the first card's width + the gap to find the exact offset
+    const firstCard = cards[0];
+    const style = window.getComputedStyle(scroller);
+    const gap = parseInt(style.columnGap) || 0;
+    
+    // The width of one full set of cards including their gaps
+    const setWidth = (firstCard.offsetWidth + gap) * cards.length;
+
+    let isPaused = false;
+
+    function step() {
+      if (!isPaused) {
+        scroller.scrollLeft += 1;
+
+        // 3. Seamless Reset
+        // If we've scrolled the length of the original set, jump back to 0
+        if (scroller.scrollLeft >= setWidth) {
+          scroller.scrollLeft = 0;
+        }
+      }
+      requestAnimationFrame(step); // Smoother than setInterval
+    }
+
+    // Start the animation
+    requestAnimationFrame(step);
+
+    scroller.addEventListener('mouseenter', () => isPaused = true);
+    scroller.addEventListener('mouseleave', () => isPaused = false);
+  }
+});
+    </script>
 

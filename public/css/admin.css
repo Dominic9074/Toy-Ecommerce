@@ -1128,3 +1128,78 @@ body {
         gap: 20px;
     }
 }
+/* Reduce Description Height */
+.category-description {
+    min-height: 90px !important;   /* smaller */
+    resize: vertical;
+}
+
+/* Style Select Like Input */
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+    outline: none;
+}
+
+.form-group select:focus {
+    border-color: #1c2e4a;
+}
+
+
+.crop-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.crop-modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 600px;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.crop-image-container {
+  max-height: 400px;
+}
+
+.crop-image-container img {
+  max-width: 100%;
+}
+
+.crop-preview {
+  display: none;
+  width: 150px;
+  margin-top: 10px;
+}
+
+.category-filter-container{
+    margin-left: 8% !important;
+    border: 1px solid rgb(199, 198, 198);
+    margin-bottom: 10px;
+    border-radius: 5px;
+    height: fit-content;
+}
+.category-filter-row{
+    margin-bottom: 15px;
+    margin-right: 10px;
+}
+.category-filter-row a{
+    margin-left: 10px;
+}
+.uploaded-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+}

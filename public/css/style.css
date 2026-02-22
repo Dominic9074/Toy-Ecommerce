@@ -3244,3 +3244,81 @@ footer {
     }
 
 }
+.explore-grid {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 60px;
+  padding: 20px 40px;  /* Increased right padding */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  width: 100%;
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.explore-card {
+  flex: 0 0 auto;
+  width: 200px;
+  display: inline-block;
+}
+
+/* Optional: Add a fade effect at edges */
+.explore-grid::after {
+  content: '';
+  flex: 0 0 20px; /* Extra space at the end */
+}
+
+/* Hide scrollbar */
+.explore-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.explore-grid {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.explore-wrapper {
+  width: 100%;
+  overflow: hidden;
+}
+.explore {
+  padding: 0 20px;
+}
+.explore-wrapper {
+  width: 100%;
+  overflow: hidden;
+  padding: 20px 0;
+  position: relative;
+}
+
+/* The moving belt */
+.explore-grid {
+  display: flex;
+  width: max-content; /* Important: keeps items in one long line */
+  gap: 40px;
+  animation: scroll 20s linear infinite; /* Adjust '20s' for speed */
+}
+
+/* Ensure cards don't shrink */
+.explore-card {
+  flex: 0 0 200px;
+  width: 200px;
+}
+
+/* The Animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* We move it by exactly half because we will clone the entire set once */
+    transform: translateX(calc(-50% - 30px)); /* -30px is half the gap */
+  }
+}
+
+/* Pause on hover */
+.explore-wrapper:hover .explore-grid {
+  animation-play-state: paused;
+}
