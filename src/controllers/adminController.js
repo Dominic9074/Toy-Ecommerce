@@ -210,9 +210,19 @@ const updateStatus=async (req,res)=>{
     }
 }
 
+const loadAddproduct=async (req,res)=>{
+    try{
+        const categories=await productServices.getAllActiveCategories();
+         res.render('admin/addProduct',{title:'Products',bodyClass:"",cssFile:'admin.css',categories})
+    }catch(error){
+        console.log(error)
+    }
+   
+}
+
 export default {
     loadUsers,toggleUserStatus,loadSignin,adminSignin,createCategory,loadCategory,loadAddCategory,loadEditCategory,updateCategory,
-    updateStatus
+    updateStatus,loadAddproduct
 }
 
 

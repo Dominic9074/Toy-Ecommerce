@@ -181,54 +181,114 @@
       </div>
     </footer>
 
-    <script>
-     document.addEventListener('DOMContentLoaded', function() {
+ <script>
+document.addEventListener('DOMContentLoaded', function () {
   const scroller = document.getElementById('categoryScroller');
-  const cards = Array.from(scroller.children);
-    
-  if (scroller && scroller.children.length > 0) {
-    // Simply duplicate the existing content inside the scroller once
-    scroller.innerHTML += scroller.innerHTML;
+  if (!scroller || scroller.children.length === 0) return;
+
+  const originals = Array.from(scroller.children);
+  for (let i = 0; i < 3; i++) {
+    originals.forEach(card => scroller.appendChild(card.cloneNode(true)));
   }
-});
 
-  if (cards.length > 4) {
-    // 1. Clone the items to create the illusion of infinity
-    cards.forEach(card => {
-      const clone = card.cloneNode(true);
-      scroller.appendChild(clone);
-    });
-
-    // 2. Calculate the true "Halfway" point
-    // We use the first card's width + the gap to find the exact offset
-    const firstCard = cards[0];
+  // Dynamically measure instead of hardcoding — works at any screen size
+  function getSetWidth() {
+    const firstCard = scroller.querySelector('.explore-card');
     const style = window.getComputedStyle(scroller);
-    const gap = parseInt(style.columnGap) || 0;
-    
-    // The width of one full set of cards including their gaps
-    const setWidth = (firstCard.offsetWidth + gap) * cards.length;
+    const gap = parseFloat(style.columnGap) || parseFloat(style.gap) || 24;
+    const cardW = firstCard ? firstCard.offsetWidth : 160;
+    return originals.length * (cardW + gap);
+  }
 
-    let isPaused = false;
+  let position = 0;
+  let autoSpeed = 0.8;
+  let velocity = 0;
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartPos = 0;
+  let lastX = 0;
+  let lastTime = 0;
+  let isHovered = false;
 
-    function step() {
-      if (!isPaused) {
-        scroller.scrollLeft += 1;
+  const friction = 0.92;
+  const minVelocity = 0.05;
 
-        // 3. Seamless Reset
-        // If we've scrolled the length of the original set, jump back to 0
-        if (scroller.scrollLeft >= setWidth) {
-          scroller.scrollLeft = 0;
-        }
+  function normalize(pos) {
+    const setWidth = getSetWidth();
+    return ((pos % setWidth) - setWidth) % setWidth;
+  }
+
+  function tick() {
+    if (!isDragging) {
+      if (Math.abs(velocity) > minVelocity) {
+        position += velocity;
+        velocity *= friction;
+      } else {
+        velocity = 0;
+        if (!isHovered) position -= autoSpeed;
       }
-      requestAnimationFrame(step); // Smoother than setInterval
     }
 
-    // Start the animation
-    requestAnimationFrame(step);
-
-    scroller.addEventListener('mouseenter', () => isPaused = true);
-    scroller.addEventListener('mouseleave', () => isPaused = false);
+    position = normalize(position);
+    scroller.style.transform = `translateX(${position}px)`;
+    requestAnimationFrame(tick);
   }
-});
-    </script>
 
+  requestAnimationFrame(tick);
+
+  // Mouse
+  scroller.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    velocity = 0;
+    dragStartX = e.clientX;
+    dragStartPos = position;
+    lastX = e.clientX;
+    lastTime = performance.now();
+    scroller.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const now = performance.now();
+    const dt = now - lastTime;
+    if (dt > 0) velocity = ((e.clientX - lastX) / dt) * 16;
+    lastX = e.clientX;
+    lastTime = now;
+    position = normalize(dragStartPos + (e.clientX - dragStartX));
+    scroller.style.transform = `translateX(${position}px)`;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    scroller.style.cursor = 'grab';
+  });
+
+  // Touch
+  scroller.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    velocity = 0;
+    dragStartX = e.touches[0].clientX;
+    dragStartPos = position;
+    lastX = e.touches[0].clientX;
+    lastTime = performance.now();
+  }, { passive: true });
+
+  scroller.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const now = performance.now();
+    const dt = now - lastTime;
+    if (dt > 0) velocity = ((e.touches[0].clientX - lastX) / dt) * 16;
+    lastX = e.touches[0].clientX;
+    lastTime = now;
+    position = normalize(dragStartPos + (e.touches[0].clientX - dragStartX));
+    scroller.style.transform = `translateX(${position}px)`;
+  }, { passive: true });
+
+  scroller.addEventListener('touchend', () => { isDragging = false; });
+
+  scroller.addEventListener('mouseenter', () => { isHovered = true; });
+  scroller.addEventListener('mouseleave', () => { isHovered = false; });
+});
+</script>

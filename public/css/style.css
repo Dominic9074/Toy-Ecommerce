@@ -3243,82 +3243,98 @@ footer {
         width: 100%;
     }
 
-}
-.explore-grid {
-  display: flex;
-  overflow-x: auto;
-  overflow-y: hidden;
-  gap: 60px;
-  padding: 20px 40px;  /* Increased right padding */
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  flex-wrap: nowrap;
-  white-space: nowrap;
-  width: 100%;
-  box-sizing: border-box; /* Include padding in width calculation */
-}
-
-.explore-card {
-  flex: 0 0 auto;
-  width: 200px;
-  display: inline-block;
-}
-
-/* Optional: Add a fade effect at edges */
-.explore-grid::after {
-  content: '';
-  flex: 0 0 20px; /* Extra space at the end */
-}
-
-/* Hide scrollbar */
-.explore-grid::-webkit-scrollbar {
-  display: none;
-}
-
-.explore-grid {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.explore-wrapper {
-  width: 100%;
-  overflow: hidden;
-}
-.explore {
+}.explore {
   padding: 0 20px;
 }
+
 .explore-wrapper {
   width: 100%;
-  overflow: hidden;
+  overflow: hidden !important;
   padding: 20px 0;
   position: relative;
 }
 
-/* The moving belt */
+/* Fade edges */
+.explore-wrapper::before,
+.explore-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 80px;
+  z-index: 2;
+  pointer-events: none;
+}
+.explore-wrapper::before {
+  left: 0;
+  background: linear-gradient(to right, white, transparent);
+}
+.explore-wrapper::after {
+  right: 0;
+  background: linear-gradient(to left, white, transparent);
+}
+
+/* Belt — NO animation property here */
 .explore-grid {
-  display: flex;
-  width: max-content; /* Important: keeps items in one long line */
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  width: max-content !important;
   gap: 40px;
-  animation: scroll 20s linear infinite; /* Adjust '20s' for speed */
+  cursor: grab;
+  will-change: transform;
+  /* NO animation: or transition: here */
 }
 
-/* Ensure cards don't shrink */
+.explore-grid:active {
+  cursor: grabbing;
+}
+
 .explore-card {
-  flex: 0 0 200px;
-  width: 200px;
+  flex: 0 0 200px !important;
+  width: 200px !important;
+  white-space: normal;
 }
 
-/* The Animation */
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    /* We move it by exactly half because we will clone the entire set once */
-    transform: translateX(calc(-50% - 30px)); /* -30px is half the gap */
-  }
+/* Hide scrollbar */
+.explore-grid::-webkit-scrollbar { display: none; }
+.explore-grid { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Force horizontal layout at ALL screen sizes */
+.explore-wrapper {
+  width: 100%;
+  overflow: hidden !important;
+  padding: 20px 0;
+  position: relative;
 }
 
-/* Pause on hover */
-.explore-wrapper:hover .explore-grid {
-  animation-play-state: paused;
+.explore-grid {
+  display: flex !important;
+  flex-direction: row !important;      /* Always horizontal */
+  flex-wrap: nowrap !important;        /* Never wrap to next line */
+  width: max-content !important;       /* Grow as wide as needed */
+  gap: 24px;                           /* Slightly tighter on mobile */
+  cursor: grab;
+  will-change: transform;
+  align-items: center;
+}
+
+.explore-card {
+  flex: 0 0 160px !important;         /* Slightly smaller on mobile */
+  width: 160px !important;
+  min-width: 160px !important;
+  white-space: normal !important;
+  display: inline-flex !important;
+  flex-direction: column;
+}
+
+/* Bigger cards on desktop */
+@media (min-width: 768px) {
+  .explore-card {
+    flex: 0 0 200px !important;
+    width: 200px !important;
+    min-width: 200px !important;
+  }
+
+  .explore-grid {
+    gap: 40px;
+  }
 }
