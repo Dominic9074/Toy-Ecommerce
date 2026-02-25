@@ -1,29 +1,29 @@
 let cropper = null;
-let croppedBlob = null;
+window.newImages = [];
 window.croppedImageBlob = null;
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const imageInput = document.getElementById("categoryImage");
+    const categoryInput = document.getElementById("categoryImage");
+    const productInput = document.getElementById("productImage");
+
     const cropModal = document.getElementById("cropModal");
     const cropImage = document.getElementById("cropImage");
     const cropBtn = document.getElementById("cropBtn");
     const closeBtn = document.getElementById("closeCropModal");
+
     const dropZone = document.getElementById("dropZone");
+    const previewContainer = document.getElementById("previewContainer");
 
-    if (!imageInput) return;
+    let mode = null; // "category" or "product"
 
-    imageInput.addEventListener("change", function (e) {
-
-        const file = e.target.files[0];
-        if (!file) return;
+    function openCrop(file, type) {
 
         const reader = new FileReader();
 
-        reader.onload = function (event) {
+        reader.onload = function (e) {
 
-            cropImage.src = event.target.result;
-
+            cropImage.src = e.target.result;
             cropModal.style.display = "flex";
 
             if (cropper) cropper.destroy();
@@ -32,10 +32,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 aspectRatio: 1,
                 viewMode: 1
             });
+
+            mode = type;
         };
 
         reader.readAsDataURL(file);
-    });
+    }
+
+    // CATEGORY
+    if (categoryInput) {
+        categoryInput.addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            openCrop(file, "category");
+        });
+    }
+
+    // PRODUCT (single image per selection)
+    if (productInput) {
+
+        productInput.addEventListener("change", function (e) {
+
+            const file = e.target.files[0];
+            if (!file) return;
+
+            openCrop(file, "product");
+
+            productInput.value = "";
+        });
+    }
+    
 
     cropBtn.addEventListener("click", function () {
 
@@ -48,29 +74,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
         canvas.toBlob(function (blob) {
 
-            croppedBlob = blob;
-            window.croppedImageBlob = blob;
+            if (mode === "category") {
 
-            // Remove previous preview if exists
-                const oldPreview = dropZone.querySelector(".uploaded-preview");
-                if (oldPreview) oldPreview.remove();
+                window.croppedImageBlob = blob;
 
-                // Hide upload UI
-                dropZone.querySelector(".upload-icon").style.display = "none";
-                dropZone.querySelector(".upload-text").style.display = "none";
-                dropZone.querySelector(".upload-support").style.display = "none";
-                dropZone.querySelector(".btn-browse-files").style.display = "none";
+                dropZone.innerHTML = "";
 
-                // Create new image element
                 const img = document.createElement("img");
                 img.src = URL.createObjectURL(blob);
                 img.classList.add("uploaded-preview");
 
                 dropZone.appendChild(img);
+            }
+
+            if (mode === "product") {
+
+                window.newImages.push(blob);
+
+                const previewItem = document.createElement("div");
+                previewItem.classList.add("preview-item");
+
+                const img = document.createElement("img");
+                img.src = URL.createObjectURL(blob);
+
+                const removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.classList.add("remove-btn");
+                removeBtn.innerHTML = "&times;";
+
+                previewItem.appendChild(img);
+                previewItem.appendChild(removeBtn);
+
+                previewContainer.appendChild(previewItem);
+
+                if ((window.newImages.length + window.existingImages.length) >= 5) {
+                    dropZone.style.display = "none";
+                }
+            }
 
             cropModal.style.display = "none";
-
             cropper.destroy();
+
         }, "image/jpeg");
     });
 
@@ -78,5 +122,35 @@ document.addEventListener("DOMContentLoaded", function () {
         cropModal.style.display = "none";
         if (cropper) cropper.destroy();
     });
+
+    previewContainer.addEventListener("click", function (e) {
+
+    const btn = e.target.closest(".remove-btn");
+    if (!btn) return;
+
+    const previewItem = btn.closest(".preview-item");
+    const publicId = previewItem.dataset.publicid;
+
+    // If existing image
+    if (publicId) {
+
+        window.existingImages = window.existingImages.filter(
+            img => img.publicId !== publicId
+        );
+
+    } else {
+
+        const index = Array.from(previewContainer.children)
+            .indexOf(previewItem);
+
+        window.newImages.splice(index - window.existingImages.length, 1);
+    }
+
+    previewItem.remove();
+
+    if (previewContainer.children.length < 5) {
+        dropZone.style.display = "flex";
+    }
+});
 
 });

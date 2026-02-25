@@ -21,7 +21,7 @@
         <a href="/admin/products" class="nav-item active">
           <i class="fa-solid fa-box"></i> Products
         </a>
-        <a href="/admin/categories" class="nav-item">
+        <a href="/admin/category" class="nav-item">
           <i class="fa-solid fa-layer-group"></i> Categories
         </a>
         <a href="/admin/orders" class="nav-item">
@@ -100,48 +100,61 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Row 1 -->
-              <tr>
-                <td class="product-name-cell">Traxxas 8S X-Maxx</td>
-                <td>Remote Control</td>
-                <td>₹8099</td>
-                <td>8 Unit</td>
-                <td class="status-active-text">ACTIVE</td>
-                <td style="text-align: right;">
-                    <div class="product-action-group">
-                        <button class="btn-icon-delete"><i class="fa-solid fa-trash"></i></button>
-                        <button class="btn-icon-edit"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
-                    </div>
-                </td>
-              </tr>
-              <!-- Row 2 -->
-              <tr>
-                <td class="product-name-cell">Fast & Furious Nissan Silvia S15</td>
-                <td>HotWheels</td>
-                <td>₹609</td>
-                <td>47 Unit</td>
-                <td class="status-active-light">ACTIVE</td>
-                <td style="text-align: right;">
-                    <div class="product-action-group">
-                        <button class="btn-icon-delete"><i class="fa-solid fa-trash"></i></button>
-                        <button class="btn-icon-edit"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
-                    </div>
-                </td>
-              </tr>
-              <!-- Row 3 -->
-              <tr>
-                <td class="product-name-cell">LEGO Speed Champions Bugatti</td>
-                <td>LEGO</td>
-                <td>₹3299</td>
-                <td>0 Unit</td>
-                <td class="status-inactive-text">INACTIVE</td>
-                <td style="text-align: right;">
-                    <div class="product-action-group">
-                        <button class="btn-icon-delete"><i class="fa-solid fa-trash"></i></button>
-                        <button class="btn-icon-edit"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
-                    </div>
-                </td>
-              </tr>
+              <% if (products && products.length > 0) { %>
+
+                <% products.forEach(product => { %>
+                  <tr>
+                    <td class="product-name-cell">
+                      <%= product?.name %>
+                    </td>
+
+                    <td>
+                      <%= product.category?.name || "No Category" %>
+                    </td>
+
+                    <td>
+                      ₹<%= product?.price %>
+                    </td>
+
+                    <td>
+                      <%= product?.stock %> Unit
+                    </td>
+
+                    <td class="<%= product?.stock > 0 ? 'status-active-text' : 'status-inactive-text' %>">
+                      <%= product?.stock > 0 ? "ACTIVE" : "INACTIVE" %>
+                    </td>
+
+                    <td style="text-align: right;">
+                      <div class="product-action-group">
+
+                        <!-- Delete -->
+                        <button 
+                          class="btn-icon-delete"
+                          onclick="deleteProduct('<%= product?._id %>')">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+
+                        <!-- Edit -->
+                        <a href="/admin/edit-product/<%= product?._id %>">
+                          <button class="btn-icon-edit">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                          </button>
+                        </a>
+
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+
+              <% } else { %>
+
+                <tr>
+                  <td colspan="6" style="text-align:center;">
+                    No products found
+                  </td>
+                </tr>
+
+              <% } %>
             </tbody>
           </table>
 

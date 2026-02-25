@@ -162,9 +162,9 @@
     </div>
 
     <script>
-      //variables
+      
       const purpose = "<%= purpose %>";
-      // Sidebar Toggle Logic
+      
       const hamburger = document.getElementById("adminHamburger");
       const sidebar = document.getElementById("adminSidebar");
       const overlay = document.getElementById("adminOverlay");
@@ -179,7 +179,7 @@
         overlay.classList.remove("active");
       });
 
-      // Simple click-to-upload for the drop zone
+     
       const dropZone = document.getElementById('dropZone');
       const fileInput = document.getElementById('categoryImage');
       const browseBtn = document.querySelector('.btn-browse-files');
@@ -198,8 +198,8 @@
         existingImage.style.cursor = "pointer";
 
         existingImage.addEventListener("click", function (e) {
-          e.stopPropagation();   // prevent dropZone click duplicate
-          fileInput.click();     // open file browser
+          e.stopPropagation();   
+          fileInput.click();     
         });
       }
 
@@ -222,7 +222,7 @@
       
 
       function validation(event) {
-          event.preventDefault(); // stop form initially
+          event.preventDefault(); 
 
           let isValid = true;
 
@@ -241,14 +241,10 @@
 
           const nameError = nameDiv.querySelector('p');
           const descriptionError = descriptionDiv.querySelector('p');
-          
-          
-
-          // Reset errors
+         
           resetField(nameDiv, nameError);
           resetField(descriptionDiv, descriptionError);
 
-          // Name validation
           if (!name) {
               showerror(nameDiv, nameError, "Category name is required");
               isValid = false;
@@ -260,7 +256,6 @@
               isValid = false;
           }
 
-          // Description validation (optional but length check)
           if (description.length > 300) {
               showerror(descriptionDiv, descriptionError, "Max 300 characters allowed");
               isValid = false;
@@ -278,7 +273,7 @@
             imageDiv.style.border = '';
           }
 
-          // If everything valid → submit form
+          
           if (isValid) {
 
             const formData=new FormData();
@@ -291,7 +286,7 @@
             if(purpose==='create'){
               url='/admin/addCategory'
             }else{
-              url ='/admin/addCategory/<%= category._id %>/edit'
+              url ='/admin/addCategory/<%= category?._id %>/edit'
             }
 
               fetch(url,{

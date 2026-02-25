@@ -1,6 +1,7 @@
 import Category from "../models/categorySchema.js";
 import slugify from "slugify";
 import cloudinary from "../config/cloudinary.js";
+import Product from '../models/productSchema.js';
 
 
 const createCategory=async (file,data)=>{
@@ -119,7 +120,81 @@ const getAllActiveCategories=async ()=>{
     return category;
 }
 
+const createProduct=async (files,data)=>{
+    const {name,category,price,stock,offer,description,shortName}=data;
+
+    const rawSpec=data.specifications;
+    const specifications=rawSpec.split('\n').map(s=>s.trim()).filter(s=>s.length > 0)
+    
+
+    const existing = await Product.findOne({
+        name: { $regex: `^${name}$`, $options: "i" }
+    });
+
+    if (existing) {
+        throw new Error("Product already exists");
+    }
+    const slug = slugify(name, { lower: true, strict: true });
+
+    
+    if (!files || files.length < 3) {
+        throw new Error("Minimum 3 images required");
+    }
+
+    const uploadedImages = [];
+
+    for (const file of files) {
+
+        const uploadResult = await new Promise((resolve, reject) => {
+
+            const stream = cloudinary.uploader.upload_stream(
+                { folder: "products" },
+                (error, result) => {
+                    if (error) return reject(error);
+                    resolve(result);
+                }
+            );
+
+            stream.end(file.buffer);
+        });
+
+        uploadedImages.push({
+            url: uploadResult.secure_url,
+            publicId: uploadResult.public_id
+        });
+    }
+
+   
+    const product = await Product.create({
+        name,
+        category,
+        price,
+        stock,
+        offer,
+        specifications,
+        description,
+        shortName,
+        slug,
+        images: uploadedImages
+    });
+
+    return product;
+};
+
+const getAllProducts=async ()=>{
+    const products=await Product.find();
+    return products;
+}
+
+const findProductById=async (id)=>{
+    const product =await Product.findById(id);
+    if(!product){
+        throw new Error('Product Not Found');
+    }
+    return product;
+}
+
 export default {
-    createCategory,find,findCategoryById,updateCategory,getAllActiveCategories
+    createCategory,find,findCategoryById,updateCategory,getAllActiveCategories,createProduct,getAllProducts,findProductById
 }
 

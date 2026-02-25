@@ -27,7 +27,7 @@ const productSchema=new mongoose.Schema({
         unique:true,
         index:true
     },
-    offerPercentage:{
+    offer:{
         type:Number,
         required:true,
         min:0,
@@ -38,11 +38,8 @@ const productSchema=new mongoose.Schema({
         required:true,
         min:0
     },
-    specification:[
-        {
-            key:String,
-            value:String
-        }
+    specifications:[
+        String
     ],
     images:[
         {
@@ -53,6 +50,11 @@ const productSchema=new mongoose.Schema({
     isActive:{
         type:Boolean,
         default:true
+    },
+    shortName:{
+        type:String,
+        required:true
     }
-
 },{timestamps:true})
+
+export default mongoose.model('product',productSchema)

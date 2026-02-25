@@ -212,17 +212,80 @@ const updateStatus=async (req,res)=>{
 
 const loadAddproduct=async (req,res)=>{
     try{
+        const purpose='create';
         const categories=await productServices.getAllActiveCategories();
-         res.render('admin/addProduct',{title:'Products',bodyClass:"",cssFile:'admin.css',categories})
+         res.render('admin/addProduct',{title:'Products',bodyClass:"",cssFile:'admin.css',categories,purpose,product:undefined})
     }catch(error){
         console.log(error)
     }
    
 }
 
+const addProduct=async (req,res)=>{
+   try{
+        if(!req.files){
+            return res.json({
+                success:false,
+                message:'Image Is Required'
+            })
+        }
+
+        const product=await productServices.createProduct(req.files,req.body)
+
+        if(!product){
+            return res.json({
+                success:false,
+                message:'Category Not Stored'
+            })
+        }
+
+        return res.json({
+            success:true,
+            message:'Product Created Successfully'
+        })
+        
+
+    }catch(error){
+        console.log(error)
+        return res.json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+const loadProducts=async (req,res)=>{
+   try{
+     const products=await productServices.getAllProducts();
+     if(!products){
+        throw new Error('Products Not Fetched')
+     }
+    
+    res.render('admin/productManagement',{title:'Products',bodyClass:"",cssFile:'admin.css',products})
+
+   }catch(error){
+    console.log(error)
+    res.render('admin/productManagement',{title:'Products',bodyClass:"",cssFile:'admin.css',error:error.message})
+   }
+}
+
+const loadEditProduct=async (req,res)=>{
+   try{
+     const productId=req.params.id;
+    const product=await productServices.findProductById(productId);
+    const categories=await productServices.getAllActiveCategories();
+    const purpose='edit'
+
+    return res.render('admin/addProduct',{title:'Products',bodyClass:"",cssFile:'admin.css',categories,product,purpose})
+    
+   }catch(error){
+    console.log(error)
+   }
+}
+
 export default {
     loadUsers,toggleUserStatus,loadSignin,adminSignin,createCategory,loadCategory,loadAddCategory,loadEditCategory,updateCategory,
-    updateStatus,loadAddproduct
+    updateStatus,loadAddproduct,addProduct,loadProducts,loadEditProduct
 }
 
 

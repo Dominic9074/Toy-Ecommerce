@@ -19,7 +19,9 @@ router.post('/admin/addCategory/:id/edit',upload.single('image'),adminController
 router.patch('/admin/addCategory/status/:id',adminController.updateStatus)
 
 //product
-router.get('/admin/products',(req,res)=>{res.render('admin/productManagement',{title:'Products',bodyClass:"",cssFile:'admin.css'})})
+router.get('/admin/products',adminController.loadProducts)
 router.get('/admin/addProducts',adminController.loadAddproduct)
+router.post('/admin/addProduct',upload.array('images',5),adminController.addProduct)
+router.get('/admin/edit-product/:id',adminController.loadEditProduct)
 
 export default router;

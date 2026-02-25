@@ -63,48 +63,48 @@
                     <div class="form-column">
                         <div class="form-group" id="nameDiv">
                             <label for="productName">Product Name</label>
-                            <input type="text" id="productName" name="name" placeholder="e.g. Speedster Pro Gen 2" >
+                            <input type="text" id="productName" name="name" placeholder="e.g. Speedster Pro Gen 2" value="<%= product?.name || '' %>">
                             <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
                         </div>
                         
                         <div class="form-group" id="categoryDiv">
                             <label for="category">Category</label>
                             <select id="category" name="category" class="categorySelect">
-                                <option value="" disabled selected>Select Category</option>
+                                <option value="" disabled <%= !product?.category ? 'selected' : '' %>>Select Category</option>
 
                                 <% if (categories && categories.length > 0) { %>
                                     <% categories.forEach(category => { %>
-                                        <option value="<%= category?._id %>">
+                                        <option value="<%= category?._id %>" <%= product?.category?.toString() === category?._id?.toString() ? 'selected' : '' %>>
                                             <%= category?.name %>
                                         </option>
                                     <% }) %>
                                 <% } %>
                             </select>
-                              <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                            <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
                         </div>
 
                         <div class="form-row-inline">
                             <div class="form-group flex-1" id="priceDiv">
                                 <label for="price">Price ($)</label>
-                                <input type="number" id="price" name="price" >
+                                <input type="number" id="price" name="price" value="<%= product?.price || '' %>">
                                 <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
                             </div>
                             <div class="form-group flex-1" id="stockDiv">
                                 <label for="stock">Stock Quantity</label>
-                                <input type="number" id="stock" name="stock" placeholder="0">
+                                <input type="number" id="stock" name="stock" placeholder="0" value="<%= product?.stock || '' %>">
                                 <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
                             </div>
                         </div>
 
                         <div class="form-group" id="offerDiv">
                             <label for="offer">offer</label>
-                            <input type="text" id="offer" name="offer" placeholder="">
+                            <input type="text" id="offer" name="offer" placeholder="" value="<%= product?.offer || '' %>">
                             <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
                         </div>
 
                         <div class="form-group" id="specificationDiv">
                             <label for="specifications">Specifications</label>
-                            <textarea id="specifications" name="specifications" placeholder="Detailed product specifications and features..."></textarea>
+                            <textarea id="specifications" name="specifications" placeholder="Detailed product specifications and features..."><%= product?.specifications.join('\n') || '' %></textarea>
                             <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
                         </div>
                     </div>
@@ -113,32 +113,40 @@
                     <div class="form-column">
                         <label class="field-label">Product Images (Min 3)</label>
 
-                      <!-- Small Upload Box -->
-                      <div class="small-upload-box" id="dropZone">
-                          <i class="fa-solid fa-plus"></i>
-                          <p>Add Image</p>
-                          <input type="file"
+                        <!-- Small Upload Box -->
+                        <div class="small-upload-box" id="dropZone">
+                            <i class="fa-solid fa-plus"></i>
+                            <p>Add Image</p>
+                            <input type="file"
                                 id="productImage"
                                 name="images"
-                                multiple
                                 hidden
                                 accept="image/*">
-                      </div>
+                        </div>
 
-                      <p class="image-error-msg" id="imageError"></p>
+                        <p class="image-error-msg" id="imageError"></p>
 
-                      <!-- Preview Grid -->
-                      <div class="preview-grid" id="previewContainer"></div>
+                        <!-- Preview Grid -->
+                        <div class="preview-grid" id="previewContainer">
+                            <% if (product?.images && product?.images.length > 0) { %>
+                                <% product.images.forEach((img, index) => { %>
+                                    <div class="preview-item" data-publicid="<%= img?.publicId %>">
+                                        <img src="<%= img?.url %>" />
+                                        <button type="button" class="remove-btn">×</button>
+                                    </div>
+                                <% }) %>
+                            <% } %>
+                        </div>
 
                         <div class="form-group mt-20">
                             <label for="description">Description</label>
-                            <textarea id="description" name="description" placeholder="Detailed product description and features..."></textarea>
+                            <textarea id="description" name="description" placeholder="Detailed product description and features..."><%= product?.description || '' %></textarea>
                             <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
                         </div>
 
                         <div class="form-group" id="shortnameDiv">
                             <label for="shortName">Short Name</label>
-                            <input type="text" id="shortName" name="shortName" placeholder="">
+                            <input type="text" id="shortName" name="shortName" placeholder="" value="<%= product?.shortName || '' %>">
                             <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
                         </div>
                     </div>
@@ -147,7 +155,11 @@
                 <!-- Form Footer Actions -->
                 <div class="form-footer-actions">
                     <button type="button" class="btn-submit-product" onclick="productValidation(event)">
-                        <i class="fa-solid fa-save"></i> Add Product
+                        <% if (purpose === 'edit') { %>
+                            <i class="fa-solid fa-pen"></i> Update Product
+                        <% } else { %>
+                            <i class="fa-solid fa-save"></i> Add Product
+                        <% } %>
                     </button>
                     <a href="/admin/products" class="btn-cancel-product">
                         <i class="fa-solid fa-xmark"></i> Cancel
@@ -157,6 +169,17 @@
         </div>
       </div>
     </div>
+    <div id="cropModal" class="crop-modal">
+    <div class="crop-container">
+        <span id="closeCropModal" class="close-crop">&times;</span>
+        <div class="crop-image-wrapper">
+            <img id="cropImage">
+        </div>
+        <button type="button" id="cropBtn" class="crop-save-btn">
+            Crop & Save
+        </button>
+    </div>
+</div>
 
     <script>
       // Sidebar Toggle Logic
@@ -176,61 +199,26 @@
 
       // Simple click-to-upload for the drop zone
       const dropZone = document.getElementById("dropZone");
-const fileInput = document.getElementById("productImage");
-const previewContainer = document.getElementById("previewContainer");
+        const fileInput = document.getElementById("productImage");
+        const previewContainer = document.getElementById("previewContainer");
 
-window.productImages = [];
+        dropZone.addEventListener("click", () => fileInput.click());
+        
+        window.newImages = [];
+        window.existingImages = [];
 
-dropZone.addEventListener("click", () => fileInput.click());
-let removeAddImageCount=0;
-fileInput.addEventListener("change", function (e) {
+            const previewItems = document.querySelectorAll(".preview-item");
 
-    removeAddImageCount++;
-    if(removeAddImageCount===5){
-      document.getElementById('dropZone').style.display='none'
-    }
+            previewItems.forEach(item => {
+                const publicId = item.dataset.publicid;
 
-    const files = Array.from(e.target.files);
-
-    files.forEach(file => {
-
-        window.productImages.push(file);
-
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-
-            const previewItem = document.createElement("div");
-            previewItem.classList.add("preview-item");
-
-            const img = document.createElement("img");
-            img.src = event.target.result;
-
-            const removeBtn = document.createElement("button");
-            removeBtn.innerText = "×";
-            removeBtn.classList.add("remove-btn");
-
-            removeBtn.addEventListener("click", function () {
-
-                const index = Array.from(previewContainer.children)
-                                   .indexOf(previewItem);
-              removeAddImageCount--;
-              document.getElementById('dropZone').style.display='flex'
-                window.productImages.splice(index, 1);
-                previewItem.remove();
+                if (publicId) {
+                    window.existingImages.push({
+                        publicId,
+                        url: item.querySelector("img").src
+                    });
+                }
             });
-
-            previewItem.appendChild(img);
-            previewItem.appendChild(removeBtn);
-
-            previewContainer.appendChild(previewItem);
-        };
-
-        reader.readAsDataURL(file);
-    });
-
-    fileInput.value = "";
-});
 
         function productValidation(event){
           
@@ -246,7 +234,8 @@ fileInput.addEventListener("change", function (e) {
           const description = document.getElementById('description').value.trim();
           const shortName=document.getElementById('shortName').value.trim();
 
-          const images = window.productImages || []; // you must store images here
+         const newImages = window.newImages || [];
+         const existingImages = window.existingImages || [];
 
           // 🔹 Div references
           const nameDiv = document.getElementById('nameDiv');
@@ -289,30 +278,28 @@ fileInput.addEventListener("change", function (e) {
               isValid = false;
           }
 
-          // 🔥 Category validation
+          
           if (!category) {
               showerror(categoryDiv, categoryError, "Category is required");
               isValid = false;
           }
-          //short name
+          
           if (!shortName) {
               showerror(shortnameDiv, shortnameError, "shortName is required");
               isValid = false;
           }
 
-          // 🔥 Price validation
           if (isNaN(price) || price <= 0) {
               showerror(priceDiv, priceError, "Price must be greater than 0");
               isValid = false;
           }
 
-          // 🔥 Stock validation
+          
           if (isNaN(stock) || stock < 0) {
               showerror(stockDiv, stockError, "Stock cannot be negative");
               isValid = false;
           }
 
-          // 🔥 Offer validation (optional but must be valid number if entered)
           if (!offer) {
               const offerNumber = parseFloat(offer);
               if (isNaN(offerNumber) || offerNumber < 0 || offerNumber > 90) {
@@ -321,13 +308,13 @@ fileInput.addEventListener("change", function (e) {
               }
           }
 
-          // 🔥 Specification validation
+          
           if (!specifications) {
               showerror(specificationDiv, specificationError, "Specifications are required");
               isValid = false;
           }
 
-          // 🔥 Description validation
+          
           if (!description || description.length < 10) {
               showerror(
                   document.getElementById('description').parentElement,
@@ -338,9 +325,10 @@ fileInput.addEventListener("change", function (e) {
           }
 
           // 🔥 Image validation (Minimum 3 images)
-          if (!images || images.length < 3) {
+          if ((newImages.length + existingImages.length) < 3){
               imageError.style.display = 'block';
               imageError.innerText = "Minimum 3 images required";
+              isValid=false;
           }else{
             imageError.style.display = 'none';
             imageError.innerText = '';
@@ -348,6 +336,40 @@ fileInput.addEventListener("change", function (e) {
          
 
           if (!isValid) return;
+
+          const formData=new FormData();
+          formData.append('name',name)
+          formData.append('category',category)
+          formData.append('price',price)
+          formData.append('stock',stock)
+          formData.append('offer',offer)
+          formData.append('specifications',specifications)
+          formData.append('description',description)
+          formData.append('shortName',shortName)
+          formData.append("existingImages", JSON.stringify(existingImages));
+
+        newImages.forEach((img, index) => {
+            formData.append("images", img, `product-${index}.jpg`);
+        });
+
+            if(purpose==='create'){
+              url='/admin/addProduct'
+            }else{
+              url ='/admin/addProduct/<%= product?._id %>/edit'
+            }
+
+          fetch(url,{
+            method:'POST',
+            body:formData
+          }).then(res=>res.json())
+          .then(data=>{
+            if(data.success){
+                showSuccess(data.message)
+                setTimeout(()=>{window.location.href='/admin/products'},1000)
+            }else{
+                showError(data.message)
+            }
+          })
         }
         function showerror(div, errorElement, message) {
     const field = div.querySelector('input, textarea, select');
