@@ -1,0 +1,102 @@
+<!-- HEADER -->
+<header class="cart-header">
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/shop">Shop</a></li>
+        <li><a href="/categories">Categories</a></li>
+    </ul>
+
+    <div class="logo">Wheelz</div>
+
+    <div class="user-actions">
+        <a href="#">Order</a>
+        <a href="/cart" class="active">Cart</a>
+        <a href="#">Wish List</a>
+        <span class="username-placeholder">
+            <%= user ? user.username : "Username" %>
+        </span>
+    </div>
+</header>
+
+<!-- PAGE TITLE -->
+<div class="cart-page-title">
+    <h1>SHOPPING CART</h1>
+</div>
+
+<!-- CART CONTAINER -->
+<div class="cart-container">
+
+    <!-- LEFT SIDE ITEMS -->
+    <div class="cart-items">
+
+        <!-- Cart Item -->
+        <div class="cart-item">
+            <div class="item-left">
+                <input type="checkbox" checked>
+                <img src="https://placehold.co/150x150" alt="Product">
+            </div>
+
+            <div class="item-middle">
+                <h3>Ant Esports GM320 RGB Optical Wired Gaming Mouse</h3>
+                <p class="stock">In stock</p>
+
+                <div class="item-meta">
+                    <span>Style: Black</span>
+                </div>
+
+                <div class="item-actions">
+                    <div class="quantity-box">
+                        <button>-</button>
+                        <span>1</span>
+                        <button>+</button>
+                    </div>
+
+                    <a href="#">Delete</a>
+                    <a href="#">Save for later</a>
+                </div>
+            </div>
+
+            <div class="item-right">
+                <div class="price">₹529</div>
+                <div class="mrp">₹2,799</div>
+                <div class="discount">-81%</div>
+            </div>
+        </div>
+
+        <!-- Duplicate item for demo -->
+        <div class="cart-item">
+            <div class="item-left">
+                <input type="checkbox" checked>
+                <img src="https://placehold.co/150x150" alt="Product">
+            </div>
+
+            <div class="item-middle">
+                <h3>Zebronics Transformer Gaming Mouse</h3>
+                <p class="stock">In stock</p>
+
+                <div class="item-actions">
+                    <div class="quantity-box">
+                        <button>-</button>
+                        <span>1</span>
+                        <button>+</button>
+                    </div>
+
+                    <a href="#">Delete</a>
+                </div>
+            </div>
+
+            <div class="item-right">
+                <div class="price">₹299</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDE SUMMARY -->
+    <div class="cart-summary">
+        <h3>Subtotal (2 items)</h3>
+        <div class="subtotal-price">₹828</div>
+        <button class="checkout-btn">Proceed to Checkout</button>
+    </div>
+
+</div>

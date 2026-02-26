@@ -1,0 +1,321 @@
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">Wheelz</div>
+      <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="nav-item">
+          <i class="fa-solid fa-qrcode"></i> Dashboard
+        </a>
+        <a href="/admin/products" class="nav-item">
+          <i class="fa-solid fa-box"></i> Products
+        </a>
+        <a href="/admin/categories" class="nav-item active">
+          <i class="fa-solid fa-layer-group"></i> Categories
+        </a>
+        <a href="/admin/orders" class="nav-item">
+          <i class="fa-solid fa-cart-shopping"></i> Orders
+        </a>
+        <a href="/admin/sales" class="nav-item">
+            <i class="fa-solid fa-money-bill-wave"></i> Sales & Revenue
+        </a>
+        <a href="/admin/users" class="nav-item">
+          <i class="fa-solid fa-user-group"></i> Users
+        </a>
+        <a href="/admin/coupons" class="nav-item">
+           <i class="fa-solid fa-ticket"></i> Coupons
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="/admin/logout" class="logout-link">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+      <!-- Header -->
+      <header class="admin-header">
+        <button class="admin-hamburger" id="adminHamburger">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <h2>ADMIN PANEL</h2>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- Title Section -->
+        <div class="page-title-block">
+            <% if (purpose === "create") { %>
+              <h1 class="page-main-title">ADD NEW CATEGORY</h1>
+            <% } else if (purpose === "edit") { %>
+              <h1 class="page-main-title">EDIT CATEGORY</h1>
+            <% } %>
+            <p class="page-sub-title">Organize your toy car inventory by creating a new category.</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+          <% if (purpose === "create") { %>
+              <h2 class="form-card-title">Add Category</h2>
+            <% } else if (purpose === "edit") { %>
+              <h1 class="page-main-title">EDIT CATEGORY</h1>
+            <% } %>
+            
+            
+            <form class="add-category-form" onsubmit="validation(event)">
+                <div class="form-main-layout">
+                    <!-- Left Column: Inputs -->
+                     <div class="form-inputs-column">
+    
+                      <div id="nameDiv" class="form-group">
+                          <label for="categoryName">Category Name</label>
+                          <input 
+                            type="text" 
+                            id="categoryName" 
+                            name="name" 
+                            placeholder="e.g. Vintage Racing"
+                            value="<%= category?.name || '' %>">
+                          <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;margin-bottom: 0;"></p>
+                        </div>
+
+                        <div id="descriptionDiv" class="form-group">
+                          <label for="categoryDescription">Description</label>
+                          <textarea 
+                            id="categoryDescription" 
+                            name="description" 
+                            class="category-description"
+                            placeholder="Provide a small overview of this category..."><%= category?.description || '' %></textarea>
+                          <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;margin-bottom: 0;"></p>
+                        </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-create-category">
+                                    <%= purpose === "edit" ? "Update Category" : "Create Category" %>
+                                  </button>
+                                <a href="/admin/category" class="btn-cancel-form">Cancel</a>
+                            </div>
+                        </div>
+
+                    <!-- Right Column: Image Upload -->
+                    <div class="form-upload-column">
+                      <div class="drag-drop-zone" id="dropZone">
+
+                          <!-- Preview Image -->
+                          <img 
+                            src="<%= category?.imageUrl || '' %>" 
+                            class="uploaded-preview"
+                            id="previewImage"
+                            style="<%= category?.imageUrl ? '' : 'display:none;' %>"
+                          >
+
+                          <!-- Upload Placeholder -->
+                          <div class="upload-placeholder"
+                              style="<%= category?.imageUrl ? 'display:none;' : '' %>">
+
+                            <div class="upload-icon">
+                              <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            <p class="upload-text">Drag and drop images here</p>
+                            <p class="upload-support">Support: JPG, PNG, WEBP (Max 5MB)</p>
+                            <button type="button" class="btn-browse-files">BROWSE FILES</button>
+
+                          </div>
+
+                          <input 
+                            type="file" 
+                            id="categoryImage" 
+                            name="image" 
+                            hidden 
+                            accept="image/*"
+                          >
+
+                          <p class="image-error"
+                            style="color:red;font-size:13px;display:none;"></p>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div id="cropModal" class="crop-modal">
+              <div class="crop-modal-content">
+                  <div class="crop-modal-header">
+                      <h3>Crop Image</h3>
+                      <button type="button" id="closeCropModal">&times;</button>
+                  </div>
+
+                  <div class="crop-image-container">
+                      <img id="cropImage">
+                  </div>
+
+                  <div class="crop-modal-actions">
+                      <button type="button" id="cropBtn">Crop & Save</button>
+                  </div>
+              </div>
+            </div>
+
+           
+        </div>
+      </div>
+    </div>
+
+    <script>
+      
+      const purpose = "<%= purpose %>";
+      
+      const hamburger = document.getElementById("adminHamburger");
+      const sidebar = document.getElementById("adminSidebar");
+      const overlay = document.getElementById("adminOverlay");
+
+      hamburger.addEventListener("click", () => {
+        sidebar.classList.add("sidebar-open");
+        overlay.classList.add("active");
+      });
+
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("sidebar-open");
+        overlay.classList.remove("active");
+      });
+
+     
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('categoryImage');
+      const browseBtn = document.querySelector('.btn-browse-files');
+
+      if (browseBtn) {
+        browseBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          fileInput.click();
+        });
+      }
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      const existingImage = document.getElementById("existingImage");
+
+      if (existingImage) {
+        existingImage.style.cursor = "pointer";
+
+        existingImage.addEventListener("click", function (e) {
+          e.stopPropagation();   
+          fileInput.click();     
+        });
+      }
+
+      fileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const preview = document.getElementById("previewImage");
+          const placeholder = document.querySelector(".upload-placeholder");
+
+          if (preview) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+          }
+
+          if (placeholder) {
+            placeholder.style.display = "none";
+          }
+        });
+      
+
+      function validation(event) {
+          event.preventDefault(); 
+
+          let isValid = true;
+
+          const name = document.getElementById('categoryName').value.trim();
+          const description = document.getElementById('categoryDescription').value.trim();
+          const categoryImage = window.croppedImageBlob;
+          
+
+          const nameDiv = document.getElementById('nameDiv');
+          const descriptionDiv = document.getElementById('descriptionDiv');
+         
+
+          const imageDiv = document.getElementById('dropZone')
+          const imageError = imageDiv.querySelector('p')
+          
+
+          const nameError = nameDiv.querySelector('p');
+          const descriptionError = descriptionDiv.querySelector('p');
+         
+          resetField(nameDiv, nameError);
+          resetField(descriptionDiv, descriptionError);
+
+          if (!name) {
+              showerror(nameDiv, nameError, "Category name is required");
+              isValid = false;
+          } else if (name.length < 3) {
+              showerror(nameDiv, nameError, "Minimum 3 characters required");
+              isValid = false;
+          } else if (name.length > 15) {
+              showerror(nameDiv, nameError, "Maximum 50 characters allowed");
+              isValid = false;
+          }
+
+          if (description.length > 300) {
+              showerror(descriptionDiv, descriptionError, "Max 300 characters allowed");
+              isValid = false;
+          }
+          if (!description) {
+              showerror(descriptionDiv, descriptionError, "Description Required");
+              isValid = false;
+          }
+          
+          if (purpose === "create" && !categoryImage) {
+            showerror(imageDiv, imageError, 'Image Is Required');
+            imageDiv.style.border = '1px solid red';
+            isValid = false;
+          } else {
+            imageDiv.style.border = '';
+          }
+
+          
+          if (isValid) {
+
+            const formData=new FormData();
+            formData.append('name',name)
+            formData.append("description", description);
+            if (window.croppedImageBlob) {
+                formData.append("image", window.croppedImageBlob, "cropped.jpg");
+              }
+            let url='';
+            if(purpose==='create'){
+              url='/admin/addCategory'
+            }else{
+              url ='/admin/addCategory/<%= category?._id %>/edit'
+            }
+
+              fetch(url,{
+                method:'POST',
+                body:formData
+              }).then(res=>res.json())
+              .then(data=>{
+                if(data.success){
+                  showSuccess(data.message)
+                  setTimeout(()=>{
+                    window.location.href='/admin/category'
+                  },1500)
+                }else{
+                  showError(data.message);
+                }
+              })
+          }
+      }
+
+      function showerror(div, errorElement, message) {
+          div.querySelector('input, textarea, select').style.border = '1px solid red';
+          errorElement.style.display = 'block';
+          errorElement.innerText = message;
+      }
+
+      function resetField(div, errorElement) {
+          div.querySelector('input, textarea, select').style.border = '1px solid #ccc';
+          errorElement.style.display = 'none';
+          errorElement.innerText = '';
+      }
+    </script>
+    

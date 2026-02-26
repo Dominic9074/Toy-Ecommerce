@@ -1,0 +1,222 @@
+
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">Wheelz</div>
+      <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="nav-item">
+          <i class="fa-solid fa-qrcode"></i> Dashboard
+        </a>
+        <a href="/admin/products" class="nav-item">
+          <i class="fa-solid fa-box"></i> Products
+        </a>
+        <a href="/admin/categories" class="nav-item active">
+          <i class="fa-solid fa-layer-group"></i> Categories
+        </a>
+        <a href="/admin/orders" class="nav-item">
+          <i class="fa-solid fa-cart-shopping"></i> Orders
+        </a>
+        <a href="/admin/sales" class="nav-item" style="color: white;"> <! -- Using inline style to mimic screenshot active state logic if needed, but usually handled by class -->
+            <i class="fa-solid fa-money-bill-wave"></i> Sales & Revenue
+        </a>
+        <a href="/admin/users" class="nav-item">
+          <i class="fa-solid fa-user-group"></i> Users
+        </a>
+        <a href="/admin/coupons" class="nav-item">
+           <i class="fa-solid fa-ticket"></i> Coupons
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="/admin/logout" class="logout-link">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+      <!-- Header -->
+      <header class="admin-header">
+        <button class="admin-hamburger" id="adminHamburger">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <h2>ADMIN PANEL</h2>
+        <!-- Search Bar (Full Widthish) -->
+        <form action="/admin/category" method="GET">
+          <div class="search-bar-container">
+                <input type="hidden" name="status">
+                <input 
+                    type="text" 
+                    name="search"
+                    placeholder="Search users..."
+                    id="searchInput"
+                    value="<%= search || '' %>">
+                <button type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button type="button" class="clearSearch" onclick="clearSearch()" >Clear</button>
+                </div>
+
+        </form>
+
+      </header>
+
+      <div class="content-body">
+        
+        <!-- Title Section -->
+        <div class="category-header-row">
+            <div class="page-title-block">
+                <h1 class="page-main-title">CATEGORY MANANGENMENT</h1>
+                <p class="page-sub-title">MANAGE YOUR CATEGORY HERE</p>
+            </div>
+            <div class="category-filter-container">
+                  <h2 class="filter-title">FILTER</h2>
+
+                  <div class="category-filter-row">
+                      <span class="filter-label">STATUS:</span>
+
+                      <a href="?status=all&search=<%= search || '' %>" 
+                      class="filter-btn <%= (!status || status === 'all') ? 'active' : '' %>">
+                      ALL
+                      </a>
+
+                      <a href="?status=Active&search=<%= search || '' %>" 
+                      class="filter-btn <%= status === 'Active' ? 'active' : '' %>">
+                      Active
+                      </a>
+
+                      <a href="?status=Inactive&search=<%= search || '' %>" 
+                      class="filter-btn <%= status === 'Inactive' ? 'active' : '' %>">
+                      INACTIVE
+                      </a>
+
+                  </div>
+                  </div>
+            
+            <a href="/admin/addCategory?purpose=create" class="btn-add-category">
+                <i class="fa-solid fa-circle-plus"></i> ADD CATEGORY
+            </a>
+        </div>
+      </div>
+      
+
+        
+        <!-- Table -->
+        <div class="table-container">
+          <div class="table-scroll">
+            <table class="custom-table table-dark-header">
+              <thead>
+                <tr>
+                  <th style="width: 20%;">CATEGORY  NAME</th> <!-- Typo intentional to match screenshot "ANME" if desired, or correct to NAME. Screenshot says "ANME" -->
+                  <th style="width: 35%;">DISCREPTION</th> <!-- Typo intentional to match screenshot "DISCRIPTION" -->
+                  <th style="width: 15%;">STOCK</th>
+                  <th style="width: 15%;">STATUS</th>
+                  <th style="width: 15%; text-align: right;">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                  <% if (categories.length === 0) { %>
+                      <tr>
+                        <td colspan="5" style="text-align:center;">No categories found</td>
+                      </tr>
+                  <% } %>
+
+                  <% categories.forEach(category => { %>
+                      <tr>
+                        <td class="user-name"><%= category?.name %></td>
+                        <td><%= category?.description %></td>
+                        <td><%= category?.productCount || 0 %> Unit</td>
+                        <td class="<%= category?.status ? 'status-active' : 'status-inactive' %>">
+                          <%= category?.status  %>
+                        </td>
+                        <td style="text-align: right;">
+                          <div class="action-btn-group" style="justify-content: flex-end;">
+                              <button 
+                                class="action-icon icon-delete"
+                                data-id="<%= category._id %>" onclick="updateStatus(`<%= category._id %>`)">
+                                <i class="fa-solid fa-trash-can"></i>
+                              </button>
+                              <a href="/admin/addCategory/<%= category._id %>/edit"
+                                class="action-icon icon-edit"
+                                data-id="<%= category._id %>" >
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                  <% }) %>
+                </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-wrapper">
+             <div class="pagination">
+                <a href="?page=<%= page - 1 %>&search=<%= search || '' %>&status=<%= status || 'all' %>" 
+                        class="page-link">&lt;</a>
+                <a href="?page=1&search=<%= search || '' %>&status=<%= status || 'all' %>" 
+                        class="page-link <%= page === 1 ? 'active' : '' %>">1</a>
+                <a href="?page=2&search=<%= search || '' %>&status=<%= status || 'all' %>" 
+                        class="page-link <%= page === 2 ? 'active' : '' %>">2</a>
+                <a href="?page=3&search=<%= search || '' %>&status=<%= status || 'all' %>" 
+                        class="page-link <%= page === 3 ? 'active' : '' %>">3</a>
+                <a href="?page=<%= page + 1 %>&search=<%= search || '' %>&status=<%= status || 'all' %>" 
+                        class="page-link">&gt;</a>
+             </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Sidebar Toggle Logic
+      const hamburger = document.getElementById("adminHamburger");
+      const sidebar = document.getElementById("adminSidebar");
+      const overlay = document.getElementById("adminOverlay");
+
+      hamburger.addEventListener("click", () => {
+        sidebar.classList.add("sidebar-open");
+        overlay.classList.add("active");
+      });
+
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("sidebar-open");
+        overlay.classList.remove("active");
+      });
+      function clearSearch(){
+            const search=document.getElementById('searchInput');
+            search.value=''
+            window.location.href='/admin/category'
+        }
+
+        function updateStatus(categoryId){
+          Swal.fire({
+            title: "Are you sure?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Change Status!"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              fetch(`/admin/addCategory/status/${categoryId}`,{
+                method:"PATCH"
+              }).then(res=>res.json())
+              .then(data=>{
+                if(data.success){
+                  showSuccess(data.message)
+                  setTimeout(()=>{
+                    window.location.reload();
+                  },1000)
+                }else{
+                  showError(data.message)
+                }
+              })
+            }
+          });
+        }
+    </script>
+

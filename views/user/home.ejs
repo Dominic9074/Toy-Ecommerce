@@ -64,34 +64,26 @@
     <!-- Explore Section -->
     <section class="explore">
       <div class="section-title">Explore</div>
-      <div class="explore-grid">
-        <div class="explore-card">
-          <h3>HotWheels</h3>
-          <div class="card-image-box">
-            <img
-              src="images/hotwheel category image.jpg"
-              alt="Hot Wheels Car"
-            />
-          </div>
-        </div>
-        <div class="explore-card">
-          <h3>Remote Control Toys</h3>
-          <div class="card-image-box">
-            <img
-              src="images/remote Category.jpg"
-              alt="RC Car"
-            />
-          </div>
-        </div>
-        <div class="explore-card">
-          <h3>Building Toys(Lego)</h3>
-          <div class="card-image-box">
-            <img
-              src="images/LOGO Categoryy.png"
-              alt="Lego Car"
-            />
-          </div>
-        </div>
+      <div class="explore-wrapper">
+      <div class="explore-grid" id="categoryScroller">
+        <% if (categories && categories.length > 0) { %>
+          <% categories.forEach(category => { %>
+            <div class="explore-card">
+              <h3><%= category.name %></h3>
+              <div class="card-image-box">
+                <img 
+                  src="<%= category.imageUrl || '/images/default-category.jpg' %>" 
+                  alt="<%= category.name %>"
+                  onerror="this.src='/images/default-category.jpg'"
+                />
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <!-- Fallback if no categories -->
+          <p>No categories available</p>
+        <% } %>
+      </div>
       </div>
     </section>
 
@@ -189,3 +181,114 @@
       </div>
     </footer>
 
+ <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const scroller = document.getElementById('categoryScroller');
+  if (!scroller || scroller.children.length === 0) return;
+
+  const originals = Array.from(scroller.children);
+  for (let i = 0; i < 3; i++) {
+    originals.forEach(card => scroller.appendChild(card.cloneNode(true)));
+  }
+
+  // Dynamically measure instead of hardcoding — works at any screen size
+  function getSetWidth() {
+    const firstCard = scroller.querySelector('.explore-card');
+    const style = window.getComputedStyle(scroller);
+    const gap = parseFloat(style.columnGap) || parseFloat(style.gap) || 24;
+    const cardW = firstCard ? firstCard.offsetWidth : 160;
+    return originals.length * (cardW + gap);
+  }
+
+  let position = 0;
+  let autoSpeed = 0.8;
+  let velocity = 0;
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartPos = 0;
+  let lastX = 0;
+  let lastTime = 0;
+  let isHovered = false;
+
+  const friction = 0.92;
+  const minVelocity = 0.05;
+
+  function normalize(pos) {
+    const setWidth = getSetWidth();
+    return ((pos % setWidth) - setWidth) % setWidth;
+  }
+
+  function tick() {
+    if (!isDragging) {
+      if (Math.abs(velocity) > minVelocity) {
+        position += velocity;
+        velocity *= friction;
+      } else {
+        velocity = 0;
+        if (!isHovered) position -= autoSpeed;
+      }
+    }
+
+    position = normalize(position);
+    scroller.style.transform = `translateX(${position}px)`;
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+
+  // Mouse
+  scroller.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    velocity = 0;
+    dragStartX = e.clientX;
+    dragStartPos = position;
+    lastX = e.clientX;
+    lastTime = performance.now();
+    scroller.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const now = performance.now();
+    const dt = now - lastTime;
+    if (dt > 0) velocity = ((e.clientX - lastX) / dt) * 16;
+    lastX = e.clientX;
+    lastTime = now;
+    position = normalize(dragStartPos + (e.clientX - dragStartX));
+    scroller.style.transform = `translateX(${position}px)`;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    scroller.style.cursor = 'grab';
+  });
+
+  // Touch
+  scroller.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    velocity = 0;
+    dragStartX = e.touches[0].clientX;
+    dragStartPos = position;
+    lastX = e.touches[0].clientX;
+    lastTime = performance.now();
+  }, { passive: true });
+
+  scroller.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const now = performance.now();
+    const dt = now - lastTime;
+    if (dt > 0) velocity = ((e.touches[0].clientX - lastX) / dt) * 16;
+    lastX = e.touches[0].clientX;
+    lastTime = now;
+    position = normalize(dragStartPos + (e.touches[0].clientX - dragStartX));
+    scroller.style.transform = `translateX(${position}px)`;
+  }, { passive: true });
+
+  scroller.addEventListener('touchend', () => { isDragging = false; });
+
+  scroller.addEventListener('mouseenter', () => { isHovered = true; });
+  scroller.addEventListener('mouseleave', () => { isHovered = false; });
+});
+</script>

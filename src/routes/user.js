@@ -4,6 +4,7 @@ const router = express.Router();
 import userController from "../controllers/userController.js";
 import userMiddleware from "../middleware/userMiddleware.js";
 import passport from "../config/passport.js";
+import productController from "../controllers/productController.js";
 
 // local auth
 router.get("/", userController.loadHome);
@@ -38,7 +39,18 @@ router.post('/updateAddress/:addressId',userController.updateAddress)
 router.get("/logout", userMiddleware.isLoggedIn, userController.logoutUser);
 
 //shop
-router.get('/shop',userController.loadShop)
+router.get('/shop',productController.loadShop)
+
+//productDetails
+router.get('/product',productController.loadProductDetails)
+
+//cartpage
+router.get('/cart',productController.loadCartPage)
+
+//wishlist
+router.get('/wishlist',productController.loadWishlist)
+
+
 
 // 🔐 Google Auth
 router.get("/auth/google",passport.authenticate("google", {scope: ["profile", "email"]}));
