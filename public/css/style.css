@@ -2552,12 +2552,15 @@ footer {
     transform: translateY(-50%);
     color: #888;
     font-size: 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
 }
 
 /* Clear button — perfectly aligned at end */
 .clear-btn {
     position: absolute;
-    right: 35px;   /* FIXED alignment */
+    right: 45px;   /* FIXED alignment */
     top: 50%;
     transform: translateY(-50%);
     border: none;
@@ -3337,4 +3340,91 @@ footer {
   .explore-grid {
     gap: 40px;
   }
+}
+
+.category-wrapper {
+  max-width: 600px;   /* Adjust width if needed */
+  overflow: hidden;
+}
+
+.category-pills {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 5px;
+   scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE */
+  border: 1px solid #A2001D;
+  padding:10px;
+  border-radius: 20px;
+}
+.category-pills:hover{
+    border: 2px solid #A2001D;
+}
+.category-pills::-webkit-scrollbar {
+  display: none;              /* Chrome, Safari */
+}
+
+/* Hide scrollbar (optional clean look) */
+.category-pills::-webkit-scrollbar {
+  height: 6px;
+}
+
+.category-pills::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.cat-pill {
+  flex: 0 0 calc(20% - 8px); /* 5 items visible at once */
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 20px;
+  background: #f3f3f3;
+  white-space: nowrap;
+  text-decoration: none;
+  color: rgb(13, 13, 13);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cat-pill:hover {
+  background: #ddd;
+}
+
+.cat-pill.active {
+  background: #A2001D;
+  color: white;
+}
+.price-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.original-price {
+  font-size: 13px;
+  color: #888;
+  text-decoration: line-through;
+}
+
+.upc-price {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+}
+.upc-heart {
+  position: relative;
+}
+
+.discount-badge {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: #A2001D;
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
