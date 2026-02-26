@@ -31,5 +31,17 @@ const getFilterProducts=async (filter)=>{
     return products;
 }
 
-export default {getAllCategory,getFilterProducts}
+const findProductById=async(slug)=>{
+    console.log(slug);
+    const product=await Product.findOne({slug}).populate('category','name')
+    if(!product){
+        throw new Error('Product Not Found')
+    }
+    const categoryId=product.category;
+    const RelatedProducts=await Product.find({category:categoryId,_id: { $ne: product._id },isActive: true}).populate('category','name')
+    return {product,RelatedProducts};
+}
+
+export default {getAllCategory,getFilterProducts,findProductById    
+}
 

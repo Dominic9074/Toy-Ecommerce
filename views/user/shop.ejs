@@ -157,7 +157,7 @@
 
                     <% } %>
 
-                    <button class="upc-order-btn" onclick="productDetails(`<%= product._id %>`)" >Order Now</button>
+                    <button class="upc-order-btn" onclick="productDetails(`<%= product.slug %>`)" >Order Now</button>
 
                     </div>
                     </div>
@@ -304,7 +304,7 @@
                                 </div>`
                                 : `<span class="upc-price">₹${originalPrice}</span>`
                             }
-                            <button class="upc-order-btn">Order Now</button>
+                            <button class="upc-order-btn" onclick="productDetails('${product.slug}')">Order Now</button>
                         </div>
                     </div>
                 </div>
@@ -314,5 +314,8 @@
             grid.innerHTML = html;
 }
 
+    function productDetails(slug){
+        window.location.href=`/product/${slug}`
+    }
 
     </script>

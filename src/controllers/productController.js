@@ -35,8 +35,15 @@ const loadShop=async (req,res)=>{
 }
 
 //product details
-const loadProductDetails=(req,res)=>{
-    res.render('user/productDetails',{title:'Product',bodyClass:"",cssFile:'style.css'})
+const loadProductDetails=async (req,res)=>{
+try{
+    const slug=req.params.slug
+    const {product,RelatedProducts}=await userProductServices.findProductById(slug);
+
+    res.render('user/productDetails',{title:'Product',bodyClass:"",cssFile:'style.css',product,RelatedProducts})
+}catch(error){
+    console.log(error)
+}
 }
 //cart
 const loadCartPage=(req,res)=>{

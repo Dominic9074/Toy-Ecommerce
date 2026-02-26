@@ -42,7 +42,7 @@ router.get("/logout", userMiddleware.isLoggedIn, userController.logoutUser);
 router.get('/shop',productController.loadShop)
 
 //productDetails
-router.get('/product',productController.loadProductDetails)
+router.get('/product/:slug',productController.loadProductDetails)
 
 //cartpage
 router.get('/cart',productController.loadCartPage)

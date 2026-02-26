@@ -33,9 +33,16 @@
       <nav class="pd-breadcrumbs">
         <a href="/">Home</a> <span>/</span> 
         <a href="/shop">Shop</a> <span>/</span> 
-        <a href="#">Categories</a> <span>/</span> 
-        <span class="current">Blue Monster Truck</span>
-      </nav>
+
+        <% if (product.category) { %>
+            <a href="/shop?category=<%= product.category._id %>">
+                <%= product.category.name %>
+            </a> 
+            <span>/</span>
+        <% } %>
+
+        <span class="current"><%= product.shortName %></span>
+    </nav>
 
       <!-- Top Section: Gallery & Info -->
       <div class="pd-top-section">
@@ -43,47 +50,72 @@
         <!-- Left: Gallery -->
         <div class="pd-gallery">
             <div class="pd-thumbnails">
-                <div class="pd-thumb active">
-                    <img src="https://placehold.co/100x100" alt="Thumb 1">
-                </div>
-                <div class="pd-thumb">
-                    <img src="https://placehold.co/100x100" alt="Thumb 2">
-                </div>
-                <div class="pd-thumb">
-                    <img src="https://placehold.co/100x100" alt="Thumb 3">
-                </div>
+                <% if (product.images && product.images.length > 0) { %>
+
+                    <% product.images.forEach((img, index) => { %>
+                        <div class="pd-thumb <%= index === 0 ? 'active' : '' %>">
+                            <img src="<%= img.url %>" 
+                                alt="Thumb <%= index + 1 %>">
+                        </div>
+                    <% }) %>
+
+                <% } %>
             </div>
+
             <div class="pd-main-image">
-                <img src="https://placehold.co/500x350" alt="Main Product Image" id="mainImage">
+                <img src="<%= product.images && product.images.length ? product.images[0].url : '' %>" 
+                    alt="<%= product.name %>" 
+                    id="mainImage">
             </div>
         </div>
 
         <!-- Right: Info -->
         <div class="pd-info">
-            <h1 class="pd-title">Traxxas 8S X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</h1>
-            
-            <ul class="pd-features">
-                <li>Extreme VXL-8s speed control takes up to 33.6 volts and powers monster 1200XL brushless motor for 50+mph speed</li>
-                <li>Traxxas Stability Management for control over virtually any terrain and self-righting. (LiPo batteries sold separately)</li>
-                <li>All metal gear drivetrain with strengthened axles, Cush Drive, and Torque Biasing Center Drive</li>
-            </ul>
+        <h1 class="pd-title"><%= product.name %></h1>
+        
+        <ul class="pd-features">
+           
+            <% if (product.specifications && product.specifications.length > 0) { %>
+                <% product.specifications.forEach(feature => { %>
+                    <li> <i class="fa-solid fa-circle bullet-icon"></i><%= feature %></li>
+                <% }) %>
+            <% } %>
+        </ul>
 
-            <div class="pd-price-row">
-                <span class="pd-price">₹18,999</span>
-                <span class="pd-old-price">₹21,837</span>
-                <span class="pd-discount">13%OFF</span>
-            </div>
+        <div class="pd-price-row">
+            <% 
+                const originalPrice = product.price;
+                const offer = product.offer || 0;
+                const discountedPrice = offer > 0 
+                    ? Math.round(originalPrice - (originalPrice * offer / 100)) 
+                    : originalPrice;
+            %>
 
-            <div class="pd-meta-row">
-                <span class="pd-stock">Stock Left: <span class="stock-count">23</span></span>
-                <span class="pd-rating">Rating: 4.6 <i class="fa-solid fa-star"></i></span>
-            </div>
+            <span class="pd-price">₹<%= discountedPrice %></span>
 
-            <div class="pd-actions">
-                <button class="pd-btn btn-order">Order Now</button>
-                <button class="pd-btn btn-cart">Add To Cart</button>
-            </div>
+            <% if (offer > 0) { %>
+                <span class="pd-old-price">₹<%= originalPrice %></span>
+                <span class="pd-discount"><%= offer %>%OFF</span>
+            <% } %>
         </div>
+
+        <div class="pd-meta-row">
+            <span class="pd-stock">
+                Stock Left: 
+                <span class="stock-count"><%= product.stock %></span>
+            </span>
+
+            <span class="pd-rating">
+                Rating: <%= product.rating || 0 %> 
+                <i class="fa-solid fa-star"></i>
+            </span>
+        </div>
+
+        <div class="pd-actions">
+            <button class="pd-btn btn-order">Order Now</button>
+            <button class="pd-btn btn-cart">Add To Cart</button>
+        </div>
+    </div>
       </div>
     </div>
 
@@ -91,7 +123,7 @@
     <section class="pd-description-section">
         <div class="section-title-center">Description</div>
         <div class="pd-desc-content">
-            <p>Defy Physics With The Traxxas 8S X-Maxx Experience The Ultimate Monster Truck. Engineered With 30+ Volts Of 8S Power And A Massive 4WD Drivetrain, The X-Maxx Is Built To Crush Any Terrain. Featuring A Waterproof Brushless Motor And A "Self-Righting" System, This RTR (Ready-To-Race) Beast Delivers 50+ MPH Speeds In A Striking Blue Finish. Scale Doesn't Get Bigger Than This.</p>
+            <p><%= product.description %></p>
         </div>
     </section>
 
@@ -162,46 +194,95 @@
     <section class="pd-related-section">
         <h2 class="related-title">RELATED PRODUCT</h2>
         <div class="user-product-grid">
-            <!-- Product 1 -->
-            <div class="user-product-card">
-                <div class="upc-heart"><i class="fa-solid fa-heart"></i></div>
-                <div class="upc-image"><img src="https://placehold.co/200x150" alt="Related"></div>
-                <div class="upc-details">
-                    <div class="upc-header"><span class="upc-title">Remote Control</span><span class="upc-discount">13%OFF</span></div>
-                    <p class="upc-desc">Traxxas 8S X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</p>
-                    <div class="upc-footer"><span class="upc-price">₹8,099</span><button class="upc-order-btn">Order Now</button></div>
+
+            <% if (RelatedProducts && RelatedProducts.length > 0) { %>
+
+                <% RelatedProducts.forEach(product => { %>
+
+                <div class="user-product-card" style="width:250px; 
+                    min-height:380px; 
+                    display:flex; 
+                    flex-direction:column; 
+                    justify-content:space-between;">
+                    <div class="upc-heart">
+                    <i class="fa-solid fa-heart"></i>
+                    <span class="discount-badge">
+                        <%= product.offer %>% OFF
+                    </span>
+                    </div>
+
+                    <div class="upc-image">
+                    <img src="<%= product?.images[0].url %>" 
+                        alt="<%= product?.name %>">
+                    </div>
+
+                    <div class="upc-details">
+                    <div class="upc-header">
+                        <span class="upc-title"><%= product?.category?.name %></span>
+
+                        <% if (product.offerPercentage && product.offerPercentage > 0) { %>
+                        <span class="upc-discount">
+                            <%= product.offerPercentage %>%OFF
+                        </span>
+                        <% } %>
+                    </div>
+
+                    <p class="upc-desc" 
+                    style="display:-webkit-box;
+                            -webkit-line-clamp:2;
+                            -webkit-box-orient:vertical;
+                            overflow:hidden;
+                            text-overflow:ellipsis;
+                            line-height:20px;
+                            max-height:40px;">
+                        <%= product?.name %>
+                    </p>
+
+                    <div class="upc-footer">
+
+                    <% 
+                        const originalPrice = product.price;
+                        const offer = product.offer || 0;
+                        const discountedPrice = Math.round(
+                        originalPrice - (originalPrice * offer / 100)
+                        );
+                    %>
+
+                    <% if (offer > 0) { %>
+                        
+                        <div class="price-wrapper">
+                        <span class="original-price">
+                            ₹<%= originalPrice %>
+                        </span>
+
+                        <span class="upc-price">
+                            ₹<%= discountedPrice %>
+                        </span>
+                        </div>
+
+                    <% } else { %>
+
+                        <span class="upc-price">
+                        ₹<%= originalPrice %>
+                        </span>
+
+                    <% } %>
+
+                    <button class="upc-order-btn" onclick="productDetails(`<%= product.slug %>`)" >Order Now</button>
+
+                    </div>
+                    </div>
                 </div>
-            </div>
-             <!-- Product 2 -->
-             <div class="user-product-card">
-                <div class="upc-heart"><i class="fa-solid fa-heart"></i></div>
-                <div class="upc-image"><img src="https://placehold.co/200x150" alt="Related"></div>
-                <div class="upc-details">
-                    <div class="upc-header"><span class="upc-title">Remote Control</span><span class="upc-discount">13%OFF</span></div>
-                    <p class="upc-desc">Traxxas 8S X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</p>
-                    <div class="upc-footer"><span class="upc-price">₹8,099</span><button class="upc-order-btn">Order Now</button></div>
-                </div>
-            </div>
-             <!-- Product 3 -->
-             <div class="user-product-card">
-                <div class="upc-heart"><i class="fa-solid fa-heart"></i></div>
-                <div class="upc-image"><img src="https://placehold.co/200x150" alt="Related"></div>
-                <div class="upc-details">
-                    <div class="upc-header"><span class="upc-title">Remote Control</span><span class="upc-discount">13%OFF</span></div>
-                    <p class="upc-desc">Traxxas 8S X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</p>
-                    <div class="upc-footer"><span class="upc-price">₹8,099</span><button class="upc-order-btn">Order Now</button></div>
-                </div>
-            </div>
-             <!-- Product 4 -->
-             <div class="user-product-card">
-                <div class="upc-heart"><i class="fa-solid fa-heart"></i></div>
-                <div class="upc-image"><img src="https://placehold.co/200x150" alt="Related"></div>
-                <div class="upc-details">
-                    <div class="upc-header"><span class="upc-title">Remote Control</span><span class="upc-discount">13%OFF</span></div>
-                    <p class="upc-desc">Traxxas 8S X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</p>
-                    <div class="upc-footer"><span class="upc-price">₹8,099</span><button class="upc-order-btn">Order Now</button></div>
-                </div>
-            </div>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <p style="grid-column:1/-1;text-align:center;">
+                    No related products
+                </p>
+
+            <% } %>
 
         </div>
         <div class="related-arrows" id="related-arrows" style="display: none;">
@@ -280,4 +361,53 @@ if (window.innerWidth <= 768) {
     });
   });
 }
+    function productDetails(productId){
+            window.location.href=`/product/${productId}`
+        }
+
+        document.querySelectorAll('.pd-thumb').forEach(thumb => {
+
+         thumb.addEventListener('click', function () {
+
+        // Remove active from all thumbnails
+        document.querySelectorAll('.pd-thumb').forEach(t => {
+            t.classList.remove('active');
+        });
+
+        // Add active to clicked thumbnail
+        this.classList.add('active');
+
+        // Get clicked image src
+        const newSrc = this.querySelector('img').getAttribute('src');
+
+        // Change main image
+        document.getElementById('mainImage').setAttribute('src', newSrc);
+
+    });
+
+});
+
+    const mainImageContainer = document.querySelector('.pd-main-image');
+    const mainImage = document.getElementById('mainImage');
+
+    mainImageContainer.addEventListener('mousemove', function(e) {
+
+        const rect = this.getBoundingClientRect();
+
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const xPercent = (x / rect.width) * 100;
+        const yPercent = (y / rect.height) * 100;
+
+        mainImage.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+        mainImage.style.transform = "scale(1.5)";
+
+    });
+
+    mainImageContainer.addEventListener('mouseleave', function() {
+        mainImage.style.transform = "scale(1)";
+        mainImage.style.transformOrigin = "center center";
+    });
+
     </script>

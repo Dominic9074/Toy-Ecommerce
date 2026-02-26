@@ -3428,3 +3428,54 @@ footer {
   padding: 2px 6px;
   border-radius: 4px;
 }
+.bullet-icon {
+  font-size: 9px;
+  color: #888;
+  margin-right: 8px;
+}
+.pd-desc-content {
+  width: 100% !important;
+  text-align: left !important;
+}
+
+.pd-desc-content p {
+  width: 100% !important;
+  text-align: left !important;
+  line-height: 1.8 !important;
+  margin: 0 !important;
+}
+.pd-desc-content {
+  max-width: 100% !important;
+}
+.pd-main-image {
+  position: relative;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.upc-heart {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.upc-heart i {
+  pointer-events: auto;
+  margin-left: auto;
+  background: white;
+  padding: 6px;
+  border-radius: 50%;
+}
+
+.discount-badge {
+  background: #A2001D;
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
