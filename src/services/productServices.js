@@ -2,6 +2,7 @@ import Category from "../models/categorySchema.js";
 import slugify from "slugify";
 import cloudinary from "../config/cloudinary.js";
 import Product from '../models/productSchema.js';
+import { json } from "express";
 
 
 const createCategory=async (file,data)=>{
@@ -181,8 +182,42 @@ const createProduct=async (files,data)=>{
     return product;
 };
 
-const getAllProducts=async ()=>{
-    const products=await Product.find();
+const getFilterProducts=async (search,status,sort,page)=>{
+    let filter={};
+    let sortOption={};
+    let skiper=page-1;
+    let skip=10*skiper;
+    const limit=10;
+
+    if(search && search.trim() !== ''){
+        filter.name={$regex:search,$options:'i'}
+    }
+
+    if(status && status ==='Active'){
+        filter.isActive=true;
+    }else if(status==='Inactive'){
+        filter.isActive=false
+    }
+
+    if(sort===''){
+        sortOption.createdAt=1
+    }
+    if (sort === "price_asc") {
+        sortOption.price = 1;
+    }
+
+    if (sort === "price_desc") {
+        sortOption.price = -1;
+    }
+
+    if (sort === "stock_asc") {
+        sortOption.stock = 1;
+    }
+
+    if (sort === "stock_desc") {
+        sortOption.stock = -1;
+    }
+    const products=await Product.find(filter).populate('category','name').sort(sortOption).skip(skip).limit(limit)
     return products;
 }
 
@@ -194,7 +229,100 @@ const findProductById=async (id)=>{
     return product;
 }
 
+const editProduct=async (files,data,productId)=>{
+    const {name,category,price,stock,offer,description,shortName}=data;
+    const rawSpec=data.specifications;
+    const product=await Product.findById(productId);
+
+    if(!product){
+        throw new Error('Product Does Not Exist ');
+    }
+    let existingImages=[];
+    
+    if(data.existingImages){
+        existingImages=JSON.parse(data.existingImages);
+    }
+
+   
+
+    const basicFieldUnchanged=name===product.name&&category===product.category.toString()&&Number(price)===product.price&&
+        Number(stock)===product.stock && Number(offer)===product.offer
+        &&description===product.description && shortName===product.shortName;
+
+        const specifications=rawSpec.split('\n').map(s=>s.trim()).filter(s=>s.length > 0);
+
+        const specUnchanged=JSON.stringify(specifications)===JSON.stringify(product.specifications);
+
+        const oldPublicId=product.images.map(img=>img.publicId).sort();
+        const newPublicId=existingImages.map(img=>img.publicId).sort();
+
+        const imageUnchanged=oldPublicId.length===newPublicId.length && 
+                                oldPublicId.every((id,index)=>id === newPublicId[index]) && files.length ===0;
+
+        if(basicFieldUnchanged && specUnchanged && imageUnchanged){
+            throw new Error('No Changes Detected');
+        }
+
+        const imagesToDelete=oldPublicId.filter(id=> !newPublicId.includes(id));
+
+        for(const publicId of imagesToDelete){
+            await cloudinary.uploader.destroy(publicId);
+        }
+  
+
+        const uploadedImages=[];
+
+        for(const file of files){
+            const uploadResult=await new Promise((resolve,reject)=>{
+                const stream=cloudinary.uploader.upload_stream(
+                    {folder:'product'},
+                    (error,result)=>{
+                        if(error) return reject(error.message);
+                        resolve(result);
+                    }
+                );
+                stream.end(file.buffer)
+            })
+            uploadedImages.push({
+                url:uploadResult.secure_url,
+                publicId:uploadResult.public_id
+            })
+        }
+
+        const finalImages=[...existingImages,...uploadedImages];
+
+        product.name = name;
+        product.category = category;
+        product.price = price;
+        product.stock = stock;
+        product.offer = offer;
+        product.description = description;
+        product.shortName = shortName;
+        product.specifications = specifications;
+        product.images = finalImages;
+
+        await product.save();
+
+        return product;
+}
+
+const updateProductStatus=async(id)=>{
+    const product=await Product.findById(id);
+    if(!product){
+        throw new Error('Product Not Found')
+    }
+    if(product.isActive===true){
+        product.isActive=false
+    }else{
+        product.isActive=true
+    }
+    await product.save();
+    return product;
+
+}
+
 export default {
-    createCategory,find,findCategoryById,updateCategory,getAllActiveCategories,createProduct,getAllProducts,findProductById
+    createCategory,find,findCategoryById,updateCategory,getAllActiveCategories,createProduct,getFilterProducts,findProductById,
+    editProduct,updateProductStatus
 }
 

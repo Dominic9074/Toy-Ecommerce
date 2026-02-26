@@ -182,6 +182,7 @@
 </div>
 
     <script>
+      const purpose = "<%= purpose %>";
       // Sidebar Toggle Logic
       const hamburger = document.getElementById("adminHamburger");
       const sidebar = document.getElementById("adminSidebar");
@@ -269,7 +270,7 @@
           imageError.style.display = 'none';
           imageError.innerText = '';
 
-          // 🔥 Name validation
+          
           if (!name) {
               showerror(nameDiv, nameError, "Product name is required");
               isValid = false;
@@ -324,7 +325,7 @@
               isValid = false;
           }
 
-          // 🔥 Image validation (Minimum 3 images)
+          
           if ((newImages.length + existingImages.length) < 3){
               imageError.style.display = 'block';
               imageError.innerText = "Minimum 3 images required";
@@ -355,7 +356,7 @@
             if(purpose==='create'){
               url='/admin/addProduct'
             }else{
-              url ='/admin/addProduct/<%= product?._id %>/edit'
+              url ='/admin/editProduct/<%= product?._id %>'
             }
 
           fetch(url,{

@@ -256,16 +256,19 @@ const addProduct=async (req,res)=>{
 
 const loadProducts=async (req,res)=>{
    try{
-     const products=await productServices.getAllProducts();
-     if(!products){
-        throw new Error('Products Not Fetched')
-     }
+       const {search,status,sort}=req.query;
+       const page=parseInt(req.query.page)|| 1 ;
+
+       const products=await productServices.getFilterProducts(search,status,sort,page);
+       if(!products){
+           throw new Error('Products Not Fetched');
+        }
     
-    res.render('admin/productManagement',{title:'Products',bodyClass:"",cssFile:'admin.css',products})
+    res.render('admin/productManagement',{title:'Products',bodyClass:"",cssFile:'admin.css',products,search,status,sort,page})
 
    }catch(error){
     console.log(error)
-    res.render('admin/productManagement',{title:'Products',bodyClass:"",cssFile:'admin.css',error:error.message})
+    //res.render('admin/productManagement',{title:'Products',bodyClass:"",cssFile:'admin.css',error:error.message})
    }
 }
 
@@ -283,9 +286,50 @@ const loadEditProduct=async (req,res)=>{
    }
 }
 
+const editProduct=async (req,res)=>{
+    try{
+        const productId=req.params.id;
+
+        const product=await productServices.editProduct(req.files,req.body,productId);
+
+        res.json({
+            success:true,
+            message:'Product Edited Successfully'
+        })
+
+
+    }catch(error){
+        console.log(error);
+        res.json({
+            success:false,
+            message:error.message
+        })
+    }
+
+}
+
+const updateProductStatus=async (req,res)=>{
+    try{
+        const productId=req.params.id;
+
+        const product=await productServices.updateProductStatus(productId);
+        res.json({
+            success:true,
+            message:'Product Status Changed'
+        });
+
+    }catch(error){
+        console.log(error);
+        res.json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
 export default {
     loadUsers,toggleUserStatus,loadSignin,adminSignin,createCategory,loadCategory,loadAddCategory,loadEditCategory,updateCategory,
-    updateStatus,loadAddproduct,addProduct,loadProducts,loadEditProduct
+    updateStatus,loadAddproduct,addProduct,loadProducts,loadEditProduct,editProduct,updateProductStatus
 }
 
 

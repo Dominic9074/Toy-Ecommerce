@@ -14,8 +14,9 @@ const productSchema=new mongoose.Schema({
     category:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
-        ref:'Category'
+        ref:'category'
     },
+    
     price:{
         type:Number,
         required:true,
@@ -56,5 +57,7 @@ const productSchema=new mongoose.Schema({
         required:true
     }
 },{timestamps:true})
+
+
 
 export default mongoose.model('product',productSchema)

@@ -22,6 +22,8 @@ router.patch('/admin/addCategory/status/:id',adminController.updateStatus)
 router.get('/admin/products',adminController.loadProducts)
 router.get('/admin/addProducts',adminController.loadAddproduct)
 router.post('/admin/addProduct',upload.array('images',5),adminController.addProduct)
-router.get('/admin/edit-product/:id',adminController.loadEditProduct)
+router.get('/admin/edit-product/:id',adminController.loadEditProduct);
+router.post('/admin/editProduct/:id',upload.array('images',5),adminController.editProduct);
+router.patch('/admin/addProduct/status/:id',adminController.updateProductStatus)
 
 export default router;
