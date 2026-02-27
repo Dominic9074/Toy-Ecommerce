@@ -3479,3 +3479,6 @@ footer {
   padding: 3px 6px;
   border-radius: 4px;
 }
+.active-heart {
+  color: red;
+}

@@ -1,13 +1,25 @@
 import Category from "../models/categorySchema.js";
 import Product from '../models/productSchema.js'
+import Wishlist from "../models/wishListSchema.js";
+
+
 const getAllCategory=async ()=>{
     const categories=await Category.find();
     return categories;
 }
 
-const getFilterProducts=async (filter)=>{
+const getFilterProducts=async (filter,userId)=>{
     const query={isActive:true};
     const sort={};
+    let wishlistProductIds=[];
+    
+   if(userId){
+     const wishlist=await Wishlist.findOne({user:userId});
+     if(wishlist){
+     wishlistProductIds=wishlist.products.map(id=>id.toString());
+     }
+    }
+    console.log(wishlistProductIds)
     
     if(filter.search !==''&&filter.search!==undefined){
         query.name={$regex:filter.search,$options:'i'}
@@ -28,7 +40,7 @@ const getFilterProducts=async (filter)=>{
     }
 
     const products=await Product.find(query).populate('category','name').sort(sort);
-    return products;
+    return {products,wishlistProductIds}
 }
 
 const findProductById=async(slug)=>{
@@ -42,6 +54,12 @@ const findProductById=async(slug)=>{
     return {product,RelatedProducts};
 }
 
-export default {getAllCategory,getFilterProducts,findProductById    
+const findWishlistProduct=async(userId)=>{
+    const wishlist=await Wishlist.findOne({user:userId});
+    const wishlistProducts=await Product.find({_id:{$in:wishlist.products}}).populate('category','name')
+    return wishlistProducts;
+}
+
+export default {getAllCategory,getFilterProducts,findProductById,findWishlistProduct    
 }
 

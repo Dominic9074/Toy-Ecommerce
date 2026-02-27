@@ -1,10 +1,11 @@
 import userProductServices from '../services/userProductServices.js'
+import Wishlist from '../models/wishListSchema.js';
 
 //shop
 const loadShop=async (req,res)=>{
    try {
     const categories = await userProductServices.getAllCategory();
-    const products = await userProductServices.getFilterProducts(req.query);
+    const {products,wishlistProductIds} = await userProductServices.getFilterProducts(req.query,req.session.user?.userId);
     console.log(req.query.search)
 
     // If request is AJAX
@@ -13,7 +14,8 @@ const loadShop=async (req,res)=>{
         success: true,
         categories,
         selectedCategory: req.query.category || "all",
-        products
+        products,
+        wishlistProductIds
       });
     }
 
@@ -24,7 +26,8 @@ const loadShop=async (req,res)=>{
       cssFile: 'style.css',
       categories,
       selectedCategory: req.query.category || "all",
-      products
+      products,
+      wishlistProductIds
     });
 
   } catch (error) {
@@ -50,11 +53,65 @@ const loadCartPage=(req,res)=>{
     res.render('user/cart',{title:'Cart',bodyClass:"",cssFile:'style.css'})
 }
 //wishlist
-const loadWishlist=(req,res)=>{
-    res.render('user/wishlist',{title:'WishList',bodyClass:"",cssFile:'style.css'})
+const loadWishlist=async (req,res)=>{
+
+    const products=await userProductServices.findWishlistProduct(req.session.user?.userId);
+    console.log(products)
+
+    res.render('user/wishlist',{title:'WishList',bodyClass:"",cssFile:'style.css',products})
 }
 
-export default {loadShop,loadProductDetails,loadCartPage,loadWishlist,
+const addWishlist=async (req,res)=>{
+    try{
+
+        const userId=req.session.user?.userId
+        if(!userId){
+            return res.json({
+                success:false,
+                message:'SignIn Required'
+            })
+        }
+        const {productId}=req.body;
+
+        let wishlist=await Wishlist.findOne({user:userId});
+
+        if(!wishlist){
+            wishlist=new Wishlist({
+                user:userId,
+                products:[productId]
+            })
+        await wishlist.save();
+        return res.json({success:true,message:'Product Added Successfully'})
+        }
+        
+        const index=wishlist.products.findIndex(id=>id.toString()===productId);
+
+        if(index >-1){
+            wishlist.products.splice(index,1);
+            wishlist.save();
+            return res.json({
+                success:true,
+                message:'Product Removed Successfully'
+            })
+        }else{
+            wishlist.products.push(productId);
+            wishlist.save();
+            return res.json({
+                success:true,
+                message:'Product Added Successfully'
+            })
+        }
+        
+    }catch(error){
+        console.log(error);
+        res.json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+export default {loadShop,loadProductDetails,loadCartPage,loadWishlist,addWishlist
     
 
 }

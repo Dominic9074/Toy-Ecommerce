@@ -103,7 +103,8 @@
 
                 <div class="user-product-card">
                     <div class="upc-heart">
-                    <i class="fa-solid fa-heart"></i>
+                    <i class="fa-solid fa-heart <%= wishlistProductIds.includes(product._id.toString()) ? 'active-heart':'' %>"
+                         onclick="addToWishlist('<%= product._id %>',this)"></i>
                     <span class="discount-badge">
                         <%= product.offer %>% OFF
                     </span>
@@ -242,7 +243,6 @@
                     this.classList.add('active');
                     filter.name=this.dataset.name
                 }
-                console.log(filter)
             })
         })
         function filterProducts(){
@@ -255,11 +255,11 @@
             }).then(res => res.json())
                 .then(data => {
                 if (data.success) {
-                    renderProducts(data.products);
+                    renderProducts(data.products,data.wishlistProductIds);
                 }})
         }
 
-        function renderProducts(products){
+        function renderProducts(products,wishlistProductIds=[]){
             const grid = document.querySelector('.user-product-grid');
 
             if(!products.length){
@@ -280,7 +280,9 @@
                 html += `
                 <div class="user-product-card">
                     <div class="upc-heart">
-                        <i class="fa-solid fa-heart"></i>
+                        <i class="fa-solid fa-heart ${wishlistProductIds.includes(product._id) ? 'active-heart' : ''}"
+                             onclick="addToWishlist('${product._id}',this)">
+                        </i>
                         ${offer > 0 ? `<span class="discount-badge">${offer}% OFF</span>` : ''}
                     </div>
 
@@ -316,6 +318,24 @@
 
     function productDetails(slug){
         window.location.href=`/product/${slug}`
+    }
+
+    function addToWishlist(productId,icon){
+        icon.classList.toggle('active-heart');
+        fetch('/addWishlist',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId})
+        }).then(res => res.json())
+        .then(data =>{
+            if(data.success){
+                showSuccess(data.message);
+            }else{
+                showError(data.message)
+            }
+        })
     }
 
     </script>

@@ -49,6 +49,7 @@ router.get('/cart',productController.loadCartPage)
 
 //wishlist
 router.get('/wishlist',productController.loadWishlist)
+router.post('/addWishlist',productController.addWishlist)
 
 
 
