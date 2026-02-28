@@ -15,7 +15,7 @@
 
         <div class="user-actions">
            <a href="#">Order</a> <!-- Matches 'Order' in image? Image says 'Order' -->
-           <a href="#">Cart</a>
+           <a href="/cart">Cart</a>
            <a href="/wishlist">Wish List</a>
            <% if (user) { %>
       <a href="/user/profile" class="profile-avatar">
@@ -33,12 +33,27 @@
         <div class="categories-left">
         <h1 class="categories-title" style="background-color: transparent;">Wishlist</h1>
         <div class="categories-line"></div>
+        <!-- search -->
         <div class="search-wrapper">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" id="searchInput" placeholder="Search products...">
-        <button type="button" id="clearSearch" class="clear-btn">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
+        <form action="/wishlist" method="GET">
+    
+            <button type="submit" style="background:none;border:none;cursor:pointer;">
+                <i class="fa-solid fa-magnifying-glass search-icon" style="padding-top: 25px;"></i>
+            </button>
+
+            <input type="text"
+                id="searchInput"
+                name="search"
+                placeholder="Search products..."
+                value="<%= searchInput || '' %>">
+
+            <button type="button"
+                    id="clearSearch"
+                    class="clear-btn"
+                    onclick="clearSearchInput()">
+                <i class="fa-solid fa-xmark" style="padding-top: 25px;"></i>
+            </button>
+        </form>
       </div>
       </div>
 
@@ -151,4 +166,39 @@
         function productDetails(slug){
         window.location.href=`/product/${slug}`
     }
+
+    function removeFromWishlist(productId,icon){
+        icon.classList.toggle('active-heart');
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/addWishlist',{
+                    method:'POST',
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+                    body:JSON.stringify({productId})
+                }).then(res => res.json())
+                .then(data =>{
+                    if(data.success){
+                        showSuccess(data.message);
+                        setTimeout(()=>{
+                            location.reload();
+                        },1000)
+                    }else{
+                        showError(data.message)
+                    }
+                })
+            }
+            });
+            
+    }
+
     </script>

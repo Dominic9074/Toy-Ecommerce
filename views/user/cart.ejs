@@ -9,12 +9,16 @@
     <div class="logo">Wheelz</div>
 
     <div class="user-actions">
-        <a href="#">Order</a>
+        <a href="/orders">Order</a>
         <a href="/cart" class="active">Cart</a>
-        <a href="#">Wish List</a>
-        <span class="username-placeholder">
-            <%= user ? user.username : "Username" %>
-        </span>
+        <a href="/wishlist">Wish List</a>
+        <% if (user) { %>
+      <a href="/user/profile" class="profile-avatar">
+            <%= user.username.charAt(0).toUpperCase() %>
+        </a>
+        <% } else { %>
+        <a href="/signin" class="sign-in-btn">Sign In</a>
+        <% } %>
     </div>
 </header>
 
@@ -29,74 +33,167 @@
     <!-- LEFT SIDE ITEMS -->
     <div class="cart-items">
 
-        <!-- Cart Item -->
-        <div class="cart-item">
-            <div class="item-left">
-                <input type="checkbox" checked>
-                <img src="https://placehold.co/150x150" alt="Product">
-            </div>
+        <% if (cartProducts && cartProducts.length > 0) { %>
 
-            <div class="item-middle">
-                <h3>Ant Esports GM320 RGB Optical Wired Gaming Mouse</h3>
-                <p class="stock">In stock</p>
+            <% cartProducts.forEach(item => { 
+                const product = item.product;
+                const offer = product.offer || 0;
+                const originalPrice = product.price;
+                const discountedPrice = offer > 0
+                    ? Math.round(originalPrice - (originalPrice * offer / 100))
+                    : originalPrice;
+            %>
 
-                <div class="item-meta">
-                    <span>Style: Black</span>
+            <div class="cart-item">
+                <div class="item-left">
+                    <input type="checkbox"
+                        class="item-checkbox"
+                        checked
+                        data-price="<%= discountedPrice %>"
+                        data-quantity="<%= item.quantity %>"
+                        onchange="updateSubtotal()">
+                    <img src="<%= product.images?.[0]?.url || '' %>" alt="<%= product.name %>">
                 </div>
 
-                <div class="item-actions">
-                    <div class="quantity-box">
-                        <button>-</button>
-                        <span>1</span>
-                        <button>+</button>
+                <div class="item-middle">
+                    <h3><%= product.name %></h3>
+
+                    <% if (product.stock > 0) { %>
+                        <p class="stock">In stock</p>
+                    <% } else { %>
+                        <p class="stock" style="color:red;">Out of stock</p>
+                    <% } %>
+
+                    
+
+                    <div class="item-actions">
+                        <div class="quantity-box">
+                            <button onclick="updateQuantity('<%= item.product._id %>', -1)">-</button>
+                            <span id="qty-<%= item.product._id %>"><%= item.quantity %></span>
+                            <button onclick="updateQuantity('<%= item.product._id %>', 1)">+</button>
+                        </div>
+
+                        <button onclick="deleteCart('<%= item.product._id %>')" class="cartDelete-btn">Delete</button>
                     </div>
+                </div>
 
-                    <a href="#">Delete</a>
-                    <a href="#">Save for later</a>
+                <div class="item-right">
+                    <div class="price">₹<%= discountedPrice %></div>
+
+                    <% if (offer > 0) { %>
+                        <div class="mrp">₹<%= originalPrice %></div>
+                        <div class="discount">-<%= offer %>%</div>
+                    <% } %>
                 </div>
             </div>
 
-            <div class="item-right">
-                <div class="price">₹529</div>
-                <div class="mrp">₹2,799</div>
-                <div class="discount">-81%</div>
-            </div>
-        </div>
+            <% }) %>
 
-        <!-- Duplicate item for demo -->
-        <div class="cart-item">
-            <div class="item-left">
-                <input type="checkbox" checked>
-                <img src="https://placehold.co/150x150" alt="Product">
-            </div>
+        <% } else { %>
 
-            <div class="item-middle">
-                <h3>Zebronics Transformer Gaming Mouse</h3>
-                <p class="stock">In stock</p>
+            <p style="text-align:center;">Your cart is empty</p>
 
-                <div class="item-actions">
-                    <div class="quantity-box">
-                        <button>-</button>
-                        <span>1</span>
-                        <button>+</button>
-                    </div>
-
-                    <a href="#">Delete</a>
-                </div>
-            </div>
-
-            <div class="item-right">
-                <div class="price">₹299</div>
-            </div>
-        </div>
+        <% } %>
 
     </div>
 
     <!-- RIGHT SIDE SUMMARY -->
+        <%
+        let subtotal = 0;
+        let totalItems = 0;
+
+        if (cartProducts && cartProducts.length > 0) {
+            cartProducts.forEach(item => {
+                const product = item.product;
+                const offer = product.offer || 0;
+
+                const discountedPrice = offer > 0
+                    ? Math.round(product.price - (product.price * offer / 100))
+                    : product.price;
+
+                subtotal += discountedPrice * item.quantity;
+                totalItems += item.quantity;
+            });
+        }
+    %>
+
     <div class="cart-summary">
-        <h3>Subtotal (2 items)</h3>
-        <div class="subtotal-price">₹828</div>
+        <h3 id="subtotalCount" >Subtotal (<%= totalItems %> items)</h3>
+        <div id="subtotalPrice" class="subtotal-price">₹<%= subtotal %></div>
         <button class="checkout-btn">Proceed to Checkout</button>
     </div>
 
 </div>
+
+<script>
+    
+    function updateQuantity(productId,change){
+        fetch('/updateProductQuantity',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId,change})
+        }).then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+               showError(data.message)
+            }
+        });
+    }
+
+    function updateSubtotal() {
+
+    let subtotal = 0;
+    let totalItems = 0;
+
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+
+    checkboxes.forEach(cb => {
+        if (cb.checked) {
+            const price = parseFloat(cb.dataset.price);
+            const quantity = parseInt(cb.dataset.quantity);
+
+            subtotal += price * quantity;
+            totalItems += quantity;
+        }
+    });
+
+    document.getElementById('subtotalPrice').innerText = "₹" + subtotal;
+    document.getElementById('subtotalCount').innerText ="Subtotal (" + totalItems + " items)";
+}
+
+    function deleteCart(productId){
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/removeCart',{
+            method:"DELETE",
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId})
+        }).then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess(data.message)
+                setTimeout(()=>{location.reload()},1000)
+            } else {
+               showError(data.message)
+            }
+        });
+            }
+            });
+        
+    }
+    
+</script>

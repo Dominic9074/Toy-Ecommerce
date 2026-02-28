@@ -3482,3 +3482,59 @@ footer {
 .active-heart {
   color: red;
 }
+.cartDelete-btn{
+    font-weight: 800;
+    background-color: #A2001D;
+    border: none;
+    border-radius: 20px;
+    color: white !important;
+    padding: 7px;
+    cursor: pointer;
+}
+.pagination-wrapper {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+/* THIS is the important part */
+.pagination {
+    display: flex;              /* makes items horizontal */
+    gap: 8px;                   /* spacing between buttons */
+    align-items: center;
+}
+
+/* Make sure links don't behave like block */
+.page-link {
+    min-width: 25px;
+    height: 38px;
+    padding: 0 12px;
+
+    display: flex;              /* keep content centered */
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+
+    color: #444;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+
+    transition: all 0.2s ease;
+}
+
+/* Active */
+.page-link.active {
+    background-color: #1c2e4a;
+    color: #fff;
+    border-color: #1c2e4a;
+}
+
+/* Hover */
+.page-link:hover:not(.active) {
+    background-color: #f3f3f3;
+    border-color: #bbb;
+}

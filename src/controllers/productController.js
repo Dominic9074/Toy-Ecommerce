@@ -1,12 +1,14 @@
 import userProductServices from '../services/userProductServices.js'
 import Wishlist from '../models/wishListSchema.js';
+import userController from './userController.js';
 
 //shop
 const loadShop=async (req,res)=>{
    try {
     const categories = await userProductServices.getAllCategory();
-    const {products,wishlistProductIds} = await userProductServices.getFilterProducts(req.query,req.session.user?.userId);
-    console.log(req.query.search)
+    const searchInput=req.query.search||"";
+    const page=parseInt(req.query.page) || 1;
+    const {products,wishlistProductIds} = await userProductServices.getFilterProducts(req.query,req.session.user?.userId,page);
 
     // If request is AJAX
     if (req.headers.accept && req.headers.accept.includes('application/json')) {
@@ -15,7 +17,9 @@ const loadShop=async (req,res)=>{
         categories,
         selectedCategory: req.query.category || "all",
         products,
-        wishlistProductIds
+        wishlistProductIds,
+        searchInput,
+        page
       });
     }
 
@@ -27,7 +31,9 @@ const loadShop=async (req,res)=>{
       categories,
       selectedCategory: req.query.category || "all",
       products,
-      wishlistProductIds
+      wishlistProductIds,
+      searchInput,
+      page
     });
 
   } catch (error) {
@@ -49,16 +55,19 @@ try{
 }
 }
 //cart
-const loadCartPage=(req,res)=>{
-    res.render('user/cart',{title:'Cart',bodyClass:"",cssFile:'style.css'})
+const loadCartPage=async (req,res)=>{
+    const userId=req.session.user?.userId;
+    const cartProducts=await userProductServices.getCartProducts(userId)
+
+    res.render('user/cart',{title:'Cart',bodyClass:"",cssFile:'style.css',cartProducts})
 }
 //wishlist
 const loadWishlist=async (req,res)=>{
+    const searchInput=req.query.search||'';
+    console.log(searchInput)
+    const products=await userProductServices.findWishlistProduct(req.session.user?.userId,searchInput);
 
-    const products=await userProductServices.findWishlistProduct(req.session.user?.userId);
-    console.log(products)
-
-    res.render('user/wishlist',{title:'WishList',bodyClass:"",cssFile:'style.css',products})
+    res.render('user/wishlist',{title:'WishList',bodyClass:"",cssFile:'style.css',products,searchInput})
 }
 
 const addWishlist=async (req,res)=>{
@@ -111,7 +120,45 @@ const addWishlist=async (req,res)=>{
     }
 }
 
-export default {loadShop,loadProductDetails,loadCartPage,loadWishlist,addWishlist
+const addToCart=async (req,res)=>{
+   try{
+        const {productId}=req.body
+        const userId=req.session.user?.userId;
+
+        if(!userId){
+            return res.json({success:false,message:'User Not Found'})
+        }
+
+        const cart=await userProductServices.addToCart(productId,userId);
+
+        return res.json(cart)
+
+   }catch(error){
+    console.log(error)
+   }
+
+}
+
+const UpdateQuantityCount=async (req,res)=>{
+    const {productId,change}=req.body;
+    const userId=req.session.user?.userId;
+    if(!userId){
+        return res.json({success:false,message:'SignIn Required'})
+    }
+    const obj=await userProductServices.updateQuantityCount(userId,productId,change);
+
+    return res.json(obj)
+}
+
+const removeCart=async (req,res)=>{
+    const {productId}=req.body;
+    const userId=req.session.user?.userId;
+
+    const obj =await userProductServices.removeCart(productId,userId);
+    return res.json(obj)
+}
+
+export default {loadShop,loadProductDetails,loadCartPage,loadWishlist,addWishlist,addToCart,UpdateQuantityCount,removeCart
     
 
 }

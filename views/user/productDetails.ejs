@@ -13,9 +13,9 @@
       <div class="logo">Wheelz</div>
 
       <div class="user-actions">
-        <a href="#">Order</a>
-        <a href="#">Cart</a>
-        <a href="#">Wish List</a>
+        <a href="/orders">Order</a>
+        <a href="/cart">Cart</a>
+        <a href="/wishlist">Wish List</a>
         <% if (user) { %>
         <a href="/user/profile" class="profile-avatar">
           <%= user.username.charAt(0).toUpperCase() %>
@@ -113,7 +113,7 @@
 
         <div class="pd-actions">
             <button class="pd-btn btn-order">Order Now</button>
-            <button class="pd-btn btn-cart">Add To Cart</button>
+            <button class="pd-btn btn-cart" onclick="addToCart('<%= product._id %>')" >Add To Cart</button>
         </div>
     </div>
       </div>
@@ -409,5 +409,22 @@ if (window.innerWidth <= 768) {
         mainImage.style.transform = "scale(1)";
         mainImage.style.transformOrigin = "center center";
     });
+
+    function addToCart(productId){
+        fetch('/cart',{
+            method:'post',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                showSuccess(data.message)
+            }else{
+                showError(data.message)
+            }
+        })
+    }
 
     </script>

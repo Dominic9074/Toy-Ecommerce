@@ -14,9 +14,9 @@
         </div>
 
         <div class="user-actions">
-           <a href="#">Order</a> <!-- Matches 'Order' in image? Image says 'Order' -->
-           <a href="#">Cart</a>
-           <a href="#">Wish List</a>
+           <a href="/orders">Order</a> <!-- Matches 'Order' in image? Image says 'Order' -->
+           <a href="/cart">Cart</a>
+           <a href="/wishlist">Wish List</a>
            <% if (user) { %>
       <a href="/user/profile" class="profile-avatar">
         <%= user.username.charAt(0).toUpperCase() %>
@@ -39,7 +39,7 @@
         <button type="submit" class="search-icon">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-        <input type="text" id="searchInput" name="search" placeholder="Search products...">
+        <input type="text" id="searchInput" value="<%= searchInput||'' %>" name="search" placeholder="Search products...">
         </form>
         <button type="button" id="clearSearch" class="clear-btn">
         <i class="fa-solid fa-xmark"></i>
@@ -174,6 +174,20 @@
 
             </div>
     </div>
+    <div class="pagination-wrapper">
+             <div class="pagination">
+                <a href="?page=<%= page - 1 %>&search=<%= searchInput || '' %>" 
+                        class="page-link">&lt;</a>
+                <a href="?page=1&search=<%= searchInput || '' %>" 
+                        class="page-link <%= page === 1 ? 'active' : '' %>">1</a>
+                <a href="?page=2&search=<%= searchInput || '' %>" 
+                        class="page-link <%= page === 2 ? 'active' : '' %>">2</a>
+                <a href="?page=3&search=<%= searchInput || '' %>" 
+                        class="page-link <%= page === 3 ? 'active' : '' %>">3</a>
+                <a href="?page=<%= page + 1 %>&search=<%= searchInput || '' %>" 
+                        class="page-link">&gt;</a>
+             </div>
+          </div>
 
     <script>
         const hamburger = document.getElementById("hamburger");

@@ -45,11 +45,14 @@ router.get('/shop',productController.loadShop)
 router.get('/product/:slug',productController.loadProductDetails)
 
 //cartpage
-router.get('/cart',productController.loadCartPage)
+router.get('/cart', userMiddleware.isLoggedIn,productController.loadCartPage)
+router.post('/cart', userMiddleware.isLoggedIn,productController.addToCart);
+router.post('/updateProductQuantity', userMiddleware.isLoggedIn,productController.UpdateQuantityCount)
+router.delete('/removeCart', userMiddleware.isLoggedIn,productController.removeCart)
 
 //wishlist
-router.get('/wishlist',productController.loadWishlist)
-router.post('/addWishlist',productController.addWishlist)
+router.get('/wishlist', userMiddleware.isLoggedIn,productController.loadWishlist)
+router.post('/addWishlist', userMiddleware.isLoggedIn,productController.addWishlist)
 
 
 
