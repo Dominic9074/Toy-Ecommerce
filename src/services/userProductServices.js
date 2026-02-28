@@ -11,7 +11,7 @@ const getAllCategory=async ()=>{
 
 const getFilterProducts=async (filter,userId,page)=>{
     const query={isActive:true};
-    const sort={createdAt:-1};
+    const sort={};
     let wishlistProductIds=[];
     const skipper=page-1;
     const limit=10;
@@ -156,6 +156,9 @@ const updateQuantityCount = async (userId,productId,change) => {
 
     if (newQty < 1) {
         return { success: false, message: "Minimum quantity is 1" }
+    }
+    if(newQty >5){
+        return { success: false, message: "Quantity limit reached" }
     }
 
     if (newQty > product.stock) {
