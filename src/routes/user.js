@@ -42,14 +42,21 @@ router.get("/logout", userMiddleware.isLoggedIn, userController.logoutUser);
 router.get('/shop',productController.loadShop)
 
 //productDetails
-router.get('/product',productController.loadProductDetails)
+router.get('/product/:slug',productController.loadProductDetails)
 
 //cartpage
-router.get('/cart',productController.loadCartPage)
+router.get('/cart', userMiddleware.isLoggedIn,productController.loadCartPage)
+router.post('/cart',productController.addToCart);
+router.post('/updateProductQuantity', userMiddleware.isLoggedIn,productController.UpdateQuantityCount)
+router.delete('/removeCart', userMiddleware.isLoggedIn,productController.removeCart)
 
 //wishlist
-router.get('/wishlist',productController.loadWishlist)
+router.get('/wishlist', userMiddleware.isLoggedIn,productController.loadWishlist)
+router.post('/addWishlist',productController.addWishlist)
 
+//checkOut page
+router.get('/checkout',productController.loadCheckout)
+router.post('/addOrder',productController.addOrder)
 
 
 // 🔐 Google Auth

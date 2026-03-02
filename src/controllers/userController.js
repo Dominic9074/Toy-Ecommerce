@@ -159,7 +159,7 @@ const signIn=async (req,res,next)=>{
 const loadHome=async (req,res)=>{
     try {
     const categories = await productServices.getAllActiveCategories(); // Get only active ones
-    res.render('user/home', {title:'Home',bodyClass:'',cssFile: "style.css",categories,user: req.user || null});
+    res.render('user/home', {title:'Home',bodyClass:'',cssFile: "style.css",categories,user: req.session.user || null});
   } catch (error) {
     console.log(error)
     res.render('user/home', {title:'Home',bodyClass:'',cssFile: "style.css",categories: [] });

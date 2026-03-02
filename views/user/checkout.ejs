@@ -1,0 +1,212 @@
+<!-- HEADER -->
+<header class="cart-header">
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/shop">Shop</a></li>
+    </ul>
+
+    <div class="logo">Wheelz</div>
+
+    <div class="user-actions">
+        <a href="/orders">Order</a>
+        <a href="/cart">Cart</a>
+        <a href="/wishlist">Wish List</a>
+        <% if (locals.user) { %>
+      <a href="/user/profile" class="profile-avatar">
+            <%= (user.username || 'U').charAt(0).toUpperCase() %>
+        </a>
+        <% } else { %>
+        <h3 class="profile-avatar"><i class="fa fa-user"></i></h3>
+        <% } %>
+    </div>
+</header>
+
+<!-- CHECKOUT CONTAINER -->
+<div class="checkout-wrapper">
+    
+    <!-- LEFT PANE: Billing & Payment -->
+    <div class="checkout-left-pane">
+        
+        <!-- Billing Details -->
+        <div class="checkout-block">
+            <h3 class="checkout-section-title">Billing Details</h3>
+            
+            <div class="address-container">
+                <% if (addresses.length === 0) { %>
+                    <p>No addresses found. Please add one.</p>
+                <% } %>
+
+                <% addresses.forEach(address => { %>
+                    <label class="address-card <%= address.isDefault ? 'selected' : '' %>">
+                        
+                        <input 
+                            type="radio" 
+                            name="selectedAddress" 
+                            value="<%= address._id %>" 
+                            class="custom-radio"
+                            <%= address.isDefault ? "checked" : "" %>
+                        >
+                        
+
+                        <div class="address-info">
+                            <h4><%= address?.fullname %></h4>
+                            <p> 
+                                <%= address?.street %>, 
+                                <%= address?.city %>, 
+                                <%= address?.state %> - 
+                                <%= address?.pincode %>
+                            </p>
+                            <p><%= address?.phone %></p>
+                        </div>
+                        <a href="/editAddress/<%= address._id %>">
+                            <button class="btn-icon-edit">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                          </button>
+                        </a>
+
+                    </label>
+                <% }) %>
+                </div>
+
+            <!-- Add/Edit Address Buttons -->
+            <div class="address-actions-row">
+                <a href="/addaddress" class="btn-outline">+ Add New Address</a>
+            </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="checkout-block">
+            <h3 class="checkout-section-title">Payment Method</h3>
+            
+            <div class="payment-methods-list">
+                <label class="payment-method-card selected">
+                    <input type="radio" name="payment" value="razorpay" checked class="custom-radio">
+                    <div class="payment-label">
+                        <span class="pay-icon razorpay-icon">⚡</span> Razorpay
+                    </div>
+                </label>
+
+                <label class="payment-method-card">
+                    <input type="radio" name="payment" value="cod" class="custom-radio">
+                    <div class="payment-label">
+                        <span class="pay-icon cod-icon">💵</span> Cash on Delivery
+                    </div>
+                </label>
+
+                <label class="payment-method-card">
+                    <input type="radio" name="payment" value="wallet" class="custom-radio">
+                    <div class="payment-label">
+                        <span class="pay-icon wallet-icon">⚪</span> WALLET PAY
+                    </div>
+                </label>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RIGHT PANE: Promo & Summary -->
+    <div class="checkout-right-pane">
+        
+        <!-- PROMO CODE -->
+        <div class="promo-section">
+            <h4 class="promo-label">PROMO CODE</h4>
+            <div class="promo-input-group">
+                <input type="text" placeholder="" class="promo-input">
+                <button class="promo-apply-btn">APPLY</button>
+            </div>
+        </div>
+
+        <!-- ORDER SUMMARY -->
+        <div class="order-summary-box">
+            <h3 class="summary-title">Order Summary</h3>
+            <hr class="summary-line-divider">
+            
+            Products Preview List
+            <div class="checkout-products-preview">
+                <% 
+                let subtotal = 0;
+                let shipping = 50;
+                let coupon = 400;
+
+                if (typeof cartProducts !== 'undefined' && cartProducts.length > 0) {
+                    cartProducts.forEach(item => {
+                        const product = item.product;
+                        const offer = product.offer || 0;
+                        const discountedPrice = offer > 0
+                            ? Math.round(product.price - (product.price * offer / 100))
+                            : product.price;
+                        subtotal += discountedPrice * item.quantity;
+                %>
+                <div class="preview-item">
+                    <div class="preview-img-box">
+                        <img src="<%= product.images?.[0]?.url || '' %>" alt="<%= product.name %>">
+                    </div>
+                    <div class="preview-details">
+                        <h5><%= product.name %></h5>
+                        <div class="preview-qty">Qty: <%= item.quantity %></div>
+                    </div>
+                    <div class="preview-price">₹<%= discountedPrice * item.quantity %></div>
+                </div>
+                <% 
+                    });
+                } else {
+                    subtotal = 16999;
+                %>
+                <!-- Mock product card to match the requested design feature -->
+                <div class="preview-item">
+                    <div class="preview-img-box empty-box"></div>
+                    <div class="preview-details">
+                        <h5>RC Toy Car</h5>
+                        <div class="preview-qty">Qty: 1</div>
+                    </div>
+                    <div class="preview-price">₹8,499</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-img-box empty-box"></div>
+                    <div class="preview-details">
+                        <h5>Hoverboard</h5>
+                        <div class="preview-qty">Qty: 1</div>
+                    </div>
+                    <div class="preview-price">₹8,500</div>
+                </div>
+                <% } %>
+            </div>
+
+            <hr class="summary-line-divider">
+
+            <div class="summary-totals">
+                <div class="summary-row">
+                    <span class="tot-label">Subtotal</span>
+                    <span class="tot-value">₹<%= subtotal.toLocaleString('en-IN') %></span>
+                </div>
+                <div class="summary-row">
+                    <span class="tot-label">Shipping</span>
+                    <span class="tot-value">₹<%= shipping.toLocaleString('en-IN') %></span>
+                </div>
+                <div class="summary-row">
+                    <span class="tot-label">Coupen</span>
+                    <span class="tot-value">₹<%= coupon.toLocaleString('en-IN') %></span>
+                </div>
+                <div class="summary-row grand-total">
+                    <span class="tot-label">Total</span>
+                    <span class="tot-value"><%= (subtotal + shipping - coupon).toLocaleString('en-IN') %></span>
+                </div>
+            </div>
+
+            <button class="proceed-pay-btn">PROCEED TO PAY</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    const cards = document.querySelectorAll(".address-card");
+
+    cards.forEach(card => {
+        card.addEventListener("click", () => {
+            cards.forEach(c => c.classList.remove("selected"));
+            card.classList.add("selected");
+        });
+    });
+</script>

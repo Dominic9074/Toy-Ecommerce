@@ -14,9 +14,9 @@
         </div>
 
         <div class="user-actions">
-           <a href="#">Order</a> <!-- Matches 'Order' in image? Image says 'Order' -->
-           <a href="#">Cart</a>
-           <a href="#">Wish List</a>
+           <a href="/orders">Order</a> <!-- Matches 'Order' in image? Image says 'Order' -->
+           <a href="/cart">Cart</a>
+           <a href="/wishlist">Wish List</a>
            <% if (user) { %>
       <a href="/user/profile" class="profile-avatar">
         <%= user.username.charAt(0).toUpperCase() %>
@@ -33,11 +33,16 @@
         <div class="categories-left">
         <h1 class="categories-title">Categories</h1>
         <div class="categories-line"></div>
+        <!-- search -->
         <div class="search-wrapper">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" id="searchInput" placeholder="Search products...">
+        <form action="/shop" method="GET">
+        <button type="submit" class="search-icon">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <input type="text" id="searchInput" value="<%= searchInput||'' %>" name="search" placeholder="Search products...">
+        </form>
         <button type="button" id="clearSearch" class="clear-btn">
-            <i class="fa-solid fa-xmark"></i>
+        <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       </div>
@@ -46,145 +51,179 @@
 
         <div class="shop-content-wrapper">
             <!-- Left Side: Category Pills -->
-            <div class="category-pills">
-                <button class="cat-pill active">All</button>
-                <button class="cat-pill">HotWheels</button>
-                <button class="cat-pill">Rc Cars</button>
-                <button class="cat-pill">Lego</button>
-            </div>
+            <div class="category-wrapper">
+                
+                <div class="category-pills">
+                    
+                    <!-- All Button -->
+                    <button data-category="all" class="cat-pill <%= !selectedCategory || selectedCategory === 'all' ? 'active' : '' %>">
+                    All
+                    </button>
+
+                    <!-- Dynamic Categories -->
+                    <% categories.forEach(cat => { %>
+                    <button data-category="<%= cat._id %>" class="cat-pill <%= selectedCategory == cat._id.toString() ? 'active' : '' %>">
+                        <%= cat.name %>
+                    </button>
+                    <% }) %>
+
+                </div>
+
+                </div>
 
             <!-- Right Side: Filter -->
             <div class="filter-box">
-                <h3>FILTER</h3>
+                <div style="display: flex;" >
+                    <h3>FILTER</h3>
+                <button style="margin-left: 50%;width: fit-content; height: fit-content;color: white;
+                background-color: #A2001D; border: none; font-size: 18px;
+                font-weight: 500;padding: 5px;cursor: pointer;" onclick="filterProducts()">Apply All</button>
+                <button style="margin-left: 20px;width: fit-content; height: fit-content;color: white;
+                background-color: #1c2e4a; border: none; font-size: 18px;
+                font-weight: 500;padding: 5px;cursor: pointer;" onclick="window.location.href='/shop'">Clear</button>
+                </div>
                 <div class="filter-options">
                     <span class="filter-label">PRICE:</span>
-                    <button class="filter-btn active">ALL</button>
-                    <button class="filter-btn">LOW TO HIGH</button>
-                    <button class="filter-btn">HIGH TO LOW</button>
+                    <button data-price="all" class="filter-btn active">ALL</button>
+                    <button data-price="asc" class="filter-btn">LOW TO HIGH</button>
+                    <button data-price="dec" class="filter-btn">HIGH TO LOW</button>
                     <span class="filter-label">NAME:</span>
-                    <button class="filter-btn">A - Z</button>
-                    <button class="filter-btn">Z - A</button>
+                    <button data-name="asc" class="filter-btn">A - Z</button>
+                    <button data-name="dec" class="filter-btn">Z - A</button>
                 </div>
             </div>
         </div>
 
         <!-- Product Grid -->
         <div class="user-product-grid">
-            
-            <!-- Product 1 -->
-            <div class="user-product-card">
-                <div class="upc-heart">
-                    <i class="fa-solid fa-heart"></i>
-                </div>
-                <div class="upc-image">
-                    <!-- Placeholder as requested -->
-                    <img src="/images/hotwheel category image.jpg" alt="HotWheels"> 
-                </div>
-                <div class="upc-details">
+
+            <% if (products && products.length > 0) { %>
+
+                <% products.forEach(product => { %>
+
+                <div class="user-product-card">
+                    <div class="upc-heart">
+                    <i class="fa-solid fa-heart <%= wishlistProductIds.includes(product._id.toString()) ? 'active-heart':'' %>"
+                         onclick="addToWishlist('<%= product._id %>',this)"></i>
+                    <span class="discount-badge">
+                        <%= product.offer %>% OFF
+                    </span>
+                    </div>
+
+                    <div class="upc-image">
+                    <img src="<%= product?.images[0].url %>" 
+                        alt="<%= product?.name %>">
+                    </div>
+
+                    <div class="upc-details">
                     <div class="upc-header">
-                        <span class="upc-title">HotWheels</span>
-                        <span class="upc-discount">23%OFF</span>
-                    </div>
-                    <p class="upc-desc">Toy Car, Fast & Furious Nissan Silvia S15 Custom 1:64 Scale Vehicle With Elevated Deco Execution</p>
-                    <div class="upc-footer">
-                        <span class="upc-price">₹609</span>
-                        <button class="upc-order-btn">Order Now</button>
-                    </div>
-                </div>
-            </div>
+                        <span class="upc-title"><%= product?.category?.name %></span>
 
-            <!-- Product 2 -->
-            <div class="user-product-card">
-                <div class="upc-heart">
-                    <i class="fa-solid fa-heart"></i>
-                </div>
-                <div class="upc-image">
-                    <img src="/images/RC PRO2.jpg" alt="Remote Control">
-                </div>
-                <div class="upc-details">
-                     <div class="upc-header">
-                        <span class="upc-title">Remote Control</span>
-                        <span class="upc-discount">13%OFF</span>
+                        <% if (product.offerPercentage && product.offerPercentage > 0) { %>
+                        <span class="upc-discount">
+                            <%= product.offerPercentage %>%OFF
+                        </span>
+                        <% } %>
                     </div>
-                    <p class="upc-desc">Traxxas X-Maxx 4WD Brushless Electric Monster RTR Truck, Blue</p>
-                    <div class="upc-footer">
-                        <span class="upc-price">₹8,099</span>
-                        <button class="upc-order-btn">Order Now</button>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Product 3 -->
-            <div class="user-product-card">
-                <div class="upc-heart">
-                    <i class="fa-solid fa-heart"></i>
-                </div>
-                <div class="upc-image">
-                    <img src="/images/Hotwheel product.jpg" alt="HotWheels">
-                </div>
-                <div class="upc-details">
-                     <div class="upc-header">
-                        <span class="upc-title">HotWheels</span>
-                        <span class="upc-discount">32%OFF</span>
-                    </div>
-                    <p class="upc-desc">Hot Wheels 1:64 Scale Audi 90 Quattro Peak Pursuit Ages 3 Years And Up 199/250 (Black)</p>
-                    <div class="upc-footer">
-                        <span class="upc-price">₹499</span>
-                        <button class="upc-order-btn">Order Now</button>
-                    </div>
-                </div>
-            </div>
+                    <p class="upc-desc"><%= product?.name %></p>
 
-             <!-- Product 4 -->
-             <div class="user-product-card">
-                <div class="upc-heart">
-                    <i class="fa-solid fa-heart"></i>
-                </div>
-                <div class="upc-image">
-                    <img src="/images/Bugatti LEGO.jpg" alt="LEGO">
-                </div>
-                <div class="upc-details">
-                     <div class="upc-header">
-                        <span class="upc-title">LEGO</span>
-                        <span class="upc-discount">32%OFF</span>
-                    </div>
-                    <p class="upc-desc">LEGO Technic Ford Bronco SUV Model Car Kit, STEM Building Set 42213 Toys For 9+ Gift For Boys And Girls</p>
                     <div class="upc-footer">
-                        <span class="upc-price">₹8,450</span>
-                        <button class="upc-order-btn">Order Now</button>
+
+                    <% 
+                        const originalPrice = product.price;
+                        const offer = product.offer || 0;
+                        const discountedPrice = Math.round(
+                        originalPrice - (originalPrice * offer / 100)
+                        );
+                    %>
+
+                    <% if (offer > 0) { %>
+                        
+                        <div class="price-wrapper">
+                        <span class="original-price">
+                            ₹<%= originalPrice %>
+                        </span>
+
+                        <span class="upc-price">
+                            ₹<%= discountedPrice %>
+                        </span>
+                        </div>
+
+                    <% } else { %>
+
+                        <span class="upc-price">
+                        ₹<%= originalPrice %>
+                        </span>
+
+                    <% } %>
+
+                    <button class="upc-order-btn" onclick="productDetails(`<%= product.slug %>`)" >Order Now</button>
+
+                    </div>
                     </div>
                 </div>
-            </div>
 
-             <!-- Product 5 -->
-               <div class="user-product-card">
-                 <div class="upc-heart">
-                    <i class="fa-solid fa-heart"></i>
-                 </div>
-                 <div class="upc-image">
-                    <img src="/images/Bugatti LEGO.jpg" alt="LEGO">
-                 </div>
-                 <div class="upc-details">
-                     <div class="upc-header">
-                        <span class="upc-title">LEGO</span>
-                        <span class="upc-discount">14%</span>
-                    </div>
-                    <p class="upc-desc">LEGO Speed Champions Bugatti Vision Gran Turismo Hyper Sports Car Model Kit And Building Set 77253</p>
-                    <div class="upc-footer">
-                        <span class="upc-price">₹3,299</span>
-                        <button class="upc-order-btn">Order Now</button>
-                    </div>
-                </div>
-            </div>
+                <% }) %>
 
-        </div>
+            <% } else { %>
+
+                <p style="grid-column: 1/-1; text-align:center;">No products found</p>
+
+            <% } %>
+
+            </div>
     </div>
+    <div class="pagination-wrapper">
+                    <% 
+                        const maxVisible = 4;
+
+                        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                        let endPage = startPage + maxVisible - 1;
+
+                        if (endPage > pageCount) {
+                            endPage = pageCount;
+                            startPage = Math.max(1, endPage - maxVisible + 1);
+                        }
+                    %>
+
+                    <div class="pagination">
+
+                        <% if (currentPage > 1) { %>
+                            <button type="button"
+                                class="page-link"
+                                onclick="goToPage(<%= currentPage - 1 %>)">
+                            &lt;
+                        </button>
+                        <% } %>
+
+                        <% for (let i = startPage; i <= endPage; i++) { %>
+                            <button type="button"
+                                class="page-link <%= currentPage === i ? 'active' : '' %>"
+                                onclick="goToPage(<%= i %>)">
+                            <%= i %>
+                        </button>
+                        <% } %>
+
+                        <% if (currentPage < pageCount) { %>
+                            <button type="button"
+                                    class="page-link"
+                                    onclick="goToPage(<%= currentPage + 1 %>)">
+                                &gt;
+                            </button>
+                        <% } %>
+
+                    </div>
+
+
+            </div>
+          </div>
 
     <script>
         const hamburger = document.getElementById("hamburger");
         const navLinks = document.querySelector(".nav-links");
         const userActions = document.querySelector(".user-actions");
-
+        
         hamburger.addEventListener("click", () => {
             navLinks.classList.toggle("active");
             userActions.classList.toggle("active");
@@ -199,6 +238,202 @@
         clearBtn.addEventListener("click", function () {
             searchInput.value = "";
             clearBtn.style.display = "none";
+            filter.search=''
             searchInput.focus();
         });
+        const categoryContainer = document.querySelector(".category-pills");
+
+        categoryContainer.addEventListener("wheel", (e) => {
+            e.preventDefault();
+            categoryContainer.scrollLeft += e.deltaY;
+        });
+        const filter={
+            search:"",
+            category:"",
+            price:'',
+            name:'',
+            page:1
+        }
+        // Sync filter.page with current page from server
+        filter.page = <%= currentPage %>;
+        function goToPage(pageNumber) {
+            filter.page = pageNumber;
+            filterProducts();
+        }
+        
+        document.querySelectorAll('.cat-pill').forEach(btn=>{
+            btn.addEventListener('click',function(){
+                filter.category=this.dataset.category;
+                document.querySelectorAll('.cat-pill').forEach(b => {
+                b.classList.remove('active');
+        });
+
+        // Add active to clicked
+        this.classList.add('active');
+            })
+        })
+        document.getElementById('searchInput').addEventListener('input',function(){
+            filter.search=this.value;
+            console.log(filter)
+        })
+        document.querySelectorAll('.filter-btn').forEach(btn=>{
+            btn.addEventListener('click',function(){
+                if(this.dataset.price){
+                    document.querySelectorAll('[data-price]').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    // Add active to clicked button
+                    this.classList.add('active');
+                    filter.price=this.dataset.price
+                }else{
+                    document.querySelectorAll('[data-name]').forEach(b => {
+                        b.classList.remove('active');
+                    });
+
+                    // Add active to clicked button
+                    this.classList.add('active');
+                    filter.name=this.dataset.name
+                }
+            })
+        })
+        function filterProducts(){
+            const queryParams = new URLSearchParams(filter).toString();
+            fetch(`/shop?${queryParams}`,{
+                method:'GET',
+                headers:{
+                    'Accept':'application/json'
+                }
+            }).then(res => res.json())
+                .then(data => {
+                if (data.success) {
+                    filter.page = data.currentPage;
+                    renderProducts(data.products,data.wishlistProductIds);
+                    renderPagination(data.pageCount)
+                }})
+        }
+
+        function renderProducts(products,wishlistProductIds=[]){
+            const grid = document.querySelector('.user-product-grid');
+
+            if(!products.length){
+                grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;">No products found</p>`;
+                return;
+            }
+
+            let html = '';
+
+            products.forEach(product => {
+
+                const offer = product.offer || 0;
+                const originalPrice = product.price;
+                const discountedPrice = offer > 0
+                    ? Math.round(originalPrice - (originalPrice * offer / 100))
+                    : originalPrice;
+
+                html += `
+                <div class="user-product-card">
+                    <div class="upc-heart">
+                        <i class="fa-solid fa-heart ${wishlistProductIds.includes(product._id.toString()) ? 'active-heart' : ''}"
+                             onclick="addToWishlist('${product._id}',this)">
+                        </i>
+                        ${offer > 0 ? `<span class="discount-badge">${offer}% OFF</span>` : ''}
+                    </div>
+
+                    <div class="upc-image">
+                        <img src="${product.images?.[0]?.url || ''}" alt="${product.name}">
+                    </div>
+
+                    <div class="upc-details">
+                        <div class="upc-header">
+                            <span class="upc-title">${product.category?.name || ''}</span>
+                        </div>
+
+                        <p class="upc-desc">${product.name}</p>
+
+                        <div class="upc-footer">
+                            ${
+                                offer > 0
+                                ? `<div class="price-wrapper">
+                                    <span class="original-price">₹${originalPrice}</span>
+                                    <span class="upc-price">₹${discountedPrice}</span>
+                                </div>`
+                                : `<span class="upc-price">₹${originalPrice}</span>`
+                            }
+                            <button class="upc-order-btn" onclick="productDetails('${product.slug}')">Order Now</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+}
+
+    function renderPagination(pageCount) {
+
+        const container = document.querySelector(".pagination");
+        container.innerHTML = "";
+
+        if (pageCount <= 1) return;
+
+        const maxVisible = 4;
+        const currentPage = filter.page;
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+        let endPage = startPage + maxVisible - 1;
+
+        if (endPage > pageCount) {
+            endPage = pageCount;
+            startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+
+        // Previous
+        if (currentPage > 1) {
+            container.innerHTML += `
+                <button class="page-link" onclick="goToPage(${currentPage - 1})">&lt;</button>
+            `;
+        }
+
+        // Pages
+        for (let i = startPage; i <= endPage; i++) {
+            container.innerHTML += `
+                <button class="page-link ${i === currentPage ? 'active' : ''}"
+                    onclick="goToPage(${i})">
+                    ${i}
+                </button>
+            `;
+        }
+
+        // Next
+        if (currentPage < pageCount) {
+            container.innerHTML += `
+                <button class="page-link" onclick="goToPage(${currentPage + 1})">&gt;</button>
+            `;
+        }
+    }
+
+    function productDetails(slug){
+        window.location.href=`/product/${slug}`
+    }
+    function addToWishlist(productId,icon){
+        fetch('/addWishlist',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId})
+        }).then(res => res.json())
+        .then(data =>{
+            if(data.success){
+                showSuccess(data.message);
+                icon.classList.toggle('active-heart');
+            }else{
+                showError(data.message)
+            }
+        })
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderPagination(<%= pageCount %>);
+    });
     </script>

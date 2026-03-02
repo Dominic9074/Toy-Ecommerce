@@ -184,7 +184,7 @@ const createProduct=async (files,data)=>{
 
 const getFilterProducts=async (search,status,sort,page)=>{
     let filter={};
-    let sortOption={};
+    let sortOption={createdAt:-1};
     let skiper=page-1;
     let skip=10*skiper;
     const limit=10;
