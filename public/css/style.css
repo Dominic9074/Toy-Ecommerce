@@ -3482,6 +3482,10 @@ footer {
 .active-heart {
   color: red;
 }
+.page-link.active {
+    background-color: #A2001D;
+    color: white;
+}
 .cartDelete-btn{
     font-weight: 800;
     background-color: #A2001D;
@@ -3537,4 +3541,384 @@ footer {
 .page-link:hover:not(.active) {
     background-color: #f3f3f3;
     border-color: #bbb;
+}
+
+
+/* =========================================================
+   CHECKOUT PAGE STYLES
+   ========================================================= */
+
+.checkout-wrapper {
+    display: flex;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+/* Left Pane */
+.checkout-left-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.checkout-block {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 25px;
+    background: #fff;
+}
+
+.checkout-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 20px;
+}
+
+/* Address Cards */
+.address-container {
+    margin-bottom: 20px;
+}
+
+.address-card {
+    display: flex;
+    align-items: flex-start;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.address-card.selected {
+    border-color: #e0e0e0; /* Match design */
+    background-color: #fff;
+}
+
+.custom-radio {
+    margin-top: 4px;
+    margin-right: 15px;
+    accent-color: #2196F3;
+}
+
+.address-info h4 {
+    margin: 0 0 5px;
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+}
+
+.address-info p {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: #888;
+}
+
+.address-actions-row {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-outline {
+    flex: 1;
+    display: inline-block;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-outline:hover {
+    background: #f9f9f9;
+}
+
+.btn-edit {
+    color: #1c2e4a;
+}
+
+/* Payment Methods */
+.payment-methods-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.payment-method-card {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px 20px;
+    cursor: pointer;
+}
+
+.payment-label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+.pay-icon {
+    font-size: 18px;
+    margin-right: 10px;
+}
+.razorpay-icon { color: #3b5998; }
+.cod-icon { color: #4CAF50; }
+.wallet-icon { color: #888; }
+
+/* Right Pane */
+.checkout-right-pane {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Promo Section */
+.promo-section {
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    padding: 25px;
+}
+
+.promo-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #888;
+    margin: 0 0 15px;
+    text-transform: uppercase;
+}
+
+.promo-input-group {
+    display: flex;
+    height: 45px;
+}
+
+.promo-input {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 0 15px;
+    outline: none;
+    font-size: 14px;
+}
+
+.promo-apply-btn {
+    background: #100E34;
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    padding: 0 25px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.promo-apply-btn:hover {
+    background: #1a1a4a;
+}
+
+/* Order Summary */
+.order-summary-box {
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    padding: 25px;
+}
+
+.summary-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #100E34;
+    margin: 0 0 15px;
+}
+
+.summary-line-divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 15px 0;
+}
+
+/* Products Preview */
+.checkout-products-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.preview-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.preview-img-box {
+    width: 60px;
+    height: 60px;
+    background: #f9f9f9;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.preview-img-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.empty-box {
+    background: #eee;
+}
+
+.preview-details {
+    flex: 1;
+}
+
+.preview-details h5 {
+    margin: 0 0 5px;
+    font-size: 13px;
+    color: #333;
+    font-weight: 600;
+}
+
+.preview-qty {
+    font-size: 12px;
+    color: #888;
+}
+
+.preview-price {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+/* Totals */
+.summary-totals {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    color: #888;
+    font-weight: 500;
+}
+
+.summary-row.grand-total {
+    font-size: 18px;
+    font-weight: 600;
+    color: #555;
+    margin-top: 10px;
+}
+
+.proceed-pay-btn {
+    width: 100%;
+    background: #A2001D;
+    color: #fff;
+    border: none;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+.proceed-pay-btn:hover {
+    background: #850017;
+}
+
+@media screen and (max-width: 900px) {
+    .checkout-wrapper {
+        flex-direction: column;
+    }
+    
+    .checkout-right-pane {
+        width: 100%;
+    }
+}
+
+.address-container {
+    max-height: 300px;          /* height limit */
+    overflow-y: auto;           /* vertical scroll */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 5px;
+}
+
+/* Scrollbar styling (optional clean look) */
+.address-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.address-container::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+.address-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.address-card:hover {
+    border-color: #000;
+}
+
+.address-card.selected {
+    border: 2px solid black;
+    background-color: #f9f9f9;
+}
+
+.custom-radio {
+    margin-top: 6px;
+}
+
+.address-info h4 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.address-info p {
+    margin: 2px 0;
+    font-size: 14px;
+    color: #555;
+}
+.btn-icon-edit{
+    margin-left: 300px;
+    margin-top: 30px;
+    border: none;
+    background: none;
+    font-size: 15px;
+    color: gray;
+    cursor: pointer;
 }

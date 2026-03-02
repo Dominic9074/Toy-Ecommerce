@@ -7,8 +7,8 @@ const loadShop=async (req,res)=>{
    try {
     const categories = await userProductServices.getAllCategory();
     const searchInput=req.query.search||"";
-    const page=parseInt(req.query.page) || 1;
-    const {products,wishlistProductIds} = await userProductServices.getFilterProducts(req.query,req.session.user?.userId,page);
+    const {products,wishlistProductIds,pageCount,currentPage} = await userProductServices.getFilterProducts(req.query,req.session.user?.userId);
+    
 
     // If request is AJAX
     if (req.headers.accept && req.headers.accept.includes('application/json')) {
@@ -19,7 +19,8 @@ const loadShop=async (req,res)=>{
         products,
         wishlistProductIds,
         searchInput,
-        page
+        currentPage,
+        pageCount
       });
     }
 
@@ -33,7 +34,8 @@ const loadShop=async (req,res)=>{
       products,
       wishlistProductIds,
       searchInput,
-      page
+      currentPage,
+      pageCount
     });
 
   } catch (error) {
@@ -126,7 +128,7 @@ const addToCart=async (req,res)=>{
         const userId=req.session.user?.userId;
 
         if(!userId){
-            return res.json({success:false,message:'User Not Found'})
+            return res.json({success:false,message:'Sign In Required'})
         }
 
         const cart=await userProductServices.addToCart(productId,userId);
@@ -158,7 +160,35 @@ const removeCart=async (req,res)=>{
     return res.json(obj)
 }
 
-export default {loadShop,loadProductDetails,loadCartPage,loadWishlist,addWishlist,addToCart,UpdateQuantityCount,removeCart
-    
+const loadCheckout=async (req,res)=>{
+   try{
+     const user=await userProductServices.getUserInfo(req.session.user?.userId);
+
+    res.render('user/checkout',{title:'checkout',bodyClass:'',cssFile:'style.css',addresses:user.address})
+   }catch(error){
+    console.log(error);
+   }
+}
+
+const addOrder=async (req,res)=>{
+    const {productId}=req.body;
+
+    if(!productId)return res.json({success:false,message:'Product Not Found'});
+    if(!req.session.user?.userId) return res.json({success:false,message:'SignIn Required'})
+
+    req.session.cartProducts={
+        productId,
+        quantity:1
+    }
+
+    return res.json({
+        success:true,
+        message:'Session Added Successfully'
+    })
+
+}
+
+export default {loadShop,loadProductDetails,loadCartPage,loadWishlist,addWishlist,addToCart,UpdateQuantityCount,removeCart,
+    loadCheckout,addOrder
 
 }

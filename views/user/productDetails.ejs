@@ -112,7 +112,7 @@
         </div>
 
         <div class="pd-actions">
-            <button class="pd-btn btn-order">Order Now</button>
+            <button class="pd-btn btn-order" onclick="Checkout('<%= product._id %>')" >Order Now</button>
             <button class="pd-btn btn-cart" onclick="addToCart('<%= product._id %>')" >Add To Cart</button>
         </div>
     </div>
@@ -421,6 +421,24 @@ if (window.innerWidth <= 768) {
         .then(data=>{
             if(data.success){
                 showSuccess(data.message)
+            }else{
+                showError(data.message)
+            }
+        })
+    }
+
+    function Checkout(productId){
+        console.log('asd')
+        fetch('/addOrder',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                window.location.href='/checkout'
             }else{
                 showError(data.message)
             }

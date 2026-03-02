@@ -80,7 +80,7 @@
                 font-weight: 500;padding: 5px;cursor: pointer;" onclick="filterProducts()">Apply All</button>
                 <button style="margin-left: 20px;width: fit-content; height: fit-content;color: white;
                 background-color: #1c2e4a; border: none; font-size: 18px;
-                font-weight: 500;padding: 5px;cursor: pointer;" onclick="window.location.href='/shop'">Cancel</button>
+                font-weight: 500;padding: 5px;cursor: pointer;" onclick="window.location.href='/shop'">Clear</button>
                 </div>
                 <div class="filter-options">
                     <span class="filter-label">PRICE:</span>
@@ -175,18 +175,48 @@
             </div>
     </div>
     <div class="pagination-wrapper">
-             <div class="pagination">
-                <a href="?page=<%= page - 1 %>&search=<%= searchInput || '' %>" 
-                        class="page-link">&lt;</a>
-                <a href="?page=1&search=<%= searchInput || '' %>" 
-                        class="page-link <%= page === 1 ? 'active' : '' %>">1</a>
-                <a href="?page=2&search=<%= searchInput || '' %>" 
-                        class="page-link <%= page === 2 ? 'active' : '' %>">2</a>
-                <a href="?page=3&search=<%= searchInput || '' %>" 
-                        class="page-link <%= page === 3 ? 'active' : '' %>">3</a>
-                <a href="?page=<%= page + 1 %>&search=<%= searchInput || '' %>" 
-                        class="page-link">&gt;</a>
-             </div>
+                    <% 
+                        const maxVisible = 4;
+
+                        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                        let endPage = startPage + maxVisible - 1;
+
+                        if (endPage > pageCount) {
+                            endPage = pageCount;
+                            startPage = Math.max(1, endPage - maxVisible + 1);
+                        }
+                    %>
+
+                    <div class="pagination">
+
+                        <% if (currentPage > 1) { %>
+                            <button type="button"
+                                class="page-link"
+                                onclick="goToPage(<%= currentPage - 1 %>)">
+                            &lt;
+                        </button>
+                        <% } %>
+
+                        <% for (let i = startPage; i <= endPage; i++) { %>
+                            <button type="button"
+                                class="page-link <%= currentPage === i ? 'active' : '' %>"
+                                onclick="goToPage(<%= i %>)">
+                            <%= i %>
+                        </button>
+                        <% } %>
+
+                        <% if (currentPage < pageCount) { %>
+                            <button type="button"
+                                    class="page-link"
+                                    onclick="goToPage(<%= currentPage + 1 %>)">
+                                &gt;
+                            </button>
+                        <% } %>
+
+                    </div>
+
+
+            </div>
           </div>
 
     <script>
@@ -221,7 +251,14 @@
             search:"",
             category:"",
             price:'',
-            name:''
+            name:'',
+            page:1
+        }
+        // Sync filter.page with current page from server
+        filter.page = <%= currentPage %>;
+        function goToPage(pageNumber) {
+            filter.page = pageNumber;
+            filterProducts();
         }
         
         document.querySelectorAll('.cat-pill').forEach(btn=>{
@@ -269,7 +306,9 @@
             }).then(res => res.json())
                 .then(data => {
                 if (data.success) {
+                    filter.page = data.currentPage;
                     renderProducts(data.products,data.wishlistProductIds);
+                    renderPagination(data.pageCount)
                 }})
         }
 
@@ -294,7 +333,7 @@
                 html += `
                 <div class="user-product-card">
                     <div class="upc-heart">
-                        <i class="fa-solid fa-heart ${wishlistProductIds.includes(product._id) ? 'active-heart' : ''}"
+                        <i class="fa-solid fa-heart ${wishlistProductIds.includes(product._id.toString()) ? 'active-heart' : ''}"
                              onclick="addToWishlist('${product._id}',this)">
                         </i>
                         ${offer > 0 ? `<span class="discount-badge">${offer}% OFF</span>` : ''}
@@ -330,12 +369,53 @@
             grid.innerHTML = html;
 }
 
+    function renderPagination(pageCount) {
+
+        const container = document.querySelector(".pagination");
+        container.innerHTML = "";
+
+        if (pageCount <= 1) return;
+
+        const maxVisible = 4;
+        const currentPage = filter.page;
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+        let endPage = startPage + maxVisible - 1;
+
+        if (endPage > pageCount) {
+            endPage = pageCount;
+            startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+
+        // Previous
+        if (currentPage > 1) {
+            container.innerHTML += `
+                <button class="page-link" onclick="goToPage(${currentPage - 1})">&lt;</button>
+            `;
+        }
+
+        // Pages
+        for (let i = startPage; i <= endPage; i++) {
+            container.innerHTML += `
+                <button class="page-link ${i === currentPage ? 'active' : ''}"
+                    onclick="goToPage(${i})">
+                    ${i}
+                </button>
+            `;
+        }
+
+        // Next
+        if (currentPage < pageCount) {
+            container.innerHTML += `
+                <button class="page-link" onclick="goToPage(${currentPage + 1})">&gt;</button>
+            `;
+        }
+    }
+
     function productDetails(slug){
         window.location.href=`/product/${slug}`
     }
-
     function addToWishlist(productId,icon){
-        icon.classList.toggle('active-heart');
         fetch('/addWishlist',{
             method:'POST',
             headers:{
@@ -346,10 +426,14 @@
         .then(data =>{
             if(data.success){
                 showSuccess(data.message);
+                icon.classList.toggle('active-heart');
             }else{
                 showError(data.message)
             }
         })
     }
 
+    document.addEventListener("DOMContentLoaded", function() {
+        renderPagination(<%= pageCount %>);
+    });
     </script>

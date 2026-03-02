@@ -2,6 +2,7 @@ import Category from "../models/categorySchema.js";
 import Product from '../models/productSchema.js'
 import Wishlist from "../models/wishListSchema.js";
 import Cart from "../models/cartSchema.js";
+import User from "../models/userModal.js";
 
 
 const getAllCategory=async ()=>{
@@ -9,13 +10,13 @@ const getAllCategory=async ()=>{
     return categories;
 }
 
-const getFilterProducts=async (filter,userId,page)=>{
+const getFilterProducts=async (filter,userId)=>{
     const query={isActive:true};
     const sort={};
     let wishlistProductIds=[];
-    const skipper=page-1;
+    const page=parseInt(filter.page) || 1;
     const limit=10;
-    const skip=limit*skipper
+    const skip = (page - 1) * limit >= 0 ? (page - 1) * limit : 0;
     
    if(userId){
      const wishlist=await Wishlist.findOne({user:userId});
@@ -33,22 +34,26 @@ const getFilterProducts=async (filter,userId,page)=>{
         sort.price=-1
     }
     
-    if(filter.category!=='' && filter.category!=='all' && filter.category!==undefined){
-        query.category=filter.category
-    }
     if(filter.name==='asc'){
         sort.name=1
     }else if(filter.name==='dec'){
         sort.name=-1
     }
+    const activeCategoryIds = await Category.find({ status: "Active" }).distinct("_id");
+    if (filter.category && filter.category !== '' && filter.category !== 'all') {
+                query.category = filter.category;
+                console.log(filter.category)
+        } else {
+            // No specific category selected → show all active categories
+            query.category = { $in: activeCategoryIds };
+        }
 
+
+    const totalProducts = await Product.countDocuments(query);
+    const products=await Product.find(query).populate({ path: "category"}).sort(sort).skip(skip).limit(limit);
+    const pageCount = Math.ceil(totalProducts / limit);
     
-    const products=await Product.find(query).populate({ path: "category", match: { status: "Active"}}).sort(sort).skip(skip).limit(limit);
-     const filteredProducts = products.filter(
-        product => product.category !== null
-    );
-
-    return { products: filteredProducts, wishlistProductIds };
+    return { products, wishlistProductIds,pageCount,currentPage:page};
 }
 
 const findProductById=async(slug)=>{
@@ -185,7 +190,15 @@ const removeCart=async (productId,userId)=>{
     return {success:true,message:'Deleted Successfully'}
 }
 
+const getUserInfo=async (userId)=>{
+    const user=await User.findById(userId);
+    if(!user){
+        throw new Error('User Not Exist')
+    }
+    return user;
+}
+
 export default {getAllCategory,getFilterProducts,findProductById,findWishlistProduct,addToCart,getCartProducts,
-    updateQuantityCount,removeCart
+    updateQuantityCount,removeCart,getUserInfo
 }
 
