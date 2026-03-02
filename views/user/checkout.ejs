@@ -125,11 +125,11 @@
             <div class="checkout-products-preview">
                 <% 
                 let subtotal = 0;
-                let shipping = 50;
-                let coupon = 400;
+                let shipping = 0;
+                let coupon = 0;
 
-                if (typeof cartProducts !== 'undefined' && cartProducts.length > 0) {
-                    cartProducts.forEach(item => {
+                if (typeof products !== 'undefined' && products.length > 0) {
+                    products.forEach(item => {
                         const product = item.product;
                         const offer = product.offer || 0;
                         const discountedPrice = offer > 0
@@ -150,26 +150,7 @@
                 <% 
                     });
                 } else {
-                    subtotal = 16999;
-                %>
-                <!-- Mock product card to match the requested design feature -->
-                <div class="preview-item">
-                    <div class="preview-img-box empty-box"></div>
-                    <div class="preview-details">
-                        <h5>RC Toy Car</h5>
-                        <div class="preview-qty">Qty: 1</div>
-                    </div>
-                    <div class="preview-price">₹8,499</div>
-                </div>
-                <div class="preview-item">
-                    <div class="preview-img-box empty-box"></div>
-                    <div class="preview-details">
-                        <h5>Hoverboard</h5>
-                        <div class="preview-qty">Qty: 1</div>
-                    </div>
-                    <div class="preview-price">₹8,500</div>
-                </div>
-                <% } %>
+                    subtotal = 16999 %><% } %>
             </div>
 
             <hr class="summary-line-divider">

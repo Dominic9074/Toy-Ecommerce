@@ -48,10 +48,10 @@
                 <div class="item-left">
                     <input type="checkbox"
                         class="item-checkbox"
-                        checked
+                        data-id="<%= product._id %>"
                         data-price="<%= discountedPrice %>"
                         data-quantity="<%= item.quantity %>"
-                        onchange="updateSubtotal()">
+                        onchange="updateSubtotal(),addToCheckoutArray(this.dataset.id,this.dataset.quantity,this)">
                     <img src="<%= product.images?.[0]?.url || '' %>" alt="<%= product.name %>">
                 </div>
 
@@ -120,7 +120,7 @@
     <div class="cart-summary">
         <h3 id="subtotalCount" >Subtotal (<%= totalItems %> items)</h3>
         <div id="subtotalPrice" class="subtotal-price">₹<%= subtotal %></div>
-        <button class="checkout-btn">Proceed to Checkout</button>
+        <button class="checkout-btn" onclick="addToCart()">Proceed to Checkout</button>
     </div>
 
 </div>
@@ -194,6 +194,39 @@
             }
             });
         
+    }
+
+    const Checkout=[];
+
+    function addToCheckoutArray(productId,quantity,input){
+        if(input.checked){
+            Checkout.push({productId,quantity})
+        }else{
+            const index=Checkout.findIndex(obj=>{
+                return obj.productId === productId
+            });
+            if(index>-1){
+                Checkout.splice(index,1)
+            }
+        }
+        console.log(Checkout)
+    }
+
+    function addToCart(){
+        fetch('/addOrder',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({Checkout})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                window.location.href='/checkout'
+            }else{
+                showError(data.message)
+            }
+        })
     }
     
 </script>

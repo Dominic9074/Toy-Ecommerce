@@ -198,7 +198,27 @@ const getUserInfo=async (userId)=>{
     return user;
 }
 
+const getCheckoutProducts=async (temporaryCheckout)=>{
+    const products=[];
+    if(Array.isArray(temporaryCheckout)){
+        for(const obj of temporaryCheckout){
+            const product=await Product.findById(obj.productId);
+            if(!product){
+                throw new Error('Product Not Found');
+            }
+            products.push({
+                product,
+                quantity:obj.quantity
+            })
+        }
+    }else{
+        products.push({product:await Product.findById(temporaryCheckout.productId),quantity:temporaryCheckout.quantity})
+    }
+    console.log(products)
+    return products;
+}
+
 export default {getAllCategory,getFilterProducts,findProductById,findWishlistProduct,addToCart,getCartProducts,
-    updateQuantityCount,removeCart,getUserInfo
+    updateQuantityCount,removeCart,getUserInfo,getCheckoutProducts
 }
 

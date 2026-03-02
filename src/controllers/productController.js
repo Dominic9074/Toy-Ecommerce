@@ -163,24 +163,31 @@ const removeCart=async (req,res)=>{
 const loadCheckout=async (req,res)=>{
    try{
      const user=await userProductServices.getUserInfo(req.session.user?.userId);
+     const temporaryCheckout = req.session.cartProducts;
+     const products=await userProductServices.getCheckoutProducts(temporaryCheckout);
 
-    res.render('user/checkout',{title:'checkout',bodyClass:'',cssFile:'style.css',addresses:user.address})
+    res.render('user/checkout',{title:'checkout',bodyClass:'',cssFile:'style.css',addresses:user.address,products})
    }catch(error){
     console.log(error);
    }
 }
 
 const addOrder=async (req,res)=>{
-    const {productId}=req.body;
-
-    if(!productId)return res.json({success:false,message:'Product Not Found'});
-    if(!req.session.user?.userId) return res.json({success:false,message:'SignIn Required'})
-
-    req.session.cartProducts={
-        productId,
-        quantity:1
+    if(!req.body.Checkout){
+        const {productId}=req.body;
+        if(!productId)return res.json({success:false,message:'Product Not Found'});
+        req.session.cartProducts={
+            productId,
+            quantity:1    
+         }
+    }else{
+        const Checkout=req.body.Checkout;
+        req.session.cartProducts=Checkout;
+        console.log(Checkout)
     }
 
+    if(!req.session.user?.userId) return res.json({success:false,message:'SignIn Required'})
+        
     return res.json({
         success:true,
         message:'Session Added Successfully'
