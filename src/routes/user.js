@@ -57,6 +57,16 @@ router.post('/addWishlist',productController.addWishlist)
 //checkOut page
 router.get('/checkout',productController.loadCheckout)
 router.post('/addOrder',productController.addOrder)
+router.post('/placeOrder',productController.placeOrder)
+
+//order Success
+router.get('/orderSuccess',productController.loadOrderSuccess)
+
+//orders
+router.get('/orders',productController.loadOrders)
+
+//order details
+router.get('/orderDetails/:id',productController.loadOrderDetails)
 
 
 // 🔐 Google Auth

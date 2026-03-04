@@ -36,15 +36,15 @@
                     <p>No addresses found. Please add one.</p>
                 <% } %>
 
-                <% addresses.forEach(address => { %>
-                    <label class="address-card <%= address.isDefault ? 'selected' : '' %>">
+                <% addresses.forEach((address,index) => { %>
+                    <label class="address-card <%= index===0 ? 'selected' : '' %>">
                         
                         <input 
                             type="radio" 
                             name="selectedAddress" 
                             value="<%= address._id %>" 
                             class="custom-radio"
-                            <%= address.isDefault ? "checked" : "" %>
+                            <%= index===0? "checked" : "" %>
                         >
                         
 
@@ -87,7 +87,7 @@
                 </label>
 
                 <label class="payment-method-card">
-                    <input type="radio" name="payment" value="cod" class="custom-radio">
+                    <input type="radio" name="payment" value="COD" class="custom-radio">
                     <div class="payment-label">
                         <span class="pay-icon cod-icon">💵</span> Cash on Delivery
                     </div>
@@ -173,8 +173,35 @@
                     <span class="tot-value"><%= (subtotal + shipping - coupon).toLocaleString('en-IN') %></span>
                 </div>
             </div>
-
-            <button class="proceed-pay-btn">PROCEED TO PAY</button>
+           <div class="order-container">
+                <button class="order" id="orderButton" type="button">
+                    <span class="default">Complete Order</span>
+                    <span class="success">
+                        Order Placed
+                        <svg viewBox="0 0 12 10">
+                            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                        </svg>
+                    </span>
+                    <div class="box"></div>
+                    <div class="truck">
+                        <div class="door door-1"></div>
+                        <div class="door door-2"></div>
+                        
+                        <div class="back"></div>
+                        
+                        <div class="front">
+                            <div class="window"></div>
+                        </div>
+                        
+                        <div class="light top"></div>
+                        <div class="light bottom"></div>
+                        
+                        <div class="light-back top"></div>
+                        <div class="light-back bottom"></div>
+                    </div>
+                    <div class="lines"></div>
+                </button>
+            </div>
         </div>
 
     </div>
@@ -183,6 +210,7 @@
 
 <script>
     const cards = document.querySelectorAll(".address-card");
+    const products = <%- JSON.stringify(products) %>;
 
     cards.forEach(card => {
         card.addEventListener("click", () => {
@@ -190,4 +218,38 @@
             card.classList.add("selected");
         });
     });
+    
+    // order animation
+   document.getElementById('orderButton').addEventListener('click', function(e) {
+    let button = this;
+
+    // 1. Prevent multiple clicks
+    if(!button.classList.contains('animate')) {
+        button.classList.add('animate');
+
+        placeOrder(); 
+    }
+});
+    function placeOrder(){
+        const selectedAddress=document.querySelector('input[name="selectedAddress"]:checked').value
+        const paymentMethod=document.querySelector('input[name="payment"]:checked').value
+        
+        fetch('/placeOrder',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({selectedAddress,paymentMethod,products})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                showSuccess(data.message);
+                setTimeout(()=>{
+                    window.location.href='/orderSuccess'
+                },2000)
+            }else{
+                showError(data.message)
+            }
+        })
+    }
 </script>

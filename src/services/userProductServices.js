@@ -3,6 +3,13 @@ import Product from '../models/productSchema.js'
 import Wishlist from "../models/wishListSchema.js";
 import Cart from "../models/cartSchema.js";
 import User from "../models/userModal.js";
+import Order from "../models/orderSchema.js";
+
+//generate orderId
+function generateOrderId() {
+    const random = Math.floor(1000 + Math.random() * 9000); // Generates a 4-digit number
+    return `#${random}`;
+}
 
 
 const getAllCategory=async ()=>{
@@ -214,11 +221,109 @@ const getCheckoutProducts=async (temporaryCheckout)=>{
     }else{
         products.push({product:await Product.findById(temporaryCheckout.productId),quantity:temporaryCheckout.quantity})
     }
-    console.log(products)
     return products;
 }
 
+const placeOrder=async (data,userId)=>{
+    const addressId=data.selectedAddress.toString();
+    const paymentMethod=data.paymentMethod;
+    const products=data.products;
+
+    const user=await User.findById(userId);
+    const address=user.address.find(obj=>{
+        return obj._id.toString()===addressId
+    })
+
+    let newOrderId = generateOrderId();
+
+        // Optional: Check if it exists in DB (to be 100% safe)
+        let existingOrder = await Order.findOne({ orderId: newOrderId });
+        while (existingOrder) {
+            newOrderId = generateOrderId(); // Re-generate if it exists
+            existingOrder = await Order.findOne({ orderId: newOrderId });
+        }
+
+    const orderItems=[];
+    let subTotal=0;
+    for(const item of products){
+        if(item.quantity > item.product.stock){
+            throw new Error(`Influent Stock Quantity For ${item.product.shortName}`)
+        }
+        const discountedPrice =item.product.price -(item.product.price * item.product.offer / 100);
+        const itemTotal = discountedPrice * item.quantity;
+
+        subTotal+=itemTotal;
+        orderItems.push({
+            product:item.product._id,
+            name:item.product.name,
+            image:item.product.images[0].url,
+            price:item.product.price,
+            quantity:item.quantity,
+            itemTotal,
+            discount:item.product.offer
+        })
+    }
+    console.log(address)
+    const addressSnapshot={
+        name:address.fullname,
+        phone:address.phone,
+        pincode:address.pincode,
+        street:address.street,
+        city:address.city,
+        addressType:address.addressType
+    }
+    const discount=0;
+    const finalAmount=subTotal - discount;
+
+    const order=await Order.create({
+        user:user._id,
+        orderId:newOrderId,
+        items:orderItems,
+        addressSnapshot,
+        subtotal:subTotal,
+        discount,
+        finalAmount,
+        paymentMethod,
+        paymentStatus:paymentMethod==='COD' ? 'Pending':'Paid',
+    })
+
+    for(const item of products){
+        await Product.updateOne({_id:item.product._id},
+            {$inc:{stock:-item.quantity}}
+        )
+    }
+    return order;
+}
+
+const getAllOrders=async (userId,query)=>{
+    const user=await User.findById(userId);
+
+    let filter={user:userId};
+    if(query.filter==='shipped'){
+        filter.orderStatus='shipped'
+    }else if(query.filter==='delivered'){
+        filter.orderStatus='delivered'
+    }else if(query.filter==='cancelled'){
+        filter.orderStatus='cancelled'
+    }
+
+    if(!user){
+        throw new Error('User Do Not Exist')
+    };
+    const orders=await Order.find(filter).sort({createdAt:-1})
+    return orders
+}
+
+const getOrderById=async (orderId)=>{
+    console.log(orderId)
+    const order=await Order.findById(orderId);
+    if(!order){
+        throw new Error('Order Not Found');
+    }
+    return order;
+}
+
 export default {getAllCategory,getFilterProducts,findProductById,findWishlistProduct,addToCart,getCartProducts,
-    updateQuantityCount,removeCart,getUserInfo,getCheckoutProducts
+    updateQuantityCount,removeCart,getUserInfo,getCheckoutProducts,placeOrder,getAllOrders,getOrderById
 }
 

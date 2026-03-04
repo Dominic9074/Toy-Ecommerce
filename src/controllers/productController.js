@@ -165,6 +165,7 @@ const loadCheckout=async (req,res)=>{
      const user=await userProductServices.getUserInfo(req.session.user?.userId);
      const temporaryCheckout = req.session.cartProducts;
      const products=await userProductServices.getCheckoutProducts(temporaryCheckout);
+     req.session.cartProducts=null;
 
     res.render('user/checkout',{title:'checkout',bodyClass:'',cssFile:'style.css',addresses:user.address,products})
    }catch(error){
@@ -183,7 +184,6 @@ const addOrder=async (req,res)=>{
     }else{
         const Checkout=req.body.Checkout;
         req.session.cartProducts=Checkout;
-        console.log(Checkout)
     }
 
     if(!req.session.user?.userId) return res.json({success:false,message:'SignIn Required'})
@@ -195,7 +195,64 @@ const addOrder=async (req,res)=>{
 
 }
 
+const placeOrder=async (req,res)=>{
+    try{
+        const order=await userProductServices.placeOrder(req.body,req.session.user?.userId)
+        if(!order){
+            return res.json({
+                success:false,
+                message:'Order Not Placed'
+            })
+        }
+        const formattedDate = order.createdAt.toLocaleDateString('en-US', {
+            month: 'long',
+            day: '2-digit',
+            year: 'numeric'
+        });
+
+        req.session.orderSuccess={
+            orderId:order.orderId,
+            orderDate:formattedDate,
+            paymentMethod:order.paymentMethod,
+            totalAmount:order.finalAmount
+        }
+        return res.json({
+            success:true,
+            message:'Order Placed Successfully'
+        })
+    }catch(error){
+        console.log(error);
+        return res.json({
+            success:false,
+            message:error.message
+        })
+    }
+    
+
+}
+
+const loadOrderSuccess=(req,res)=>{
+    const {orderId,orderDate,paymentMethod,totalAmount}=req.session.orderSuccess;
+    req.session.orderSuccess=null;
+    res.render('user/orderSuccess',{title:'orderSuccess',bodyClass:'',cssFile:'style.css',orderId,orderDate,paymentMethod,totalAmount})
+}
+
+const loadOrders=async (req,res)=>{
+    let orders=await userProductServices.getAllOrders(req.session.user?.userId,req.query);
+    
+    res.render('user/orders',{title:'Orders',bodyClass:'',cssFile:'style.css',orders,status:req.query.filter || 'all'})
+}
+
+const loadOrderDetails=async (req,res)=>{
+    try{
+        const order=await userProductServices.getOrderById(req.params.id);
+        res.render('user/orderDetails',{title:'orderDetails',bodyClass:'',cssFile:'style.css',order})
+    }catch(error){
+        console.log(error);
+    }
+}
+
 export default {loadShop,loadProductDetails,loadCartPage,loadWishlist,addWishlist,addToCart,UpdateQuantityCount,removeCart,
-    loadCheckout,addOrder
+    loadCheckout,addOrder,placeOrder,loadOrderSuccess,loadOrders,loadOrderDetails
 
 }

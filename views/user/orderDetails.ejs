@@ -1,0 +1,159 @@
+<!-- HEADER -->
+<header class="cart-header">
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/shop">Shop</a></li>
+    </ul>
+
+    <div class="logo">Wheelz</div>
+
+    <div class="user-actions">
+        <a href="/orders" class="active">Order</a>
+        <a href="/cart">Cart</a>
+        <a href="/wishlist">Wish List</a>
+        <% if (locals.user) { %>
+      <a href="/user/profile" class="profile-avatar">
+            <%= (user.username || 'U').charAt(0).toUpperCase() %>
+        </a>
+        <% } else { %>
+        <h3 class="profile-avatar"><i class="fa fa-user"></i></h3>
+        <% } %>
+    </div>
+</header>
+
+<div class="od-page-container">
+    <div class="od-page-header">
+        <h1>ORDER STATUS</h1>
+        <p>MANAGE YOUR ORDER AND RETURN REQUESTS</p>
+    </div>
+
+    <div class="od-content-wrapper">
+        <!-- LEFT PANE -->
+        <div class="od-left-pane">
+            
+            <!-- Order Information Details Box -->
+            <div class="od-info-card">
+                <div class="od-info-grid">
+                    <div class="od-info-item">
+                        <span class="od-label">ORDER ID:</span>
+                        <span class="od-value"><%= (typeof order !== 'undefined' && order.orderId) ? order.orderId : '' %></span>
+                    </div>
+                    <div class="od-info-item">
+                        <span class="od-label">PURCHASE DATE</span>
+                        <span class="od-value"><%= (typeof order !== 'undefined' && order.createdAt) ? order.createdAt.toDateString() : '' %></span>
+                    </div>
+                    <div class="od-info-item">
+                        <span class="od-label">TOTAL PRICE</span>
+                        <span class="od-value">₹<%= (typeof order !== 'undefined' && order.finalAmount) ? order.finalAmount : '' %></span>
+                    </div>
+                    <div class="od-info-item">
+                        <span class="od-label">CURRENT STATUS:</span>
+                        <span class="od-value"><%= (typeof order !== 'undefined' && order.orderStatus) ? order.orderStatus : '' %></span>
+                    </div>
+                    <div class="od-info-item">
+                        <span class="od-label">PAYMENT METHOD</span>
+                        <span class="od-value"><%= (typeof order !== 'undefined' && order.paymentMethod) ? order.paymentMethod : '' %></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List of Ordered Products -->
+            <div class="od-products-list">
+                <h3 class="od-section-title">Items Ordered</h3>
+                
+                <% if (typeof order !== 'undefined' && order.items && order.items.length > 0) { %>
+                    <% order.items.forEach(item => { %>
+                        <div class="od-product-row">
+                            <div class="od-product-img-box">
+                                <img src="<%= item.image %>" alt="<%= item.name %>">
+                            </div>
+                            <span class="od-product-name"><%= item.name %></span>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+
+        </div>
+
+        <!-- RIGHT PANE (Actions) -->
+        <div class="od-right-pane">
+            <% const currentStatus = (typeof order !== 'undefined' && order.ordersStatus) ? order.orderStatus.toUpperCase() : 'DELIVERED'; %>
+            
+            <% if (currentStatus === 'DELIVERED') { %>
+                <!-- RETURN ITEM BOX -->
+                <div class="od-action-box dark-action-box">
+                    <h3>RETURN ITEM</h3>
+                    
+                    <div class="od-form-group">
+                        <label>REASON FOR REASON</label> <!-- As per UI image text -->
+                        <div class="od-select-wrapper dark-select">
+                            <select id="returnReason">
+                                <option value=''>SELECT A REASON</option>
+                                <option>Item is damaged/defective</option>
+                                <option>Wrong item delivered</option>
+                                <option>Not as described</option>
+                                <option>Quality issues</option>
+                                <option>Changed my mind</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="od-form-group">
+                        <label>ADDITIONAL DETAILS</label>
+                        <textarea id="returnDetails" rows="4" placeholder="PROVIDE MORE CONTEXT..."></textarea>
+                    </div>
+
+                    <button class="od-btn-submit" onclick="returnOrder('<%= order._id %>')">INITIATE RETURN</button>
+                </div>
+
+            <% } else { %>
+                <!-- CANCEL ORDER BOX -->
+                <div class="od-action-box light-action-box">
+                    <h3>CANCEL ORDER</h3>
+                    <p class="od-disclaimer">ORDER CANCELLATION ARE ONLY AVAILABLE BEFORE THE 'INSPECTION' PHASE OF THE RETURN PROCESS</p>
+                    
+                    <div class="od-form-group">
+                        <label>REASON FOR CANCELLATION</label>
+                        <div class="od-select-wrapper light-select">
+                            <select>
+                                <option>SELECT A REASON</option>
+                                <option>Found a better price elsewhere</option>
+                                <option>Ordered by mistake</option>
+                                <option>Delivery time is too long</option>
+                                <option>Change of mind</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="od-form-group">
+                        <label>ADDITIONAL DETAILS</label>
+                        <textarea rows="3" placeholder="OPTIONAL REASON DETAILS..."></textarea>
+                    </div>
+
+                    <button class="od-btn-submit">CANCEL ORDER</button>
+                </div>
+            <% } %>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    
+    function returnOrder(orderId){
+        const reason = document.getElementById("returnReason").value.trim();
+        const details = document.getElementById("returnDetails").value.trim();
+
+        if (!reason) {
+            showError("Please select a return reason.");
+            return;
+        }
+
+        if (!details) {
+            ShowError("Please provide additional details.");
+            return;
+        }
+    }
+
+</script>
+
