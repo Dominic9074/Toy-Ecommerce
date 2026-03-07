@@ -213,6 +213,7 @@ const getCheckoutProducts=async (temporaryCheckout)=>{
             if(!product){
                 throw new Error('Product Not Found');
             }
+
             products.push({
                 product,
                 quantity:obj.quantity

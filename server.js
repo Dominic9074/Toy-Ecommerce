@@ -65,6 +65,15 @@ app.use((req,res,next)=>{
 app.use('/',userRoute)
 app.use('/',adminRoute)
 
+app.use((err, req, res, next) => {
+  console.error("Error:", err);
+
+  res.status(err.statusCode || 500).send(`
+    <h1>Something went wrong</h1>
+    <p>${err.message || "Internal Server Error"}</p>
+  `);
+});
+
 //db connect
 connectDB();
 

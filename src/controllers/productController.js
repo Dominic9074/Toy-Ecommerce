@@ -193,6 +193,9 @@ const addOrder=async (req,res)=>{
     }else{
         const Checkout=req.body.Checkout;
         console.log(Checkout);
+        if(Checkout.length<1){
+            throw new Error('Select An Item To Order')
+        }
         for(const item of Checkout){
             const productId=item.productId
             const product=await Product.findById(productId);
