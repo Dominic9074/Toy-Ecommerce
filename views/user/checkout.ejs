@@ -1,24 +1,33 @@
 <!-- HEADER -->
-<header class="cart-header">
-    <ul class="nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/shop">Shop</a></li>
-    </ul>
 
-    <div class="logo">Wheelz</div>
+      <header>
+  
+  <!-- Hamburger Button (Mobile Only) -->
+  <button class="hamburger" id="hamburger" type="button">
+  <i class="fa-solid fa-bars"></i>
+  </button>
 
-    <div class="user-actions">
-        <a href="/orders">Order</a>
-        <a href="/cart">Cart</a>
-        <a href="/wishlist">Wish List</a>
-        <% if (locals.user) { %>
+  <ul class="nav-links" id="mobileMenu">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions nav-links" style="list-style-type: none; padding-left: 0; margin: 0;">
+    <li><a href="/orders">Order</a></li>
+    <li><a href="/cart">Cart</a></li>
+    <li><a href="/wishlist">Wishlist</a></li>
+
+    <% if (user) { %>
       <a href="/user/profile" class="profile-avatar">
-            <%= (user.username || 'U').charAt(0).toUpperCase() %>
-        </a>
-        <% } else { %>
-        <h3 class="profile-avatar"><i class="fa fa-user"></i></h3>
-        <% } %>
-    </div>
+        <%= user.username.charAt(0).toUpperCase() %>
+      </a>
+    <% } else { %>
+      <a href="/signin" class="sign-in-btn">Sign In</a>
+    <% } %>
+  </div>
+
 </header>
 
 <!-- CHECKOUT CONTAINER -->
@@ -246,7 +255,7 @@
                 showSuccess(data.message);
                 setTimeout(()=>{
                     window.location.href='/orderSuccess'
-                },2000)
+                },2500)
             }else{
                 showError(data.message)
             }

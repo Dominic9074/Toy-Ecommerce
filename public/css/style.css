@@ -4891,7 +4891,7 @@ textarea {
     color: #fff;
     border: none;
     padding: 15px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     border-radius: 4px;
     cursor: pointer;
@@ -4981,4 +4981,290 @@ textarea {
     .od-right-pane {
         width: 100%;
     }
+}
+
+.order-address-card{
+    background:#f5f7fa;
+    border-radius:12px;
+    padding:25px;
+    max-width:420px;
+    border:1px solid #e2e6ea;
+    margin-bottom: 15px;
+}
+
+.address-title{
+    font-size:14px;
+    letter-spacing:1px;
+    color:#8b97a7;
+    margin-bottom:15px;
+}
+
+.address-name{
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:6px;
+}
+
+.address-content p{
+    margin:4px 0;
+    color:#444;
+}
+
+.invoice-btn{
+    background: #850017;
+    color: white;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    height: 35px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.invoice-container{
+    width:100%;
+    max-width:800px;
+    margin:0 auto;
+    padding:20px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Header */
+
+.invoice-header{
+    width:100%;
+    border-bottom:1px solid #ccc;
+    padding-bottom:10px;
+    margin-bottom:20px;
+}
+
+.header-table{
+    width:100%;
+}
+
+.company-name{
+    font-size:24px;
+    font-weight:bold;
+}
+
+.invoice-title{
+    font-size:20px;
+    font-weight:bold;
+    text-align:right;
+}
+
+/* Address Section */
+
+.invoice-address-section{
+    width:100%;
+    margin-top:20px;
+}
+
+.address-table{
+    width:100%;
+}
+
+.address-box{
+    width:50%;
+    vertical-align:top;
+}
+
+.address-box h3{
+    margin-bottom:5px;
+    font-size:14px;
+}
+
+.name{
+    font-weight:bold;
+}
+
+/* Items Table */
+
+.invoice-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:25px;
+}
+
+.invoice-table th{
+    border-bottom:1px solid #000;
+    text-align:left;
+    padding:8px;
+    font-size:14px;
+}
+
+.invoice-table td{
+    padding:8px;
+    border-bottom:1px solid #ddd;
+    font-size:13px;
+}
+
+/* Summary */
+
+.invoice-summary{
+    width:300px;
+    margin-left:auto;
+    margin-top:20px;
+}
+
+.summary-table{
+    width:100%;
+}
+
+.summary-table td{
+    padding:6px 0;
+}
+
+.total-row td{
+    border-top:1px solid #000;
+    font-weight:bold;
+}
+
+/* Footer */
+
+.invoice-footer{
+    margin-top:40px;
+    text-align:center;
+    font-size:12px;
+    color:#555;
+}
+
+.order-status-container{
+padding:25px;
+border:1px solid #e5e5e5;
+border-radius:10px;
+background:#fafafa;
+}
+
+.status-title{
+margin-bottom:20px;
+font-size:16px;
+font-weight:600;
+}
+
+.status-progress-wrapper{
+position:relative;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* Grey line */
+
+.progress-line{
+position:absolute;
+top:18px;
+left:0;
+right:0;
+height:4px;
+background:#dcdcdc;
+z-index:1;
+}
+
+/* Blue progress */
+
+.progress-line-active{
+position:absolute;
+top:18px;
+left:0;
+height:4px;
+background:#2563eb;
+z-index:2;
+}
+
+/* Steps */
+
+.status-step{
+position:relative;
+z-index:3;
+text-align:center;
+flex:1;
+}
+
+.status-circle{
+width:36px;
+height:36px;
+border-radius:50%;
+background:#dcdcdc;
+display:flex;
+align-items:center;
+justify-content:center;
+margin:0 auto 6px auto;
+color:white;
+font-weight:bold;
+}
+
+.status-step.active .status-circle{
+background:#2563eb;
+}
+
+.status-step p{
+font-size:13px;
+color:#555;
+margin:0;
+}
+
+/* Cancel */
+
+.order-cancelled{
+margin-top:15px;
+padding:10px;
+background:#ffe5e5;
+color:#c40000;
+border-radius:6px;
+text-align:center;
+font-weight:600;
+}
+
+/* Returned */
+
+.order-returned{
+margin-top:15px;
+padding:10px;
+background:#fff3cd;
+color:#b78103;
+border-radius:6px;
+text-align:center;
+font-weight:600;
+}
+
+.return-modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+}
+
+.return-modal-content{
+    background:white;
+    padding:30px;
+    width:400px;
+    border-radius:8px;
+}
+
+.return-item-btn{
+    border: none;
+    border-radius: 5px;
+    margin-left: 50px;
+    background-color: #c40000;
+    color: white;
+    width: 50px;
+    height: 25px;
+}
+.od-btn-cancel{
+    width: 80px;
+    border-radius: 5px;
+    height: 50px;
+    color: white;
+    border: none;
+    font-weight: 700;
+    background-color: #c40000;
+    margin-left: 10px;
+    padding: 10px;
 }

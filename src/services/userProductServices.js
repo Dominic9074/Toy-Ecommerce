@@ -268,7 +268,7 @@ const placeOrder=async (data,userId)=>{
         name:address.fullname,
         phone:address.phone,
         pincode:address.pincode,
-        street:address.street,
+        state:address.state,
         city:address.city,
         addressType:address.addressType
     }
@@ -295,16 +295,16 @@ const placeOrder=async (data,userId)=>{
     return order;
 }
 
-const getAllOrders=async (userId,query)=>{
+const getAllUserOrders=async (userId,query)=>{
     const user=await User.findById(userId);
 
     let filter={user:userId};
     if(query.filter==='shipped'){
-        filter.orderStatus='shipped'
+        filter.orderStatus='Shipped'
     }else if(query.filter==='delivered'){
-        filter.orderStatus='delivered'
+        filter.orderStatus='Delivered'
     }else if(query.filter==='cancelled'){
-        filter.orderStatus='cancelled'
+        filter.orderStatus='Cancelled'
     }
 
     if(!user){
@@ -315,15 +315,83 @@ const getAllOrders=async (userId,query)=>{
 }
 
 const getOrderById=async (orderId)=>{
-    console.log(orderId)
-    const order=await Order.findById(orderId);
+    const order=await Order.findById(orderId).populate('user');
     if(!order){
         throw new Error('Order Not Found');
     }
     return order;
 }
 
+const returnOrder=async(orderId,reason,details,itemId)=>{
+    const order=await Order.findById(orderId);
+    console.log('working')
+    if(!order){
+        throw new Error('Order Not Found')
+    }
+     if(order.orderStatus !== "Delivered"){
+        throw new Error("Return not allowed for this order");
+    }
+    let itemFound=false;
+    for(let item of order.items){
+        if(item._id.toString()===itemId){
+            item.itemStatus='Returned';
+            item.returnReason=reason.toString();
+            item.returnDescription=details.toString();
+            itemFound=true;
+            break;
+        }
+    }
+    if(!itemFound){
+        throw new Error('Product Not Found')
+    }
+
+    await order.save();
+    return order;
+}
+
+const cancelOrder=async (reason,details,orderId)=>{
+    const order=await Order.findById(orderId);
+    if(!order){
+        throw new Error('Order Not Found')
+    }
+    if(order.orderStatus === "Delivered"){
+    throw new Error("Delivered orders cannot be cancelled");
+    }
+    order.cancelReason=reason;
+    order.cancelDescription=details;
+    order.orderStatus='Cancelled';
+
+    for(let obj of order.items){
+        const product=await Product.updateOne({_id:obj.product},{$inc:{stock:obj.quantity}})
+    }
+
+    await order.save();
+    return order;
+}
+
+const getAllOrders=async (search,status,page)=>{
+
+    const limit =10;
+    const skip=(page-1)*limit;
+
+   
+    let query={};
+    if(search){
+         const user =await User.find({email:{$regex:search,$options:'i'}}).select('_id');
+         const userIds = user.map(user=>user._id);
+         query.user={$in:userIds};
+    }
+    if(status !=='all' && status !== undefined && status !== null){
+        query.orderStatus=status;
+    }
+    const totalOrders=await Order.countDocuments(query);
+    const orders=await Order.find(query).populate('user').sort({createdAt:-1}).skip(skip).limit(limit)
+    const pageCount=Math.ceil(totalOrders/limit)
+    return {orders,pageCount};
+}
+
 export default {getAllCategory,getFilterProducts,findProductById,findWishlistProduct,addToCart,getCartProducts,
-    updateQuantityCount,removeCart,getUserInfo,getCheckoutProducts,placeOrder,getAllOrders,getOrderById
+    updateQuantityCount,removeCart,getUserInfo,getCheckoutProducts,placeOrder,getAllUserOrders,getOrderById,returnOrder,
+    cancelOrder,getAllOrders
 }
 

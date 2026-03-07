@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Invoice - <%= order.orderId %></title>
+
+<style>
+
+.invoice-container{
+    width:800px;
+    margin:auto;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:14px;
+    color:#333;
+}
+
+/* HEADER */
+
+.header-table{
+    width:100%;
+    border-bottom:2px solid #000;
+    padding-bottom:10px;
+}
+
+.company-name{
+    font-size:26px;
+    font-weight:bold;
+}
+
+.invoice-title{
+    text-align:right;
+    font-size:20px;
+    font-weight:bold;
+}
+
+/* ADDRESS */
+
+.address-table{
+    width:100%;
+    margin-top:20px;
+    border-bottom:1px solid #ccc;
+    padding-bottom:15px;
+}
+
+.address-box{
+    width:50%;
+    vertical-align:top;
+}
+
+.address-box h3{
+    margin-bottom:6px;
+    font-size:15px;
+}
+
+.name{
+    font-weight:bold;
+}
+
+/* PRODUCT TABLE */
+
+.invoice-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+.invoice-table th{
+    border-bottom:2px solid #000;
+    text-align:left;
+    padding:10px 5px;
+}
+
+.invoice-table td{
+    padding:8px 5px;
+    border-bottom:1px solid #ddd;
+}
+
+/* SUMMARY */
+
+.summary-table{
+    width:300px;
+    margin-top:20px;
+    margin-left:auto;
+    border-top:2px solid #000;
+}
+
+.summary-table td{
+    padding:8px 0;
+}
+
+.total-row{
+    font-weight:bold;
+    font-size:16px;
+}
+
+/* FOOTER */
+
+.footer{
+    margin-top:40px;
+    border-top:1px solid #ccc;
+    padding-top:10px;
+    text-align:center;
+    font-size:13px;
+    color:#555;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="invoice-container">
+
+<!-- HEADER -->
+
+<table class="header-table">
+<tr>
+
+<td>
+<div class="company-name">Wheelz</div>
+<p>Toy Ecommerce Store</p>
+</td>
+
+<td class="invoice-title">
+INVOICE<br>
+<span style="font-size:13px;">
+Order ID: <%= order.orderId %><br>
+Date: <%= new Date(order.createdAt).toLocaleDateString("en-IN") %>
+</span>
+</td>
+
+</tr>
+</table>
+
+
+<!-- ADDRESS -->
+
+<table class="address-table">
+<tr>
+
+<td class="address-box">
+
+<h3>Shipping Address</h3>
+
+<p class="name"><%= order.addressSnapshot.name %></p>
+
+<p><%= order.addressSnapshot.street %></p>
+
+<p>
+<%= order.addressSnapshot.city %>,
+<%= order.addressSnapshot.pincode %>
+</p>
+
+<p>Phone: <%= order.addressSnapshot.phone %></p>
+
+</td>
+
+
+<td class="address-box">
+
+<h3>Payment Details</h3>
+
+<p>Method: <%= order.paymentMethod %></p>
+
+<p>Status: <%= order.paymentStatus %></p>
+
+<p>Order Status: <%= order.orderStatus %></p>
+
+</td>
+
+</tr>
+</table>
+
+
+
+<!-- PRODUCTS -->
+
+<table class="invoice-table">
+
+<thead>
+
+<tr>
+<th style="width:50%">Product</th>
+<th>Price</th>
+<th>Qty</th>
+<th>Total</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<% order.items.forEach(item => { %>
+
+<tr>
+
+<td><%= item.name %></td>
+
+<td>₹<%= item.price.toLocaleString("en-IN") %></td>
+
+<td><%= item.quantity %></td>
+
+<td>₹<%= item.itemTotal.toLocaleString("en-IN") %></td>
+
+</tr>
+
+<% }) %>
+
+</tbody>
+
+</table>
+
+
+
+<!-- TOTALS -->
+
+<table class="summary-table">
+
+<tr>
+<td>Subtotal</td>
+<td style="text-align:right;">
+₹<%= order.subtotal.toLocaleString("en-IN") %>
+</td>
+</tr>
+
+<tr>
+<td>Discount</td>
+<td style="text-align:right;">
+₹<%= order.discount.toLocaleString("en-IN") %>
+</td>
+</tr>
+
+<tr class="total-row">
+<td>Total</td>
+<td style="text-align:right;">
+₹<%= order.finalAmount.toLocaleString("en-IN") %>
+</td>
+</tr>
+
+</table>
+
+
+
+<!-- FOOTER -->
+
+<div class="footer">
+
+<p>Thank you for shopping with <strong>Wheelz</strong>!</p>
+
+<p>This is a computer generated invoice.</p>
+
+</div>
+
+
+</div>
+
+</body>
+</html>

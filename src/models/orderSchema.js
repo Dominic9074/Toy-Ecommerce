@@ -16,13 +16,20 @@ const orderItems= new mongoose.Schema({
         type:String,
         enum:['Placed','Confirmed','Shipped','Delivered','Cancelled','Returned'],
         default:'Placed'
+    },
+    returnReason: String,
+    returnDescription: String,
+    refundStatus:{
+        type:String,
+        enum:['Pending','Processed','Not Applicable','Success'],
+        default:'Not Applicable'
     }
 },{_id:true,timestamps:true},);
 
 const orderSchema=new mongoose.Schema({
     user:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'user',
+        ref:'User',
         required:true
     },
     orderId:{
@@ -35,8 +42,8 @@ const orderSchema=new mongoose.Schema({
         name:String,
         phone:String,
         pincode:String,
-        street:String,
         city:String,
+        state:String,
         addressType:String
     },
     subtotal:Number,
@@ -54,17 +61,13 @@ const orderSchema=new mongoose.Schema({
     },
     orderStatus:{
         type:String,
-        enum:['Placed','Shipped','Delivered','Cancelled'],
+        enum:['Placed','Shipped','Delivered','Cancelled','Returned','Out For Delivery'],
         default:'Placed'
     },
-    cancelReason:String,
-    returnReason:String,
-    refundStatus:{
-        type:String,
-        enum:['Pending','Processed','Not Applicable','Success'],
-        default:'Not Applicable'
-    }
+   cancelReason: String,
+   cancelDescription: String
 },{timestamps:true})
+
 
 export default mongoose.model('order',orderSchema);
 

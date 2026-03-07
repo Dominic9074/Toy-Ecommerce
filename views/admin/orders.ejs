@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management - Wheelz</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">Wheelz</div>
+      <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="nav-item">
+          <i class="fa-solid fa-border-all"></i> Dashboard
+        </a>
+        <a href="/admin/products" class="nav-item">
+          <i class="fa-solid fa-box"></i> Products
+        </a>
+        <a href="/admin/category" class="nav-item">
+          <i class="fa-solid fa-layer-group"></i> Categories
+        </a>
+        <a href="/admin/orders" class="nav-item active">
+          <i class="fa-solid fa-cart-shopping"></i> Orders
+        </a>
+        <a href="/admin/sales" class="nav-item ">
+            <i class="fa-solid fa-money-bill-wave"></i> Sales & Revenue
+        </a>
+        <a href="/admin/users" class="nav-item">
+          <i class="fa-solid fa-user-group"></i> Users
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="/admin/logout" class="logout-link">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+      <!-- Header -->
+      <header class="admin-header" style="justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <button class="admin-hamburger" id="adminHamburger">
+            <i class="fa-solid fa-bars"></i>
+            </button>
+            <h2 style="text-transform: none; color: #100E34; font-weight: 700; font-size: 20px;">Order Management</h2>
+        </div>
+        <!-- Search Bar -->
+        <form action="/admin/orders" method="GET">
+          <div class="search-bar-container">
+                <input type="hidden" name="status">
+                <input 
+                    type="text" 
+                    name="search"
+                    placeholder="Search users..."
+                    id="searchInput"
+                    value="<%= search || '' %>">
+                    
+                <button type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button type="button" class="clearSearch" onclick="clearSearch()" >Clear</button>
+                </div>
+
+        </form>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- Title Section -->
+        <div class="order-header-row">
+            <div class="page-title-block" style="margin-bottom: 0;">
+                <h1 class="page-main-title" style="text-transform: none;">Active Orders</h1>
+                <p class="page-sub-title" style="text-transform: none;">Real-time status tracking for customer orders.</p>
+            </div>
+            <!-- filter -->
+             <div class="category-filter-container">
+                  <h2 class="filter-title">FILTER</h2>
+
+                  <div class="category-filter-row">
+                      <span class="filter-label">STATUS:</span>
+
+                      <a href="?status=all&search=<%= search || '' %>" 
+                      class="filter-btn-ord <%= (!status || status === 'all') ? 'active' : '' %>">
+                      All
+                      </a>
+                      <a href="?status=Placed&search=<%= search || '' %>" 
+                      class="filter-btn-ord <%= (!status || status === 'Placed') ? 'active' : '' %>">
+                      PLACED
+                      </a>
+
+                      <a href="?status=Shipped&search=<%= search || '' %>" 
+                      class="filter-btn-ord <%= status === 'Shipped' ? 'active' : '' %>">
+                      SHIPPED
+                      </a>
+
+                      <a href="?status=Delivered&search=<%= search || '' %>" 
+                      class="filter-btn-ord <%= status === 'Delivered' ? 'active' : '' %>">
+                      DELIVERED
+                      </a>
+
+                  </div>
+                  </div>
+        </div>
+
+        <!-- Table -->
+        <div class="product-table-container mt-20" style="border: 1px solid #f0f0f0; margin-top: 20px;">
+          <table class="custom-table order-table">
+            <thead>
+              <tr>
+                <th style="width: 15%;">ORDER ID</th>
+                <th style="width: 25%;">USER</th>
+                <th style="width: 20%;">DATE</th>
+                <th style="width: 15%;">TOTAL PRICE</th>
+                <th style="width: 15%;">STATUS</th>
+                <th style="width: 10%; text-align: right;">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (typeof orders !== 'undefined' && orders.length > 0) { %>
+                <% orders.forEach(order => { %>
+                  <tr>
+                    <td class="order-id"><%= order.orderId %></td>
+                    <td>
+                        <div class="order-user">
+                            <div class="order-user-avatar"><i class="fa-solid fa-user"></i></div>
+                            <span><%= order.user.email %></span>
+                        </div>
+                    </td>
+                    <td class="order-date"><%= new Date(order.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' }) %></td>
+                    <td class="order-price">₹<%= order.finalAmount.toLocaleString() %></td>
+                    <td>
+                      <% if(order.status === 'PENDING') { %>
+                        <span class="order-status status-pending">PENDING</span>
+                      <% } else if(order.status === 'PAID') { %>
+                        <span class="order-status status-paid">PAID</span>
+                      <% } else if(order.status === 'SHIPPED') { %>
+                        <span class="order-status status-shipped">SHIPPED</span>
+                      <% } else { %>
+                        <span class="order-status status-paid"><%= order.orderStatus %></span>
+                      <% } %>
+                    </td>
+                    <td style="text-align: right;">
+                        <a href="/admin/orders/<%= order._id %>" class="order-action-link"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div class="pagination-wrapper">
+                    <% 
+                        const maxVisible = 4;
+
+                        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                        let endPage = startPage + maxVisible - 1;
+
+                        if (endPage > pageCount) {
+                            endPage = pageCount;
+                            startPage = Math.max(1, endPage - maxVisible + 1);
+                        }
+                    %>
+
+                    <div class="pagination">
+
+                        <% if (currentPage > 1) { %>
+                            <button type="button"
+                                class="page-link"
+                                onclick="window.location.href='/admin/orders?status=<%= status %>&search=<%= search || '' %>&page=<%= currentPage -1 %>'">
+                            &lt;
+                        </button>
+                        <% } %>
+
+                        <% for (let i = startPage; i <= endPage; i++) { %>
+                            <button type="button"
+                                class="page-link <%= currentPage === i ? 'active' : '' %>"
+                                onclick="window.location.href='/admin/orders?status=<%= status %>&search=<%= search || '' %>&page=<%= i %>'">
+                            <%= i %>
+                        </button>
+                        <% } %>
+
+                        <% if (currentPage < pageCount) { %>
+                            <button type="button"
+                              class="page-link"
+                              onclick="window.location.href='/admin/orders?status=<%= status %>&search=<%= search || '' %>&page=<%= currentPage + 1 %>'">
+                              &gt;
+                          </button>
+                        <% } %>
+
+                    </div>
+
+
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Sidebar Toggle Logic
+      const hamburger = document.getElementById("adminHamburger");
+      const sidebar = document.getElementById("adminSidebar");
+      const overlay = document.getElementById("adminOverlay");
+
+      if (hamburger && sidebar && overlay) {
+        hamburger.addEventListener("click", () => {
+            sidebar.classList.add("sidebar-open");
+            overlay.classList.add("active");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("sidebar-open");
+            overlay.classList.remove("active");
+        });
+      }
+      function clearSearch(){
+            const search=document.getElementById('searchInput');
+            search.value=''
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>

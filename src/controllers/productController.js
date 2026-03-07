@@ -1,6 +1,10 @@
 import userProductServices from '../services/userProductServices.js'
 import Wishlist from '../models/wishListSchema.js';
-import userController from './userController.js';
+import pdf from 'html-pdf-node'
+import ejs from 'ejs'
+import path from 'path'
+import Product from '../models/productSchema.js'
+
 
 //shop
 const loadShop=async (req,res)=>{
@@ -174,15 +178,28 @@ const loadCheckout=async (req,res)=>{
 }
 
 const addOrder=async (req,res)=>{
-    if(!req.body.Checkout){
+  try{
+      if(!req.body.Checkout){
         const {productId}=req.body;
         if(!productId)return res.json({success:false,message:'Product Not Found'});
+        const product=await Product.findById(productId);
+        if(product.stock<1){
+            throw new Error('Out Of Stock')
+        }
         req.session.cartProducts={
             productId,
             quantity:1    
          }
     }else{
         const Checkout=req.body.Checkout;
+        console.log(Checkout);
+        for(const item of Checkout){
+            const productId=item.productId
+            const product=await Product.findById(productId);
+            if(product.stock<Number(item.quantity)){
+                throw new Error('Out Of Stock')
+            }
+        }
         req.session.cartProducts=Checkout;
     }
 
@@ -192,6 +209,13 @@ const addOrder=async (req,res)=>{
         success:true,
         message:'Session Added Successfully'
     })
+  }catch(error){
+    console.log(error);
+    return res.json({
+        success:false,
+        message:error.message
+    })
+  }
 
 }
 
@@ -209,12 +233,13 @@ const placeOrder=async (req,res)=>{
             day: '2-digit',
             year: 'numeric'
         });
+        const amount=Math.ceil(order.finalAmount)
 
         req.session.orderSuccess={
             orderId:order.orderId,
             orderDate:formattedDate,
             paymentMethod:order.paymentMethod,
-            totalAmount:order.finalAmount
+            totalAmount:amount
         }
         return res.json({
             success:true,
@@ -238,7 +263,7 @@ const loadOrderSuccess=(req,res)=>{
 }
 
 const loadOrders=async (req,res)=>{
-    let orders=await userProductServices.getAllOrders(req.session.user?.userId,req.query);
+    let orders=await userProductServices.getAllUserOrders(req.session.user?.userId,req.query);
     
     res.render('user/orders',{title:'Orders',bodyClass:'',cssFile:'style.css',orders,status:req.query.filter || 'all'})
 }
@@ -252,7 +277,67 @@ const loadOrderDetails=async (req,res)=>{
     }
 }
 
+const returnOrder=async (req,res)=>{
+    try{
+        const orderId=req.body.currentOrderId;
+        const reason=req.body.reason;
+        const details=req.body.details;
+        const itemId=req.body.currentItemId;
+        const order=await userProductServices.returnOrder(orderId,reason,details,itemId);
+
+    }catch(error){
+        console.log(error)
+    }
+    
+}
+
+const loadInvoice=async (req,res)=>{
+    const order=await userProductServices.getOrderById(req.params.id);
+    res.render('user/invoice',{title:'Invoice',bodyClass:'',cssFile:'style.css',order})
+}
+
+const downloadInvoice=async (req,res)=>{
+    try{
+        const order=await userProductServices.getOrderById(req.params.id);
+        const filePath=path.join(process.cwd(),'views/user/invoice.ejs');
+        const html=await ejs.renderFile(filePath,{order});
+        const options={format:'A4'};
+        const file={content:html};
+        const pdfBuffer=await pdf.generatePdf(file,options);
+        res.setHeader('Content-Type','application/pdf');
+        res.setHeader('Content-Disposition',`attachment;filename-invoice-{order.orderId}.pdf`);
+        res.send(pdfBuffer);
+    }catch(error){
+        console.log(error)
+    }
+
+}
+
+const cancelOrder=async (req,res)=>{
+  try{
+      const {reason,details,orderId}=req.body;
+      const order=await userProductServices.cancelOrder(reason,details,orderId);
+      if(!order){
+        return res.json({
+            success:false,
+            message:'order Not Found'
+        })
+      }
+      return res.json({
+        success:true,
+        message:'Order Cancelled Successfully'
+      })
+  }catch(error){
+    console.log(error)
+    return res.json({success:true,
+        message:error.message
+    })
+  }
+    
+}
+
 export default {loadShop,loadProductDetails,loadCartPage,loadWishlist,addWishlist,addToCart,UpdateQuantityCount,removeCart,
-    loadCheckout,addOrder,placeOrder,loadOrderSuccess,loadOrders,loadOrderDetails
+    loadCheckout,addOrder,placeOrder,loadOrderSuccess,loadOrders,loadOrderDetails,returnOrder,loadInvoice,downloadInvoice,
+    cancelOrder
 
 }

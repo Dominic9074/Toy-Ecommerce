@@ -3,6 +3,7 @@ import slugify from "slugify";
 import cloudinary from "../config/cloudinary.js";
 import Product from '../models/productSchema.js';
 import { json } from "express";
+import Order from "../models/orderSchema.js";
 
 
 const createCategory=async (file,data)=>{
@@ -321,8 +322,25 @@ const updateProductStatus=async(id)=>{
 
 }
 
+const updateOrderStatus=async (orderId,data)=>{
+    const order=await Order.findById(orderId);
+    const {orderStatus}=data;
+     if(!order){
+        throw new Error('Order Not Found')
+    }
+    if(orderStatus==='Shipped'){
+        order.orderStatus='Shipped'
+    }else if(orderStatus==='Out For Delivery'){
+        order.orderStatus='Out For Delivery'
+    }else if(orderStatus==='Delivered'){
+        order.orderStatus='Delivered'
+    }
+    await order.save();
+    return order;
+    }
+
 export default {
     createCategory,find,findCategoryById,updateCategory,getAllActiveCategories,createProduct,getFilterProducts,findProductById,
-    editProduct,updateProductStatus
+    editProduct,updateProductStatus,updateOrderStatus
 }
 
