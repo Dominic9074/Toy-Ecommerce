@@ -38,8 +38,8 @@
         <div class="categories-line"></div>
         <!-- search -->
         <div class="search-wrapper">
-        <form action="/shop" method="GET">
-        <button type="submit" class="search-icon">
+        <form onsubmit="filterProducts()">
+        <button type="button" class="search-icon" onclick="filterProducts()">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
         <input type="text" id="searchInput" value="<%= searchInput||'' %>" name="search" placeholder="Search products...">
@@ -299,6 +299,7 @@
                 }
             })
         })
+
         function filterProducts(){
             const queryParams = new URLSearchParams(filter).toString();
             fetch(`/shop?${queryParams}`,{
@@ -414,6 +415,13 @@
             `;
         }
     }
+
+    document.getElementById('searchInput').addEventListener('keydown',function(e){
+        if(e.key==='Enter'){
+            e.preventDefault();
+            filterProducts();
+        }
+    })
 
     function productDetails(slug){
         window.location.href=`/product/${slug}`
