@@ -26,4 +26,12 @@ router.get('/admin/edit-product/:id',check.isLogedin,adminController.loadEditPro
 router.post('/admin/editProduct/:id',check.isLogedin,upload.array('images',5),adminController.editProduct);
 router.patch('/admin/addProduct/status/:id',check.isLogedin,adminController.updateProductStatus)
 
+//order
+router.get('/admin/orders',check.isLogedin,adminController.loadOrders)
+router.get('/admin/orders/:id',check.isLogedin,adminController.loadOrderDetails)
+router.post('/admin/orders/:id/status',check.isLogedin,adminController.updateOrderStatus)
+
+//logout 
+router.get('/admin/logout',adminController.logout)
+
 export default router;

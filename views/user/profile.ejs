@@ -5,34 +5,36 @@
 %>
 
 
-<header>
 
-  <!-- Hamburger -->
-  <div class="hamburger" id="hamburger">
-    <i class="fas fa-bars"></i>
-  </div>
+      <header>
+  
+  <!-- Hamburger Button (Mobile Only) -->
+  <button class="hamburger" id="hamburger" type="button">
+  <i class="fa-solid fa-bars"></i>
+  </button>
 
-  <ul class="nav-links" id="mobileNav">
+  <ul class="nav-links" id="mobileMenu">
     <li><a href="/">Home</a></li>
     <li><a href="/shop">Shop</a></li>
-    <li><a href="#">Categories</a></li>
   </ul>
 
   <div class="logo">Wheelz</div>
 
-  <div class="user-actions">
-        <a href="/orders">Order</a>
-        <a href="/cart" class="active">Cart</a>
-        <a href="/wishlist">Wish List</a>
-        <a href="/user/profile" class="profile-avatar">
-          <%= avatarLetter %>
-        </a>
-    </div>
+  <div class="user-actions nav-links" style="list-style-type: none; padding-left: 0; margin: 0;">
+    <li><a href="/orders">Order</a></li>
+    <li><a href="/cart">Cart</a></li>
+    <li><a href="/wishlist">Wishlist</a></li>
 
-    
-  
+    <% if (user) { %>
+      <a href="/user/profile" class="profile-avatar">
+        <%= user.username.charAt(0).toUpperCase() %>
+      </a>
+    <% } else { %>
+      <a href="/signin" class="sign-in-btn">Sign In</a>
+    <% } %>
+  </div>
+
 </header>
-
 
 <div class="profile-user-info-section">
   <div class="container">

@@ -1,0 +1,124 @@
+<!-- HEADER -->
+<header class="cart-header">
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/shop">Shop</a></li>
+    </ul>
+
+    <div class="logo">Wheelz</div>
+
+    <div class="user-actions">
+        <a href="/orders" class="active">Order</a>
+        <a href="/cart">Cart</a>
+        <a href="/wishlist">Wish List</a>
+        <% if (locals.user) { %>
+      <a href="/user/profile" class="profile-avatar">
+            <%= (user.username || 'U').charAt(0).toUpperCase() %>
+        </a>
+        <% } else { %>
+        <h3 class="profile-avatar"><i class="fa fa-user"></i></h3>
+        <% } %>
+    </div>
+</header>
+
+<!-- ORDER SUCCESS PAGE -->
+<div class="os-page-container">
+    
+    <!-- Success Icon -->
+    <div class="os-icon-wrapper">
+        <svg class="os-check-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="40" stroke="#A2001D" stroke-width="8" />
+            <!-- The checkmark path -->
+            <path d="M30 50 L45 65 L75 30" stroke="#A2001D" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </div>
+
+    <!-- Main Messages -->
+    <h2 class="os-primary-msg">Thank you! Your order has been placed.</h2>
+    <p class="os-secondary-msg">Your order <%= orderId %> has been confirmed and will be shipped soon.</p>
+
+    <!-- Order Summary Card -->
+    <div class="os-summary-card">
+        <h3 class="os-card-title">Order Summary</h3>
+        
+        <div class="os-summary-grid">
+            <div class="os-summary-item">
+                <span class="os-label">Order Number</span>
+                <span class="os-value">
+                    <%= orderId %>
+                </span>
+            </div>
+            
+            <div class="os-summary-item">
+                <span class="os-label">Order Date</span>
+                <span class="os-value">
+                    <%= orderDate %>
+                </span>
+            </div>
+            
+            <div class="os-summary-item">
+                <span class="os-label">Payment Method</span>
+                <span class="os-value">
+                    <%= paymentMethod %>
+                </span>
+            </div>
+            
+            <div class="os-summary-item">
+                <span class="os-label">Total Amount</span>
+                <span class="os-value os-total-amt">
+                    ₹<%= totalAmount %>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- What's Next Section -->
+    <div class="os-whats-next-section">
+        <h4 class="os-section-title">What's Next?</h4>
+        
+        <div class="os-actions-row">
+            <a href="/orders" class="os-btn-track">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                Track Order
+            </a>
+            
+            <a href="/shop" class="os-btn-continue">
+                Continue Shopping
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:5px;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+        </div>
+        
+    </div>
+
+    <!-- Why Choose Section -->
+    <div class="os-why-choose-section">
+        <h4 class="os-section-title">Why Choose Wheelz?</h4>
+        
+        <div class="os-features-row">
+            <div class="os-feature-block">
+                <div class="os-feature-icon">
+                    <!-- Headset Icon -->
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A2001D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                </div>
+                <span>24/7 Support</span>
+            </div>
+            
+            <div class="os-feature-block">
+                <div class="os-feature-icon">
+                    <!-- Refresh/Returns Icon -->
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A2001D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+                </div>
+                <span>Easy Returns</span>
+            </div>
+            
+            <div class="os-feature-block">
+                <div class="os-feature-icon">
+                    <!-- Shield Icon -->
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A2001D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <span>Secure Payment</span>
+            </div>
+        </div>
+    </div>
+
+</div>

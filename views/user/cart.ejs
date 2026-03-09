@@ -1,25 +1,33 @@
 <!-- HEADER -->
-<header class="cart-header">
-    <ul class="nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/shop">Shop</a></li>
-        <li><a href="/categories">Categories</a></li>
-    </ul>
 
-    <div class="logo">Wheelz</div>
+      <header>
+  
+  <!-- Hamburger Button (Mobile Only) -->
+  <button class="hamburger" id="hamburger" type="button">
+  <i class="fa-solid fa-bars"></i>
+  </button>
 
-    <div class="user-actions">
-        <a href="/orders">Order</a>
-        <a href="/cart" class="active">Cart</a>
-        <a href="/wishlist">Wish List</a>
-        <% if (user) { %>
+  <ul class="nav-links" id="mobileMenu">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions nav-links" style="list-style-type: none; padding-left: 0; margin: 0;">
+    <li><a href="/orders">Order</a></li>
+    <li><a href="/cart">Cart</a></li>
+    <li><a href="/wishlist">Wishlist</a></li>
+
+    <% if (user) { %>
       <a href="/user/profile" class="profile-avatar">
-            <%= user.username.charAt(0).toUpperCase() %>
-        </a>
-        <% } else { %>
-        <a href="/signin" class="sign-in-btn">Sign In</a>
-        <% } %>
-    </div>
+        <%= user.username.charAt(0).toUpperCase() %>
+      </a>
+    <% } else { %>
+      <a href="/signin" class="sign-in-btn">Sign In</a>
+    <% } %>
+  </div>
+
 </header>
 
 <!-- PAGE TITLE -->
@@ -48,10 +56,10 @@
                 <div class="item-left">
                     <input type="checkbox"
                         class="item-checkbox"
-                        checked
+                        data-id="<%= product._id %>"
                         data-price="<%= discountedPrice %>"
                         data-quantity="<%= item.quantity %>"
-                        onchange="updateSubtotal()">
+                        onchange="updateSubtotal(),addToCheckoutArray(this.dataset.id,this.dataset.quantity,this)">
                     <img src="<%= product.images?.[0]?.url || '' %>" alt="<%= product.name %>">
                 </div>
 
@@ -120,7 +128,7 @@
     <div class="cart-summary">
         <h3 id="subtotalCount" >Subtotal (<%= totalItems %> items)</h3>
         <div id="subtotalPrice" class="subtotal-price">₹<%= subtotal %></div>
-        <button class="checkout-btn">Proceed to Checkout</button>
+        <button class="checkout-btn" onclick="addToCart()">Proceed to Checkout</button>
     </div>
 
 </div>
@@ -194,6 +202,41 @@
             }
             });
         
+    }
+
+    const Checkout=[];
+
+    function addToCheckoutArray(productId,quantity,input){
+        if(input.checked){
+            Checkout.push({productId,quantity})
+        }else{
+            const index=Checkout.findIndex(obj=>{
+                return obj.productId === productId
+            });
+            if(index>-1){
+                Checkout.splice(index,1)
+            }
+        }
+        console.log(Checkout)
+    }
+
+    function addToCart(){
+        fetch('/addOrder',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({Checkout})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                console.log('asdasd')
+                window.location.href='/checkout'
+            }else{
+                console.log('-------')
+                showError(data.message)
+            }
+        })
     }
     
 </script>

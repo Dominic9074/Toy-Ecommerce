@@ -1,0 +1,144 @@
+<!-- HEADER -->
+<header class="cart-header">
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/shop">Shop</a></li>
+    </ul>
+
+    <div class="logo">Wheelz</div>
+
+    <div class="user-actions">
+        <a href="/orders" class="active">Order</a>
+        <a href="/cart">Cart</a>
+        <a href="/wishlist">Wish List</a>
+        <% if (locals.user) { %>
+      <a href="/user/profile" class="profile-avatar">
+            <%= (user.username || 'U').charAt(0).toUpperCase() %>
+        </a>
+        <% } else { %>
+        <h3 class="profile-avatar"><i class="fa fa-user"></i></h3>
+        <% } %>
+    </div>
+</header>
+
+<!-- ORDERS PAGE CONTAINER -->
+<div class="orders-page-wrapper">
+    
+    <!-- Title and Search -->
+    <div class="orders-header-row">
+        <h1 class="orders-page-title">Your Orders</h1>
+        <div class="filter-box">
+                <div style="display: flex;" >
+                    <h3>FILTER</h3>
+                </div>
+                <div class="filter-options">
+                    <span class="filter-label">STATUS:</span>
+
+                    <button 
+                        class="filter-btn <%= status === 'all' ? 'active' : '' %>" 
+                        onclick="window.location.href='/orders?filter=all'">
+                        ALL
+                    </button>
+
+                    <button 
+                        class="filter-btn <%= status === 'shipped' ? 'active' : '' %>" 
+                        onclick="window.location.href='/orders?filter=shipped'">
+                        SHIPPED
+                    </button>
+
+                    <button 
+                        class="filter-btn <%= status === 'delivered' ? 'active' : '' %>" 
+                        onclick="window.location.href='/orders?filter=delivered'">
+                        DELIVERED
+                    </button>
+
+                    <button 
+                        class="filter-btn <%= status === 'cancelled' ? 'active' : '' %>" 
+                        onclick="window.location.href='/orders?filter=cancelled'">
+                        CANCELED
+                    </button>
+                </div>
+            </div>
+    </div>
+
+    <!-- Orders Filter Tabs -->
+    <div class="orders-filter-tabs">
+        <a href="#" class="tab-link active">Orders</a>
+    </div>
+
+    <!-- ORDER CARDS LIST (Mock Data based on Wheelz design and reference image) -->
+    
+    <!-- Order Card 1 -->
+    <% orders.forEach(order => { %>
+
+        <div class="order-history-card">
+                
+                <!-- Card Header Info -->
+                <div class="order-card-header">
+                    <div class="info-group">
+                        <span class="info-label">ORDER PLACED</span>
+                        <span class="info-value">
+                            <%= new Date(order.createdAt).toLocaleDateString("en-IN", { 
+                                year: "numeric", month: "long", day: "numeric" 
+                            }) %>
+                        </span>
+                    </div>
+
+                    <div class="info-group">
+                        <span class="info-label">TOTAL</span>
+                        <span class="info-value">₹<%= order.finalAmount %></span>
+                    </div>
+
+                    <div class="info-group">
+                        <span class="info-label">SHIP TO</span>
+                        <span class="info-value ship-to-link"><%= order.addressSnapshot.name %></span>
+                    </div>
+                    
+                    <div class="info-group order-id-group">
+                        <span class="info-label">ORDER <%= order.orderId %></span>
+                        <div class="order-links">
+                            <a href="/orders/<%= order._id %>">Order Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="order-card-body">
+                    <!-- Left: Product Info -->
+                    <div class="order-product-details">
+                        <div class="product-text-info">
+
+                            <% order.items.forEach(item => { %>
+                                <h3 class="product-title"><%= item.name %></h3>
+                            <% }) %>
+
+                            <div class="delivery-status <%= order.orderStatus === 'Delivered' ? 'success' : 'pending' %>">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="status-icon">
+                                    <% if(order.orderStatus === "Delivered"){ %>
+                                        <circle cx="12" cy="12" r="10" fill="#008a00"/>
+                                        <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <% } else { %>
+                                        <circle cx="12" cy="12" r="10" fill="#f08804"/>
+                                        <circle cx="12" cy="12" r="4" fill="#fff"/>
+                                    <% } %>
+                                </svg>
+
+                                <span>Order Status: <%= order.orderStatus %></span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                
+                <!-- Bottom Actions -->
+                <div class="order-card-footer">
+                    <button class="btn-primary-action">Buy it again</button>
+                    <button class="btn-secondary-action" onclick='window.location.href="/orderDetails/<%= order._id %>"'>Track package</button>
+                </div>
+
+        </div>
+
+        <% }) %>
+
+</div>

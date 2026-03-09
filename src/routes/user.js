@@ -55,8 +55,26 @@ router.get('/wishlist', userMiddleware.isLoggedIn,productController.loadWishlist
 router.post('/addWishlist',productController.addWishlist)
 
 //checkOut page
-router.get('/checkout',productController.loadCheckout)
-router.post('/addOrder',productController.addOrder)
+router.get('/checkout', userMiddleware.isLoggedIn,productController.loadCheckout)
+router.post('/addOrder', userMiddleware.isLoggedIn,productController.addOrder)
+router.post('/placeOrder', userMiddleware.isLoggedIn,productController.placeOrder)
+
+//order Success
+router.get('/orderSuccess', userMiddleware.isLoggedIn,productController.loadOrderSuccess)
+
+//orders
+router.get('/orders', userMiddleware.isLoggedIn,productController.loadOrders)
+
+//order details
+router.get('/orderDetails/:id', userMiddleware.isLoggedIn,productController.loadOrderDetails)
+
+//return order & cancel order
+router.post('/returnOrder', userMiddleware.isLoggedIn,productController.returnOrder)
+router.post('/cancelOrder', userMiddleware.isLoggedIn,productController.cancelOrder)
+
+//invoice
+router.get('/invoice/:id', userMiddleware.isLoggedIn,productController.downloadInvoice)
+
 
 
 // 🔐 Google Auth

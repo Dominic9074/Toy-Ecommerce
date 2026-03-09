@@ -18,7 +18,7 @@ window.showSuccess = function (message) {
 };
 
 window.showError = function (message) {
-  errorSound.currentTime=0;
-  errorSound.play().catch(()=>{})
+  successSound.currentTime=0;
+  successSound.play().catch(()=>{})
   notyf.error(message);
 };

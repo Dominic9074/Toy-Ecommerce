@@ -1,5 +1,6 @@
 import adminServices from '../services/adminServices.js'
 import productServices from "../services/productServices.js"
+import userProductServices from '../services/userProductServices.js';
 
 const loadUsers = async (req,res) => {
   try {
@@ -327,9 +328,58 @@ const updateProductStatus=async (req,res)=>{
     }
 }
 
+const loadOrders=async (req,res)=>{
+   try{
+     const search=req.query.search || ''
+      const status = req.query.status || 'all';
+      const currentPage=parseInt(req.query.page) || 1
+     const {orders,pageCount}=await userProductServices.getAllOrders(search,status,currentPage);
+     res.render('admin/orders',{title:'Orders',bodyClass:'',cssFile:'admin.css',orders,search,status,currentPage,pageCount});
+
+   }catch(error){
+    console.log(error)
+   }
+    
+}
+
+const loadOrderDetails=async (req,res)=>{
+   try{
+     const orderId = req.params.id;
+     const order=await userProductServices.getOrderById(orderId)
+     res.render('admin/orderDetails',{title:'Order Details',bodyClass:'',cssFile:'admin.css', order});
+   }catch(error){
+    console.log(error)
+   }
+}
+
+const updateOrderStatus=async (req,res)=>{
+    try{
+        const orderId=req.params.id;
+        const order=await productServices.updateOrderStatus(orderId,req.body);
+   
+    return res.json({
+        success:true,
+        message:'Status Changed Successfully'
+    })
+    }catch(error){
+        console.log(error);
+        return res.json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+const logout=(req,res)=>{
+    req.session.destroy();
+    res.clearCookie("connect.sid");
+    res.redirect('/admin/signin');
+}
+
 export default {
     loadUsers,toggleUserStatus,loadSignin,adminSignin,createCategory,loadCategory,loadAddCategory,loadEditCategory,updateCategory,
-    updateStatus,loadAddproduct,addProduct,loadProducts,loadEditProduct,editProduct,updateProductStatus
+    updateStatus,loadAddproduct,addProduct,loadProducts,loadEditProduct,editProduct,updateProductStatus,loadOrders,loadOrderDetails,
+    updateOrderStatus,logout
 }
 
 

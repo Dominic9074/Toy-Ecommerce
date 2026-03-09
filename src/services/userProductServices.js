@@ -3,6 +3,13 @@ import Product from '../models/productSchema.js'
 import Wishlist from "../models/wishListSchema.js";
 import Cart from "../models/cartSchema.js";
 import User from "../models/userModal.js";
+import Order from "../models/orderSchema.js";
+
+//generate orderId
+function generateOrderId() {
+    const random = Math.floor(1000 + Math.random() * 9000); // Generates a 4-digit number
+    return `#${random}`;
+}
 
 
 const getAllCategory=async ()=>{
@@ -198,7 +205,194 @@ const getUserInfo=async (userId)=>{
     return user;
 }
 
+const getCheckoutProducts=async (temporaryCheckout)=>{
+    const products=[];
+    if(Array.isArray(temporaryCheckout)){
+        for(const obj of temporaryCheckout){
+            const product=await Product.findById(obj.productId);
+            if(!product){
+                throw new Error('Product Not Found');
+            }
+
+            products.push({
+                product,
+                quantity:obj.quantity
+            })
+        }
+    }else{
+        products.push({product:await Product.findById(temporaryCheckout.productId),quantity:temporaryCheckout.quantity})
+    }
+    return products;
+}
+
+const placeOrder=async (data,userId)=>{
+    const addressId=data.selectedAddress.toString();
+    const paymentMethod=data.paymentMethod;
+    const products=data.products;
+
+    const user=await User.findById(userId);
+    const address=user.address.find(obj=>{
+        return obj._id.toString()===addressId
+    })
+
+    let newOrderId = generateOrderId();
+
+        // Optional: Check if it exists in DB (to be 100% safe)
+        let existingOrder = await Order.findOne({ orderId: newOrderId });
+        while (existingOrder) {
+            newOrderId = generateOrderId(); // Re-generate if it exists
+            existingOrder = await Order.findOne({ orderId: newOrderId });
+        }
+
+    const orderItems=[];
+    let subTotal=0;
+    for(const item of products){
+        if(item.quantity > item.product.stock){
+            throw new Error(`Influent Stock Quantity For ${item.product.shortName}`)
+        }
+        const discountedPrice =item.product.price -(item.product.price * item.product.offer / 100);
+        const itemTotal = discountedPrice * item.quantity;
+
+        subTotal+=itemTotal;
+        orderItems.push({
+            product:item.product._id,
+            name:item.product.name,
+            image:item.product.images[0].url,
+            price:item.product.price,
+            quantity:item.quantity,
+            itemTotal,
+            discount:item.product.offer
+        })
+    }
+    console.log(address)
+    const addressSnapshot={
+        name:address.fullname,
+        phone:address.phone,
+        pincode:address.pincode,
+        state:address.state,
+        city:address.city,
+        addressType:address.addressType
+    }
+    const discount=0;
+    const finalAmount=subTotal - discount;
+
+    const order=await Order.create({
+        user:user._id,
+        orderId:newOrderId,
+        items:orderItems,
+        addressSnapshot,
+        subtotal:subTotal,
+        discount,
+        finalAmount,
+        paymentMethod,
+        paymentStatus:paymentMethod==='COD' ? 'Pending':'Paid',
+    })
+
+    for(const item of products){
+        await Product.updateOne({_id:item.product._id},
+            {$inc:{stock:-item.quantity}}
+        )
+    }
+    return order;
+}
+
+const getAllUserOrders=async (userId,query)=>{
+    const user=await User.findById(userId);
+
+    let filter={user:userId};
+    if(query.filter==='shipped'){
+        filter.orderStatus='Shipped'
+    }else if(query.filter==='delivered'){
+        filter.orderStatus='Delivered'
+    }else if(query.filter==='cancelled'){
+        filter.orderStatus='Cancelled'
+    }
+
+    if(!user){
+        throw new Error('User Do Not Exist')
+    };
+    const orders=await Order.find(filter).sort({createdAt:-1})
+    return orders
+}
+
+const getOrderById=async (orderId)=>{
+    const order=await Order.findById(orderId).populate('user');
+    if(!order){
+        throw new Error('Order Not Found');
+    }
+    return order;
+}
+
+const returnOrder=async(orderId,reason,details,itemId)=>{
+    const order=await Order.findById(orderId);
+    console.log('working')
+    if(!order){
+        throw new Error('Order Not Found')
+    }
+     if(order.orderStatus !== "Delivered"){
+        throw new Error("Return not allowed for this order");
+    }
+    let itemFound=false;
+    for(let item of order.items){
+        if(item._id.toString()===itemId){
+            item.itemStatus='Returned';
+            item.returnReason=reason.toString();
+            item.returnDescription=details.toString();
+            itemFound=true;
+            break;
+        }
+    }
+    if(!itemFound){
+        throw new Error('Product Not Found')
+    }
+
+    await order.save();
+    return order;
+}
+
+const cancelOrder=async (reason,details,orderId)=>{
+    const order=await Order.findById(orderId);
+    if(!order){
+        throw new Error('Order Not Found')
+    }
+    if(order.orderStatus === "Delivered"){
+    throw new Error("Delivered orders cannot be cancelled");
+    }
+    order.cancelReason=reason;
+    order.cancelDescription=details;
+    order.orderStatus='Cancelled';
+
+    for(let obj of order.items){
+        const product=await Product.updateOne({_id:obj.product},{$inc:{stock:obj.quantity}})
+    }
+
+    await order.save();
+    return order;
+}
+
+const getAllOrders=async (search,status,page)=>{
+
+    const limit =10;
+    const skip=(page-1)*limit;
+
+   
+    let query={};
+    if(search){
+         const user =await User.find({email:{$regex:search,$options:'i'}}).select('_id');
+         const userIds = user.map(user=>user._id);
+         query.user={$in:userIds};
+    }
+    if(status !=='all' && status !== undefined && status !== null){
+        query.orderStatus=status;
+    }
+    const totalOrders=await Order.countDocuments(query);
+    const orders=await Order.find(query).populate('user').sort({createdAt:-1}).skip(skip).limit(limit)
+    const pageCount=Math.ceil(totalOrders/limit)
+    return {orders,pageCount};
+}
+
 export default {getAllCategory,getFilterProducts,findProductById,findWishlistProduct,addToCart,getCartProducts,
-    updateQuantityCount,removeCart,getUserInfo
+    updateQuantityCount,removeCart,getUserInfo,getCheckoutProducts,placeOrder,getAllUserOrders,getOrderById,returnOrder,
+    cancelOrder,getAllOrders
 }
 

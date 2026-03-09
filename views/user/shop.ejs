@@ -1,31 +1,34 @@
 
-    <header>
-        <button class="hamburger" id="hamburger">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-        <ul class="nav-links" style="justify-content: flex-start;"> <!-- Left align nav links -->
-            <li><a href="/">Home</a></li>
-            <li><a href="/shop" class="active">Shop</a></li>
-            <li><a href="/categories">Categories</a></li>
-        </ul>
-        
-        <div class="logo">
-            Wheelz
-        </div>
+   
+      <header>
+  
+  <!-- Hamburger Button (Mobile Only) -->
+  <button class="hamburger" id="hamburger" type="button">
+  <i class="fa-solid fa-bars"></i>
+  </button>
 
-        <div class="user-actions">
-           <a href="/orders">Order</a> <!-- Matches 'Order' in image? Image says 'Order' -->
-           <a href="/cart">Cart</a>
-           <a href="/wishlist">Wish List</a>
-           <% if (user) { %>
+  <ul class="nav-links" id="mobileMenu">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions nav-links" style="list-style-type: none; padding-left: 0; margin: 0;">
+    <li><a href="/orders">Order</a></li>
+    <li><a href="/cart">Cart</a></li>
+    <li><a href="/wishlist">Wishlist</a></li>
+
+    <% if (user) { %>
       <a href="/user/profile" class="profile-avatar">
         <%= user.username.charAt(0).toUpperCase() %>
       </a>
     <% } else { %>
       <a href="/signin" class="sign-in-btn">Sign In</a>
     <% } %>
-        </div>
-    </header>
+  </div>
+
+</header>
 
     <div class="shop-page-container">
         
