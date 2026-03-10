@@ -20,11 +20,11 @@ const getAllCategory=async ()=>{
 const getFilterProducts=async (filter,userId)=>{
     const query={isActive:true};
     const sort={};
-    let wishlistProductIds=[];
     const page=parseInt(filter.page) || 1;
     const limit=10;
     const skip = (page - 1) * limit >= 0 ? (page - 1) * limit : 0;
     
+    let wishlistProductIds=[];
    if(userId){
      const wishlist=await Wishlist.findOne({user:userId});
      if(wishlist){
@@ -63,14 +63,21 @@ const getFilterProducts=async (filter,userId)=>{
     return { products, wishlistProductIds,pageCount,currentPage:page};
 }
 
-const findProductById=async(slug)=>{
+const findProductById=async(slug,userId)=>{
     const product=await Product.findOne({slug}).populate('category','name')
+    let wishlistProductIds=[];
+    if(userId){
+        const wishlist=await Wishlist.findOne({user:userId});
+        if(wishlist){
+        wishlistProductIds=wishlist.products.map(id=>id.toString());
+        }
+        }
     if(!product){
         throw new Error('Product Not Found')
     }
     const categoryId=product.category;
     const RelatedProducts=await Product.find({category:categoryId,_id: { $ne: product._id },isActive: true}).populate('category','name')
-    return {product,RelatedProducts};
+    return {product,RelatedProducts,wishlistProductIds};
 }
 
 const findWishlistProduct=async(userId,search)=>{

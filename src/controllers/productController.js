@@ -53,9 +53,9 @@ const loadShop=async (req,res)=>{
 const loadProductDetails=async (req,res)=>{
 try{
     const slug=req.params.slug
-    const {product,RelatedProducts}=await userProductServices.findProductById(slug);
+    const {product,RelatedProducts,wishlistProductIds}=await userProductServices.findProductById(slug,req.session.user?.userId);
 
-    res.render('user/productDetails',{title:'Product',bodyClass:"",cssFile:'style.css',product,RelatedProducts})
+    res.render('user/productDetails',{title:'Product',bodyClass:"",cssFile:'style.css',product,RelatedProducts,wishlistProductIds})
 }catch(error){
     console.log(error)
 }

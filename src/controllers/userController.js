@@ -82,7 +82,7 @@ const signup=async (req,res,next)=>{
 
         req.session.userOtp=otp;
         req.session.otpExpires = Date.now() + (2 * 60 * 1000);
-        req.session.userdata={username,email,password}
+        req.session.userdata={username,email}
 
         console.log('OTP SENT:',otp)
        return res.redirect('/otppage?purpose=signup')
