@@ -79,10 +79,10 @@
             <div class="form-actions">
               <% if (isEdit) { %>
                 <button type="button" class="btn-save-address" onclick="formValidation(event)">UPDATE ADDRESS</button>
-                <button type="button" onclick="window.location.href='/user/profile'" class="btn-cancel-address">CANCEL</button>
+                <button type="button" onclick="addressCancel()" class="btn-cancel-address">CANCEL</button>
               <% } else { %>
                 <button type="button" class="btn-save-address" onclick="formValidation(event)">SAVE ADDRESS</button>
-                <button type="button" onclick="window.location.href='/user/profile'" class="btn-cancel-address">CANCEL</button>
+                <button type="button" onclick="addressCancel()" class="btn-cancel-address">CANCEL</button>
               <% } %>
             </div>
         </form>
@@ -90,6 +90,7 @@
 </div>
 
 <script>
+  const from=<%- JSON.stringify(from) %>;
  async function formValidation(e){
     const isEdit = <%= typeof isEdit !== 'undefined' && isEdit ? 'true' : 'false' %>;
     const fullname=document.getElementById('fullname').value;
@@ -229,7 +230,11 @@
       if(data.success){
         showSuccess(data.message)
         setTimeout(()=>{
+          if(from ==='checkout'){
+            window.location.href='/checkout'
+          }else{
           window.location.href='/user/profile'
+          }
         },1000)
       }else{
         showError(data.message);
@@ -249,12 +254,24 @@
         if(data.success){
           showSuccess(data.message)
           setTimeout(()=>{
+            if(from ==='checkout'){
+            window.location.href='/checkout'
+            }else{
             window.location.href='/user/profile'
+            }
           },1000)
         }else{
           showError(data.message);
         }
     })
+  }
+
+  function addressCancel(){
+    if(from ==='checkout'){
+      window.location.href='/checkout'
+    }else{
+      window.location.href-'/user/profile'
+    }
   }
 
 

@@ -67,7 +67,7 @@
                             </p>
                             <p><%= address?.phone %></p>
                         </div>
-                        <a href="/editAddress/<%= address._id %>">
+                        <a href="/editAddress/<%= address._id %>?from=checkout">
                             <button class="btn-icon-edit">
                             <i class="fa-solid fa-arrow-up-right-from-square"></i>
                           </button>
@@ -79,7 +79,7 @@
 
             <!-- Add/Edit Address Buttons -->
             <div class="address-actions-row">
-                <a href="/addaddress" class="btn-outline">+ Add New Address</a>
+                <a href="/addaddress?from=checkout" class="btn-outline">+ Add New Address</a>
             </div>
         </div>
 

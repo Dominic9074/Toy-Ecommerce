@@ -169,7 +169,7 @@ const loadCheckout=async (req,res)=>{
      const user=await userProductServices.getUserInfo(req.session.user?.userId);
      const temporaryCheckout = req.session.cartProducts;
      const products=await userProductServices.getCheckoutProducts(temporaryCheckout);
-     req.session.cartProducts=null;
+     
 
     res.render('user/checkout',{title:'checkout',bodyClass:'',cssFile:'style.css',addresses:user.address,products})
    }catch(error){
@@ -244,6 +244,7 @@ const placeOrder=async (req,res)=>{
             paymentMethod:order.paymentMethod,
             totalAmount:amount
         }
+        req.session.cartProducts=null;
         return res.json({
             success:true,
             message:'Order Placed Successfully'

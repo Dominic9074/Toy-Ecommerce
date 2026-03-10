@@ -469,7 +469,8 @@ const changePassword=async (req,res)=>{
 }
 
 const loadAddress=(req,res)=>{
-    res.render('user/addAddress',{title:'Add Address',bodyClass:'address-body',cssFile: "style.css",isEdit:false,address:undefined})
+    const from=req.query.from || '';
+    res.render('user/addAddress',{title:'Add Address',bodyClass:'address-body',cssFile: "style.css",isEdit:false,address:undefined,from})
 }
 
 const addAddress=async (req,res)=>{
@@ -526,14 +527,14 @@ const loadEditAddress=async (req,res)=>{
     const addressId=req.params.id;
     const user=await userServices.findUserById(userId)
     const address=user.address.id(addressId)
-    console.log(addressId,address)
+    const from =req.query.from || '';
     if(!user){
         return res.json({
             success:false,
             message:'User Not Found'
         })
     }
-    return res.render('user/addAddress',{address,addressId,isEdit:true,title:'Edit Address',bodyClass:'address-body',cssFile:'style.css'})
+    return res.render('user/addAddress',{address,addressId,isEdit:true,title:'Edit Address',bodyClass:'address-body',cssFile:'style.css',from})
 }
 
 const updateAddress=async (req,res)=>{
