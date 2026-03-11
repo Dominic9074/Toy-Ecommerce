@@ -5268,3 +5268,480 @@ font-weight:600;
     margin-left: 10px;
     padding: 10px;
 }
+
+/* Payment Failure Page */
+.payment-failure-body {
+    background-color: #f4f6f8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+}
+
+.payment-header {
+    background-color: #fff;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eaeaea;
+    box-shadow: none;
+}
+
+.payment-header .logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1c2e4a;
+    margin: 0;
+}
+
+.payment-header .close-btn {
+    font-size: 24px;
+    color: #333;
+    text-decoration: none;
+    line-height: 1;
+    background: #f4f6f8;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+.payment-header .close-btn:hover {
+    background: #e0e0e0;
+}
+
+.payment-failure-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.pf-card {
+    background: #fff;
+    width: 100%;
+    max-width: 440px;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid #f0f0f0;
+}
+
+.pf-icon-container {
+    width: 70px;
+    height: 70px;
+    background-color: #fff1f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.pf-icon-container .pf-icon {
+    width: 32px;
+    height: 32px;
+    background-color: #ff4d4f;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.pf-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+}
+
+.pf-desc {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.pf-order-details {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.pf-od-header {
+    font-size: 11px;
+    font-weight: 600;
+    color: #a0aab5;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
+}
+
+.pf-od-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 15px;
+    color: #333;
+}
+.pf-od-row:last-child {
+    margin-bottom: 0;
+}
+
+.pf-od-total {
+    border-top: 1px solid #eaeaea;
+    padding-top: 15px;
+    font-size: 14px;
+}
+.pf-od-total strong {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.pf-btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    margin-bottom: 15px;
+}
+
+.pf-btn-retry {
+    background-color: #1a56db;
+    color: #fff;
+    border: none;
+}
+.pf-btn-retry:hover {
+    background-color: #1e429f;
+}
+
+.pf-btn-continue {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+.pf-btn-continue:hover {
+    background-color: #e5e7eb;
+}
+
+.pf-help {
+    margin-top: 30px;
+    font-size: 12px;
+    color: #999;
+}
+.pf-help a {
+    color: #1a56db;
+    font-weight: 500;
+    text-decoration: none;
+}
+.pf-help a:hover {
+    text-decoration: underline;
+}
+
+.pf-secure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #999;
+}
+
+.payment-footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 12px;
+    color: #a0aab5;
+}
+
+/* Wallet Page Styles */
+.wallet-page-body {
+    background-color: #fff;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+.wallet-layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 40px auto; 
+    align-items: flex-start;
+}
+
+.w-sidebar {
+    width: 250px; /* Same sidebar width */
+    background: #fff;
+    flex-shrink: 0;
+}
+
+.w-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.w-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #00bfff; /* cyan background */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.w-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.w-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: #100E34;
+}
+
+.w-email {
+    font-size: 13px;
+    color: #a0aab5;
+    font-weight: 600;
+}
+
+.w-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.w-menu-item {
+    display: block;
+    padding: 12px 20px;
+    color: #a0aab5;
+    font-weight: 700;
+    font-size: 14px;
+    border: 1px solid #eaeaea;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.w-menu-item.active {
+    background-color: #100E34;
+    color: #fff;
+    border-color: #100E34;
+}
+
+.w-menu-item:not(.active):hover {
+    background-color: #f9f9f9;
+}
+
+.w-main-content {
+    flex: 1;
+    margin-left: 20px;
+    padding-left: 20px;
+    border-left: 1px solid #eaeaea; /* Separator like in the image */
+}
+
+.w-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #100E34;
+    margin: 0 0 5px;
+}
+
+.w-subtitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: #a0aab5;
+    margin: 0 0 20px;
+    text-transform: uppercase;
+}
+
+.w-divider {
+    border: 0;
+    height: 1px;
+    background: #eaeaea;
+    margin-bottom: 30px;
+}
+
+.w-balance-card {
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 1px solid #eaeaea;
+}
+
+.w-card-header {
+    background-color: #100E34;
+    color: #fff;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.w-card-body {
+    padding: 30px;
+    background: #fff;
+}
+
+.w-avail-funds {
+    font-size: 14px;
+    font-weight: 700;
+    color: #a0aab5;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.w-amount-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.w-amount {
+    font-size: 42px;
+    font-weight: 800;
+    color: #100E34;
+    line-height: 1;
+}
+
+.w-btn-refresh {
+    background: #fff;
+    border: 1px solid #333;
+    color: #111;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+.w-btn-refresh:hover {
+    background: #f4f6f8;
+}
+
+.w-actions {
+    display: flex;
+    justify-content: flex-end; /* right-aligning Refer And Earn since Add Money is gone */
+    margin-bottom: 40px;
+}
+
+.w-btn-refer {
+    background-color: #100E34;
+    color: #fff;
+    padding: 16px 0;
+    width: 48%; /* Half width, matching the image size approximately */
+    text-align: center;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+.w-btn-refer:hover {
+    background-color: #1a1a4a;
+}
+
+.w-tx-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #000;
+    margin-bottom: 15px;
+}
+
+.w-table-container {
+    border: 1px solid #eaeaea;
+    border-radius: 0;
+    margin-bottom: 20px;
+}
+
+.w-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.w-table thead {
+    background-color: #100E34;
+}
+
+.w-table th {
+    color: #fff;
+    padding: 15px 20px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.w-table tbody tr {
+    border-bottom: 1px solid #eaeaea;
+}
+/* Filler row to preserve height if there are missing rows */
+.w-filler-row {
+    height: 120px;
+    border-bottom: none;
+}
+
+.w-table td {
+    padding: 15px 20px;
+    font-size: 15px;
+    color: #111;
+}
+
+.w-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.w-page-btn {
+    border: 1px solid #eaeaea;
+    background: #fff;
+    color: #111;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.w-page-btn.active {
+    border-color: #8a63ff; /* Matching active outline in image */
+    color: #8a63ff;
+}
+
+.w-page-btn.w-icon {
+    background-color: #d1d6dc;
+    color: #555;
+    border: none;
+}
+.w-page-btn.w-dots {
+    border: none;
+    pointer-events: none;
+}
+

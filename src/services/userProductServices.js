@@ -258,7 +258,7 @@ const placeOrder=async (data,userId)=>{
             throw new Error(`Influent Stock Quantity For ${item.product.shortName}`)
         }
         const discountedPrice =item.product.price -(item.product.price * item.product.offer / 100);
-        const itemTotal = discountedPrice * item.quantity;
+        const itemTotal = Math.ceil(discountedPrice * item.quantity);
 
         subTotal+=itemTotal;
         orderItems.push({

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet - Wheelz</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="wallet-page-body">
+
+<header>
+  <!-- Hamburger Button (Mobile Only) -->
+  <button class="hamburger" id="hamburger" type="button">
+  <i class="fa-solid fa-bars"></i>
+  </button>
+
+  <ul class="nav-links" id="mobileMenu">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions nav-links" style="list-style-type: none; padding-left: 0; margin: 0;">
+    <li><a href="/orders">Order</a></li>
+    <li><a href="/cart">Cart</a></li>
+    <li><a href="/wishlist">Wishlist</a></li>
+
+    <% if (typeof user !== "undefined" && user) { %>
+      <a href="/user/profile" class="profile-avatar">
+        <%= user.username ? user.username.charAt(0).toUpperCase() : 'U' %>
+      </a>
+    <% } else { %>
+      <a href="/signin" class="sign-in-btn">Sign In</a>
+    <% } %>
+  </div>
+</header>
+
+<div class="wallet-layout">
+    <!-- Sidebar -->
+    <aside class="w-sidebar">
+        <div class="w-user-profile">
+            <div class="w-avatar">
+               <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="w-user-info">
+               <div class="w-name"><%= typeof user !== 'undefined' && user && user.username ? user.username.toUpperCase() : 'JHON WICK' %></div>
+               <div class="w-email"><%= typeof user !== 'undefined' && user && user.email ? user.email : 'Jhonwick@Gmail.Com' %></div>
+            </div>
+        </div>
+        
+        <nav class="w-menu">
+            <a href="/user/profile" class="w-menu-item">DASHBOARD</a>
+            <a href="/orders" class="w-menu-item">MY ORDERS</a>
+            <a href="/coupon" class="w-menu-item">MY COUPON</a>
+            <a href="/wallet" class="w-menu-item active">WALLET</a>
+            <a href="/wishlist" class="w-menu-item">WISHLIST</a>
+            <a href="/refer" class="w-menu-item">REFER AND EARN</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="w-main-content">
+        <div class="w-header">
+            <h1 class="w-title">MY DIGITAL WALLET</h1>
+            <p class="w-subtitle">MANAGE YOUR FUND FOR SEAMLESS PRODUCT PURCHASE AND EXCLUSIVE DEPOSIT</p>
+            <hr class="w-divider">
+        </div>
+
+        <div class="w-balance-card">
+            <div class="w-card-header">
+                <i class="fa-solid fa-wallet"></i> BALANCE OVERVIEW
+            </div>
+            <div class="w-card-body">
+                <div class="w-balance-info">
+                    <span class="w-avail-funds">AVAILABLE FUNDS</span>
+                    <div class="w-amount-row">
+                        <span class="w-amount">₹<%= typeof wallet !== 'undefined' && wallet.balance ? wallet.balance.toFixed(2) : '4,800.00' %></span>
+                        <button class="w-btn-refresh"><i class="fa-solid fa-arrows-rotate"></i> Refresh Balance</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-actions">
+            <a href="/refer" class="w-btn-refer">Refer And Earn</a>
+        </div>
+
+        <div class="w-transactions">
+            <h3 class="w-tx-title">Recent Transactions</h3>
+            <div class="w-table-container">
+                <table class="w-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">DATE</th>
+                            <th style="width: 35%">DISCRIPTION</th>
+                            <th style="width: 20%">STATUS</th>
+                            <th style="width: 20%">AMOUND</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if(typeof transactions !== 'undefined' && transactions.length > 0) { %>
+                            <% transactions.forEach(tx => { %>
+                                <tr>
+                                    <td><%= tx.date %></td>
+                                    <td style="font-weight: 700;"><%= tx.description %></td>
+                                    <td style="font-weight: 700;"><%= tx.status %></td>
+                                    <td style="font-weight: 700;">₹<%= tx.amount %></td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td style="font-weight: 700;">Oct 28,2025</td>
+                                <td style="font-weight: 700; color: #111;">ORDER PAYMENT</td>
+                                <td style="font-weight: 700; color: #111;">DEBITED</td>
+                                <td style="font-weight: 700; color: #111;">₹609</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 700;">Oct 24,2025</td>
+                                <td style="font-weight: 700; color: #111;">TOP-UP TO WALLET</td>
+                                <td style="font-weight: 700; color: #111;">CREDITED</td>
+                                <td style="font-weight: 700; color: #111;">₹5,300</td>
+                            </tr>
+                        <% } %>
+                        <tr class="w-filler-row">
+                            <td colspan="4"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="w-pagination">
+                <button class="w-page-btn w-icon">&lt;</button>
+                <button class="w-page-btn active">1</button>
+                <button class="w-page-btn">2</button>
+                <button class="w-page-btn w-dots">...</button>
+                <button class="w-page-btn w-icon">&gt;</button>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

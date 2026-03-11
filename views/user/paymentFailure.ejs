@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Failed - Wheelz</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="payment-failure-body">
+
+    <!-- Header -->
+    <header class="payment-header">
+        <div class="logo">Wheelz</div>
+        <a href="/" class="close-btn">&times;</a>
+    </header>
+
+    <main class="payment-failure-container">
+        <div class="pf-card">
+            <div class="pf-icon-container">
+                <div class="pf-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+            </div>
+            
+            <h1 class="pf-title">Payment Failed</h1>
+            <p class="pf-desc">We couldn't process your transaction. Please <br>check your card details or try a different <br>payment method.</p>
+
+            <div class="pf-order-details">
+                <div class="pf-od-header">ORDER DETAILS</div>
+                <div class="pf-od-row pf-od-total">
+                    <span>Total Amount</span>
+                    <strong>$<%= totalAmount %></strong>
+                </div>
+            </div>
+
+            <a href="/checkout" class="pf-btn pf-btn-retry">Retry Payment</a>
+            <a href="/shop" class="pf-btn pf-btn-continue">Continue Shopping</a>
+
+        </div>
+
+        <div class="pf-secure">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Secure Payment Processing
+        </div>
+    </main>
+
+    <footer class="payment-footer">
+        © 2024 Wheelz Ecommerce Inc. All rights reserved.
+    </footer>
+
+</body>
+</html>

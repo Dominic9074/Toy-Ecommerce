@@ -5,6 +5,7 @@ import userController from "../controllers/userController.js";
 import userMiddleware from "../middleware/userMiddleware.js";
 import passport from "../config/passport.js";
 import productController from "../controllers/productController.js";
+import paymentController from "../controllers/paymentController.js";
 
 // local auth
 router.get("/", userController.loadHome);
@@ -59,6 +60,10 @@ router.get('/checkout', userMiddleware.isLoggedIn,productController.loadCheckout
 router.post('/addOrder', userMiddleware.isLoggedIn,productController.addOrder)
 router.post('/placeOrder', userMiddleware.isLoggedIn,productController.placeOrder)
 
+//payment
+router.post('/create-razorpay-order',paymentController.createRazorpayOrder)
+router.post('/verify-payment',paymentController.verifyPayment)
+
 //order Success
 router.get('/orderSuccess', userMiddleware.isLoggedIn,productController.loadOrderSuccess)
 
@@ -73,7 +78,10 @@ router.post('/returnOrder', userMiddleware.isLoggedIn,productController.returnOr
 router.post('/cancelOrder', userMiddleware.isLoggedIn,productController.cancelOrder)
 
 //invoice
-router.get('/invoice/:id', userMiddleware.isLoggedIn,productController.downloadInvoice)
+router.get('/invoice/:id', userMiddleware.isLoggedIn,productController.downloadInvoice);
+
+//payment failure
+router.get('/payment-failure',paymentController.loadPaymentFailure)
 
 
 

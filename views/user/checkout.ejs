@@ -89,7 +89,7 @@
             
             <div class="payment-methods-list">
                 <label class="payment-method-card selected">
-                    <input type="radio" name="payment" value="razorpay" checked class="custom-radio">
+                    <input type="radio" name="payment" value="Razorpay" checked class="custom-radio">
                     <div class="payment-label">
                         <span class="pay-icon razorpay-icon">⚡</span> Razorpay
                     </div>
@@ -136,6 +136,7 @@
                 let subtotal = 0;
                 let shipping = 0;
                 let coupon = 0;
+                
 
                 if (typeof products !== 'undefined' && products.length > 0) {
                     products.forEach(item => {
@@ -216,8 +217,9 @@
     </div>
 
 </div>
-
+<% const totalAmount = subtotal + shipping - coupon %>
 <script>
+    const totalAmount=<%= totalAmount %>
     const cards = document.querySelectorAll(".address-card");
     const products = <%- JSON.stringify(products) %>;
 
@@ -239,11 +241,13 @@
         placeOrder(); 
     }
 });
-    function placeOrder(){
+    async function placeOrder(){
         const selectedAddress=document.querySelector('input[name="selectedAddress"]:checked').value
         const paymentMethod=document.querySelector('input[name="payment"]:checked').value
-        
-        fetch('/placeOrder',{
+        let url=''
+                
+        if(paymentMethod ==='COD'){
+             fetch('/placeOrder',{
             method:'POST',
             headers:{
                 'Content-Type':'application/json'
@@ -254,11 +258,69 @@
             if(data.success){
                 showSuccess(data.message);
                 setTimeout(()=>{
-                    window.location.href='/orderSuccess'
+                    window.location.replace('/orderSuccess')
                 },2500)
             }else{
                 showError(data.message)
             }
         })
+        }
+        if(paymentMethod === 'Razorpay'){
+           const res = await fetch('/create-razorpay-order',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({amount:totalAmount})
+            })
+            const data=await res.json();
+            const options={
+                key:'<%= process.env.RAZORPAY_KEY_ID %>',
+                amount:data.order.amount,
+                currency:'INR',
+                name:'Wheelz',
+                description:'Toy Purchase',
+                order_id:data.order.id,
+                handler:async function (response){
+                    const verifyRes=await fetch('/verify-payment',{
+                        method:'POST',
+                        headers:{
+                            'Content-Type':'application/json'
+                        },
+                        body:JSON.stringify(response)
+                    })
+                    const verifyData=await verifyRes.json();
+                    if(verifyData.success){
+                        const placeRes=await fetch('/placeOrder',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type':'application/json'
+                            },
+                            body:JSON.stringify({
+                                selectedAddress,
+                                paymentMethod,
+                                products
+                            })
+                        })
+                        const orderData=await placeRes.json();
+                        if(orderData.success){
+                             window.location.replace('/orderSuccess')
+                        }
+                    }else{
+                        showError('Payment Verification Failed')
+                        setTimeout(()=>{
+                            window.location.href='/payment-failure'
+                        },1000)
+                    }
+                }
+            }
+            const rzp=new Razorpay(options);
+
+            rzp.on('payment.failed',function(response){
+                window.location.href=`/payment-failure?Amount=${totalAmount}`
+            })
+
+            rzp.open();
+        }
     }
 </script>
