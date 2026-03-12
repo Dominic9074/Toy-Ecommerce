@@ -376,10 +376,26 @@ const logout=(req,res)=>{
     res.redirect('/admin/signin');
 }
 
+const updateReturnStatus=async (req,res)=>{
+try{
+        const order=await productServices.updateReturnStatus(req.body);
+    if(!order){
+        return res.json({success:false,message:'order Not Found'})
+    }
+    return res.json({success:true,message:'Status Updated Successfully'})
+}catch(error){
+    console.log(error);
+    return res.json({
+        success:false,
+        message:error.message
+    })
+}
+}
+
 export default {
     loadUsers,toggleUserStatus,loadSignin,adminSignin,createCategory,loadCategory,loadAddCategory,loadEditCategory,updateCategory,
     updateStatus,loadAddproduct,addProduct,loadProducts,loadEditProduct,editProduct,updateProductStatus,loadOrders,loadOrderDetails,
-    updateOrderStatus,logout
+    updateOrderStatus,logout,updateReturnStatus
 }
 
 

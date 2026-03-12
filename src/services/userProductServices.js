@@ -4,6 +4,7 @@ import Wishlist from "../models/wishListSchema.js";
 import Cart from "../models/cartSchema.js";
 import User from "../models/userModal.js";
 import Order from "../models/orderSchema.js";
+import paymentServices from "./paymentServices.js";
 
 //generate orderId
 function generateOrderId() {
@@ -332,7 +333,7 @@ const getOrderById=async (orderId)=>{
 
 const returnOrder=async(orderId,reason,details,itemId)=>{
     const order=await Order.findById(orderId);
-    console.log('working')
+    
     if(!order){
         throw new Error('Order Not Found')
     }
@@ -345,6 +346,8 @@ const returnOrder=async(orderId,reason,details,itemId)=>{
             item.itemStatus='Returned';
             item.returnReason=reason.toString();
             item.returnDescription=details.toString();
+            item.refundStatus='Pending'
+            item.returnStatus='Requested'
             itemFound=true;
             break;
         }
@@ -357,13 +360,24 @@ const returnOrder=async(orderId,reason,details,itemId)=>{
     return order;
 }
 
-const cancelOrder=async (reason,details,orderId)=>{
+const cancelOrder=async (reason,details,orderId,userId)=>{
     const order=await Order.findById(orderId);
     if(!order){
         throw new Error('Order Not Found')
     }
     if(order.orderStatus === "Delivered"){
     throw new Error("Delivered orders cannot be cancelled");
+    }
+    if(order.paymentStatus ==='Paid'){
+        const wallet=await paymentServices.getWalletById(userId);
+        wallet.balance+=order.finalAmount;
+        wallet.transactions.push({
+            type:'credit',
+            amount:order.finalAmount,
+            reason:'Order Cancel Refund',
+            orderId:order._id
+        })
+        await wallet.save();
     }
     order.cancelReason=reason;
     order.cancelDescription=details;

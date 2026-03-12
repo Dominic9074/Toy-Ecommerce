@@ -107,7 +107,7 @@
                 <!-- Returned Products Section -->
                 <div class="detail-card">
                     <h3 class="detail-card-title" style="color: #A2001D;">
-                        <i class="fa-solid fa-arrow-rotate-left"></i> Returned Products
+                        <i class="fa-solid fa-arrow-rotate-left"></i> Return Requests
                     </h3>
                     
                     <% 
@@ -124,11 +124,33 @@
                                     <div class="returned-item">
                                         <div class="returned-item-info">
                                             <h4><%= item.name %></h4>
-                                            <p>Reason: Customer requested return</p>
+                                            <p>Reason: <%= item.returnReason  %></p>
                                         </div>
                                         <div class="returned-item-status">
-                                            <span class="status-badge return"><%= item.itemStatus %></span>
-                                        </div>
+
+                                        <select 
+                                            class="return-status-select"
+                                            onchange="updateReturnStatus('<%= order._id %>','<%= item._id %>',this.value)"
+                                        >
+                                            <option value="" disabled <%= !item.returnStatus || item.returnStatus === 'Requested' ? 'selected' : '' %>>
+                                                Return Requested
+                                            </option>
+
+                                            <option value="Approved" <%= item.returnStatus === 'Approved' ? 'selected' : '' %>>
+                                                Approved
+                                            </option>
+
+                                            <option value="Completed" <%= item.returnStatus === 'Completed' ? 'selected' : '' %>>
+                                                Completed
+                                            </option>
+
+                                            <option value="Rejected" <%= item.returnStatus === 'Rejected' ? 'selected' : '' %>>
+                                                Rejected
+                                            </option>
+
+                                        </select>
+
+                                    </div>
                                     </div>
                                 <% }) %>
                             <% } else { %>
@@ -295,6 +317,24 @@
               });
             }
           });
+      }
+
+      function updateReturnStatus(orderId,itemId,status){
+        fetch('/admin/update-return-status',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({orderId,itemId,status})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                showSuccess(data.message);
+                setTimeout(()=>{window.location.reload()},1500)
+            }else{
+                showError(data.message)
+            }
+        })
       }
     </script>
 </body>

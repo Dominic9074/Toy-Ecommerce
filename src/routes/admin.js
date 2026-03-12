@@ -30,6 +30,7 @@ router.patch('/admin/addProduct/status/:id',check.isLogedin,adminController.upda
 router.get('/admin/orders',check.isLogedin,adminController.loadOrders)
 router.get('/admin/orders/:id',check.isLogedin,adminController.loadOrderDetails)
 router.post('/admin/orders/:id/status',check.isLogedin,adminController.updateOrderStatus)
+router.post('/admin/update-return-status',adminController.updateReturnStatus)
 
 //logout 
 router.get('/admin/logout',adminController.logout)

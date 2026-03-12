@@ -114,7 +114,7 @@
                 <% if (typeof order !== 'undefined' && order.items && order.items.length > 0) { %>
                     <% order.items.forEach(item => { %>
 
-                    <div class="od-product-row">
+                    <div class="od-product-row <%= item.itemStatus === 'Returned' ? 'returned-border' : '' %>">
 
                         <div class="od-product-img-box">
                             <img src="<%= item.image %>" alt="<%= item.name %>">
@@ -128,6 +128,26 @@
                                 onclick="openReturnModal('<%= order._id %>','<%= item._id %>')">
                                 Return
                             </button>
+                        <% } else if(item.itemStatus === "Returned"){ %>
+
+                            <div class="return-status-box">
+
+                                <div class="status-line">
+                                    <span class="status-label">Return Status:</span>
+                                    <span class="status-value return-status">
+                                        <%= item.returnStatus || "Requested" %>
+                                    </span>
+                                </div>
+
+                                <div class="status-line">
+                                    <span class="status-label">Refund Status:</span>
+                                    <span class="status-value refund-status">
+                                        <%= item.refundStatus || "Pending" %>
+                                    </span>
+                                </div>
+
+                            </div>
+
                         <% } %>
 
                     </div>

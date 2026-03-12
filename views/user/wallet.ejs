@@ -77,8 +77,8 @@
                 <div class="w-balance-info">
                     <span class="w-avail-funds">AVAILABLE FUNDS</span>
                     <div class="w-amount-row">
-                        <span class="w-amount">₹<%= typeof wallet !== 'undefined' && wallet.balance ? wallet.balance.toFixed(2) : '4,800.00' %></span>
-                        <button class="w-btn-refresh"><i class="fa-solid fa-arrows-rotate"></i> Refresh Balance</button>
+                        <span class="w-amount">₹<%= wallet.balance %></span>
+                        <button class="w-btn-refresh"><i class="fa-solid fa-arrows-rotate" onclick="window.location.reload()"></i> Refresh Balance</button>
                     </div>
                 </div>
             </div>
@@ -101,12 +101,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% if(typeof transactions !== 'undefined' && transactions.length > 0) { %>
-                            <% transactions.forEach(tx => { %>
+                        <% if(typeof wallet.transactions !== 'undefined' && wallet.transactions.length > 0) { %>
+                            <% wallet.transactions.forEach(tx => { %>
                                 <tr>
-                                    <td><%= tx.date %></td>
-                                    <td style="font-weight: 700;"><%= tx.description %></td>
-                                    <td style="font-weight: 700;"><%= tx.status %></td>
+                                    <td><%= new Date(tx.createdAt).toLocaleDateString("en-IN") %></td>
+                                    <td style="font-weight: 700;"><%= tx.reason %></td>
+                                    <td style="font-weight: 700;"><%= tx.type %></td>
                                     <td style="font-weight: 700;">₹<%= tx.amount %></td>
                                 </tr>
                             <% }) %>

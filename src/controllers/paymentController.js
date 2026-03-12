@@ -1,6 +1,7 @@
 import razorpay from "../config/razorpay.js";
 import Order from "../models/orderSchema.js";
 import crypto from 'crypto';
+import paymentServices from "../services/paymentServices.js";
 
 const createRazorpayOrder=async (req,res,next)=>{
     try{
@@ -52,5 +53,11 @@ const loadPaymentFailure=(req,res)=>{
     res.render('user/paymentFailure',{title:'paymentFailure',bodyClass:'',cssFile:'style.css',totalAmount})
 }
 
-export default {createRazorpayOrder,verifyPayment,loadPaymentFailure}
+const loadWallet=async(req,res)=>{
+    const userId=req.session.user?.userId;
+    const wallet=await paymentServices.getWalletById(userId)
+    res.render('user/wallet',{title:'wallet',cssFile:'style.css',bodyClass:'',wallet})
+}
+
+export default {createRazorpayOrder,verifyPayment,loadPaymentFailure,loadWallet}
 

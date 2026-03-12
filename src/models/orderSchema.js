@@ -23,6 +23,11 @@ const orderItems= new mongoose.Schema({
         type:String,
         enum:['Pending','Processed','Not Applicable','Success'],
         default:'Not Applicable'
+    },
+    returnStatus:{
+        type:String,
+        enum:['Not Requested','Requested','Approved','Rejected','Completed'],
+        default:'Not Requested'
     }
 },{_id:true,timestamps:true},);
 

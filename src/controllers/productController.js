@@ -288,9 +288,16 @@ const returnOrder=async (req,res)=>{
         const details=req.body.details;
         const itemId=req.body.currentItemId;
         const order=await userProductServices.returnOrder(orderId,reason,details,itemId);
-
+        return res.json({
+            success:true,
+            message:'Product Requested To Return'
+        })
     }catch(error){
         console.log(error)
+        return res.json({
+            success:false,
+            message:error.message
+        })
     }
     
 }
@@ -320,7 +327,8 @@ const downloadInvoice=async (req,res)=>{
 const cancelOrder=async (req,res)=>{
   try{
       const {reason,details,orderId}=req.body;
-      const order=await userProductServices.cancelOrder(reason,details,orderId);
+      const userId=req.session.user?.userId;
+      const order=await userProductServices.cancelOrder(reason,details,orderId,userId);
       if(!order){
         return res.json({
             success:false,

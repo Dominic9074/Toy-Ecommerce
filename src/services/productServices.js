@@ -4,6 +4,7 @@ import cloudinary from "../config/cloudinary.js";
 import Product from '../models/productSchema.js';
 import { json } from "express";
 import Order from "../models/orderSchema.js";
+import paymentServices from "./paymentServices.js";
 
 
 const createCategory=async (file,data)=>{
@@ -339,8 +340,37 @@ const updateOrderStatus=async (orderId,data)=>{
     return order;
     }
 
+const updateReturnStatus=async (data)=>{
+    const {orderId,itemId,status}=data;
+    const order=await Order.findById(orderId);
+    if(!order){
+        throw new Error('Order Not Found')
+    }
+    const userId=order.user;
+    const item=order.items.id(itemId);
+    item.returnStatus=status;
+    if(status==='Approved'){
+        item.refundStatus='Processed'
+    }else if(status==='Completed'){
+        item.refundStatus='Success'
+        const wallet= await paymentServices.getWalletById(userId);
+        wallet.balance+=item.itemTotal;
+        wallet.transactions.push({
+            type:'credit',
+            amount:item.itemTotal,
+            reason:'Order Return Refund',
+            orderId:orderId
+        })
+        await wallet.save();
+    }else if(status==='Rejected'){
+        item.refundStatus='Not Applicable'
+    }
+    await order.save();
+    return order;
+}
+
 export default {
     createCategory,find,findCategoryById,updateCategory,getAllActiveCategories,createProduct,getFilterProducts,findProductById,
-    editProduct,updateProductStatus,updateOrderStatus
+    editProduct,updateProductStatus,updateOrderStatus,updateReturnStatus
 }
 

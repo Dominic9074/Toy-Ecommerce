@@ -83,6 +83,9 @@ router.get('/invoice/:id', userMiddleware.isLoggedIn,productController.downloadI
 //payment failure
 router.get('/payment-failure',paymentController.loadPaymentFailure)
 
+//wallet
+router.get('/wallet',paymentController.loadWallet)
+
 
 
 // 🔐 Google Auth
