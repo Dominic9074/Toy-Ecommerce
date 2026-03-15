@@ -5,6 +5,7 @@ import Cart from "../models/cartSchema.js";
 import User from "../models/userModal.js";
 import Order from "../models/orderSchema.js";
 import paymentServices from "./paymentServices.js";
+import couponServices from "./couponServices.js";
 
 //generate orderId
 function generateOrderId() {
@@ -233,74 +234,113 @@ const getCheckoutProducts=async (temporaryCheckout)=>{
     return products;
 }
 
-const placeOrder=async (data,userId)=>{
-    const addressId=data.selectedAddress.toString();
-    const paymentMethod=data.paymentMethod;
-    const products=data.products;
+const placeOrder = async (data, userId) => {
 
-    const user=await User.findById(userId);
-    const address=user.address.find(obj=>{
-        return obj._id.toString()===addressId
-    })
+    const addressId = data.selectedAddress.toString();
+    const paymentMethod = data.paymentMethod;
+    const products = data.products;
+    const couponCode = data.couponCode;
+
+    let coupon = null;
+    let discount = 0;
+
+    if (couponCode) {
+        coupon = await couponServices.getCouponByCode(couponCode);
+    }
+
+    const user = await User.findById(userId);
+
+    const address = user.address.find(obj => {
+        return obj._id.toString() === addressId
+    });
 
     let newOrderId = generateOrderId();
 
-        // Optional: Check if it exists in DB (to be 100% safe)
-        let existingOrder = await Order.findOne({ orderId: newOrderId });
-        while (existingOrder) {
-            newOrderId = generateOrderId(); // Re-generate if it exists
-            existingOrder = await Order.findOne({ orderId: newOrderId });
+    let existingOrder = await Order.findOne({ orderId: newOrderId });
+    while (existingOrder) {
+        newOrderId = generateOrderId();
+        existingOrder = await Order.findOne({ orderId: newOrderId });
+    }
+
+    const orderItems = [];
+    let subTotal = 0;
+
+    for (const item of products) {
+
+        if (item.quantity > item.product.stock) {
+            throw new Error(`Insufficient Stock Quantity For ${item.product.shortName}`)
         }
 
-    const orderItems=[];
-    let subTotal=0;
-    for(const item of products){
-        if(item.quantity > item.product.stock){
-            throw new Error(`Influent Stock Quantity For ${item.product.shortName}`)
-        }
-        const discountedPrice =item.product.price -(item.product.price * item.product.offer / 100);
+        const discountedPrice =
+            item.product.price - (item.product.price * item.product.offer / 100);
+
         const itemTotal = Math.ceil(discountedPrice * item.quantity);
 
-        subTotal+=itemTotal;
-        orderItems.push({
-            product:item.product._id,
-            name:item.product.name,
-            image:item.product.images[0].url,
-            price:item.product.price,
-            quantity:item.quantity,
-            itemTotal,
-            discount:item.product.offer
-        })
-    }
-    console.log(address)
-    const addressSnapshot={
-        name:address.fullname,
-        phone:address.phone,
-        pincode:address.pincode,
-        state:address.state,
-        city:address.city,
-        addressType:address.addressType
-    }
-    const discount=0;
-    const finalAmount=subTotal - discount;
+        subTotal += itemTotal;
 
-    const order=await Order.create({
-        user:user._id,
-        orderId:newOrderId,
-        items:orderItems,
+        orderItems.push({
+            product: item.product._id,
+            name: item.product.name,
+            image: item.product.images[0].url,
+            price: item.product.price,
+            quantity: item.quantity,
+            itemTotal,
+            discount: item.product.offer
+        });
+    }
+
+    if (coupon) {
+
+        if (coupon.discountType === "percentage") {
+
+            discount = Math.round((subTotal * coupon.discountValue) / 100);
+
+            if (coupon.maxDiscount && discount > coupon.maxDiscount) {
+                discount = coupon.maxDiscount;
+            }
+
+        } else {
+
+            discount = coupon.discountValue;
+
+        }
+
+        if (discount > subTotal) {
+            discount = subTotal;
+        }
+    }
+
+    const finalAmount = subTotal - discount;
+
+    const addressSnapshot = {
+        name: address.fullname,
+        phone: address.phone,
+        pincode: address.pincode,
+        state: address.state,
+        city: address.city,
+        addressType: address.addressType
+    };
+
+    const order = await Order.create({
+        user: user._id,
+        orderId: newOrderId,
+        items: orderItems,
         addressSnapshot,
-        subtotal:subTotal,
+        subtotal: subTotal,
         discount,
+        couponCode: couponCode || null,
         finalAmount,
         paymentMethod,
-        paymentStatus:paymentMethod==='COD' ? 'Pending':'Paid',
-    })
+        paymentStatus: paymentMethod === 'COD' ? 'Pending' : 'Paid'
+    });
 
-    for(const item of products){
-        await Product.updateOne({_id:item.product._id},
-            {$inc:{stock:-item.quantity}}
-        )
+    for (const item of products) {
+        await Product.updateOne(
+            { _id: item.product._id },
+            { $inc: { stock: -item.quantity } }
+        );
     }
+
     return order;
 }
 

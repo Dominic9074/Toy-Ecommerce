@@ -361,6 +361,10 @@ const updateReturnStatus=async (data)=>{
             reason:'Order Return Refund',
             orderId:orderId
         })
+        const productId=item.product;
+        const product=await Product.findById(productId);
+        product.stock+=item.quantity;
+        await product.save();
         await wallet.save();
     }else if(status==='Rejected'){
         item.refundStatus='Not Applicable'

@@ -119,9 +119,57 @@
         <!-- PROMO CODE -->
         <div class="promo-section">
             <h4 class="promo-label">PROMO CODE</h4>
-            <div class="promo-input-group">
-                <input type="text" placeholder="" class="promo-input">
-                <button class="promo-apply-btn">APPLY</button>
+
+            <div class="promo-input-group" style="position:relative;">
+
+                <!-- Coupon Input -->
+                <input 
+                type="text" 
+                id="couponInput"
+                class="promo-input"
+                placeholder="Select Coupon"
+                readonly
+                onclick="toggleCouponDropdown()"
+                >
+
+                <button class="promo-apply-btn" onclick="applyCoupon()">APPLY</button>
+
+                <!-- Coupon Dropdown -->
+                <div id="couponDropdown" class="coupon-dropdown">
+
+                    <% if(typeof coupons !== 'undefined' && coupons.length > 0){ %>
+
+                        <% coupons.forEach(coupon => { %>
+
+                            <div 
+                            class="coupon-item"
+                            onclick="selectCoupon(
+                                '<%= coupon.code %>',
+                                '<%= coupon.discountType %>',
+                                '<%= coupon.discountValue %>',
+                                '<%= coupon.maxDiscount %>'
+                            )">
+
+                                <strong><%= coupon.code %></strong>
+
+                                <% if(coupon.discountType === 'percentage'){ %>
+                                    <span><%= coupon.discountValue %>% OFF</span>
+                                <% }else{ %>
+                                    <span>₹<%= coupon.discountValue %> OFF</span>
+                                <% } %>
+
+                            </div>
+
+                        <% }) %>
+
+                    <% }else{ %>
+
+                        <div class="coupon-item">No coupons available</div>
+
+                    <% } %>
+
+                </div>
+
             </div>
         </div>
 
@@ -219,7 +267,7 @@
 </div>
 <% const totalAmount = subtotal + shipping - coupon %>
 <script>
-    const totalAmount=<%= totalAmount %>
+    let totalAmount=<%= totalAmount %>
     const cards = document.querySelectorAll(".address-card");
     const products = <%- JSON.stringify(products) %>;
 
@@ -245,6 +293,7 @@
         const selectedAddress=document.querySelector('input[name="selectedAddress"]:checked').value
         const paymentMethod=document.querySelector('input[name="payment"]:checked').value
         let url=''
+        let couponCode=selectedCoupon?.code;
                 
         if(paymentMethod ==='COD'){
              fetch('/placeOrder',{
@@ -252,7 +301,7 @@
             headers:{
                 'Content-Type':'application/json'
             },
-            body:JSON.stringify({selectedAddress,paymentMethod,products})
+            body:JSON.stringify({selectedAddress,paymentMethod,products,couponCode})
         }).then(res=>res.json())
         .then(data=>{
             if(data.success){
@@ -299,7 +348,8 @@
                             body:JSON.stringify({
                                 selectedAddress,
                                 paymentMethod,
-                                products
+                                products,
+                                couponCode
                             })
                         })
                         const orderData=await placeRes.json();
@@ -322,5 +372,69 @@
 
             rzp.open();
         }
+    }
+    let selectedCoupon = null
+
+    function toggleCouponDropdown(){
+        const dropdown = document.getElementById("couponDropdown")
+
+        dropdown.style.display =
+            dropdown.style.display === "block" ? "none" : "block"
+    }
+
+    function selectCoupon(code,type,value,maxDiscount){
+
+    selectedCoupon = {
+            code: code,
+            discountType: type,
+            discountValue: Number(value),
+            maxDiscount: Number(maxDiscount)
+        }
+
+
+        document.getElementById("couponInput").value = code
+
+        document.getElementById("couponDropdown").style.display = "none"
+    }
+
+    function applyCoupon(){
+
+        if(!selectedCoupon){
+            showError("Please select a coupon");
+            return;
+        }
+        console.log(selectedCoupon)
+
+        let subtotal = <%= subtotal %>;
+        let discount = 0;
+
+        if(selectedCoupon.discountType === "percentage"){
+
+            discount = Math.round((subtotal * selectedCoupon.discountValue) / 100);
+
+            if(selectedCoupon.maxDiscount && discount > selectedCoupon.maxDiscount){
+                discount = selectedCoupon.maxDiscount;
+            }
+
+        }else{
+
+            discount = selectedCoupon.discountValue;
+
+        }
+
+        if(discount > subtotal){
+            discount = subtotal;
+        }
+
+        totalAmount= subtotal - discount;
+
+        document.querySelectorAll(".summary-row")[2]
+            .querySelector(".tot-value")
+            .innerText = "₹" + discount.toLocaleString("en-IN");
+
+        document.querySelector(".grand-total .tot-value")
+            .innerText = "₹" + totalAmount.toLocaleString("en-IN");
+
+        showSuccess("Coupon applied successfully");
     }
 </script>

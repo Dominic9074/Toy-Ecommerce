@@ -4782,6 +4782,7 @@ footer {
     gap: 20px;
     padding: 15px 0;
     border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 10px;
 }
 
 .od-product-row:last-child {
@@ -5764,7 +5765,7 @@ font-weight:600;
     border-radius:6px;
     background:#f8f9fb;
     border:1px solid #e2e5ec;
-    width:fit-content;
+    min-width: 30%;
 }
 
 .status-line{
@@ -5799,4 +5800,215 @@ font-weight:600;
     border:1px solid #ccc;
     font-size:13px;
     cursor:pointer;
+}
+
+.coupon-dropdown{
+    position:absolute;
+    top:40px;
+    left:0;
+    width:100%;
+    background:#fff;
+    border:1px solid #ddd;
+    display:none;
+    max-height:200px;
+    overflow-y:auto;
+    z-index:10;
+}
+
+.coupon-item{
+    padding:10px;
+    cursor:pointer;
+    border-bottom:1px solid #eee;
+}
+
+.coupon-item:hover{
+    background:#f5f5f5;
+}
+
+/* =========================================================================
+   Refer and Earn Page Styles
+   ========================================================================= */
+
+/* Sidebar Adjustments for refer page */
+.btn-logout-sidebar {
+    display: block;
+    width: 100%;
+    background-color: #A2001D;
+    color: #fff;
+    text-align: center;
+    padding: 12px 0;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-logout-sidebar:hover {
+    background-color: #800016;
+}
+
+/* Header Section */
+.refer-header-section {
+    margin-bottom: 25px;
+}
+
+.refer-main-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #100E34;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+}
+
+.refer-sub-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #a0a0a0;
+    text-transform: uppercase;
+    margin: 5px 0 15px 0;
+    letter-spacing: 0.5px;
+}
+
+.refer-divider-line {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 0;
+    width: 100%;
+}
+
+/* Cards Wrapper */
+.refer-cards-wrapper {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+    align-items: stretch;
+}
+
+/* Cards Shared Styles */
+.refer-code-card,
+.refer-how-it-works-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px; /* Slight roundness */
+    padding: 35px;
+    flex: 1;
+}
+
+/* Specific Card: Code */
+.refer-code-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.r-card-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #100E34;
+    margin-bottom: 30px;
+    margin-top: 0;
+}
+
+.r-code-display {
+    font-size: 38px;
+    font-weight: 800;
+    color: #100E34;
+    margin-bottom: 35px;
+    letter-spacing: 1px;
+}
+
+/* Copy Button */
+.r-btn-copy {
+    background-color: #A2001D;
+    color: #fff;
+    padding: 12px 40px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+    width: 200px; /* Fixed width matching design */
+}
+
+.r-btn-copy:hover {
+    background-color: #800016;
+}
+
+/* Specific Card: How it works */
+.text-center {
+    text-align: center;
+}
+
+.r-timeline {
+    display: flex;
+    flex-direction: column;
+    margin-top: 25px;
+    position: relative;
+    padding-left: 10px;
+}
+
+.r-timeline-item {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    z-index: 2;
+}
+
+.r-timeline-marker {
+    width: 32px;
+    height: 32px;
+    background-color: #A2001D;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.r-timeline-content {
+    margin-top: 6px; /* align with circle */
+}
+
+.r-timeline-content h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    margin: 0 0 5px 0;
+    text-transform: uppercase;
+}
+
+.r-timeline-content p {
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.r-timeline-line {
+    width: 1px;
+    height: 40px; /* Space between steps */
+    background-color: #A2001D;
+    margin-left: 25px; /* (32px / 2) + 10px padding */
+    margin-top: -10px;
+    margin-bottom: 5px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Responsive constraints */
+@media screen and (max-width: 900px) {
+    .refer-cards-wrapper {
+        flex-direction: column;
+    }
 }

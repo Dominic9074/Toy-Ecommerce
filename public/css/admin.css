@@ -1799,3 +1799,275 @@ body {
     color: #fff;
     border-color: #12123b;
 }
+
+/* =========================================
+   COUPEN MANAGEMENT PAGE STYLES
+   ========================================= */
+
+.coupen-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    margin-bottom: 25px; 
+}
+
+.coupen-header-row .page-title-block {
+    margin-bottom: 0;
+}
+
+.btn-add-coupen {
+    background-color: #2b3b8c;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-add-coupen i {
+    font-size: 14px;
+}
+
+.btn-add-coupen:hover {
+    background-color: #1e2a69;
+    color: white;
+}
+
+.coupen-table-container {
+    min-height: 750px;
+    padding-bottom: 20px;
+}
+
+.coupen-code {
+    font-weight: 700;
+    color: #100E34;
+    font-size: 13px;
+}
+
+.coupen-value, .coupen-expiry {
+    font-weight: 600;
+    color: #444;
+    font-size: 13px;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.right-align {
+    text-align: right;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+.mb-0 { margin-bottom: 0 !important; }
+.mb-30 { margin-bottom: 30px !important; }
+
+/* Pagination Match */
+.coupen-table-container .page-link.active {
+    background-color: #fff;
+    color: #7b58ff;
+    border-color: #7b58ff;
+}
+
+.coupen-table-container .page-link.prev-btn {
+    background-color: #e2e8f0;
+    color: #94a3b8;
+    border-color: #e2e8f0;
+}
+
+.coupen-table-container .page-link.dots {
+    border: 1px solid #ddd;
+    color: #666;
+}
+
+/* =========================================
+   COUPON MODAL STYLES
+   ========================================= */
+   
+.coupon-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.coupon-modal-overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.coupon-modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 800px;
+    max-width: 95%;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.coupon-modal-overlay.active .coupon-modal {
+    transform: translateY(0);
+}
+
+.coupon-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px 40px;
+}
+
+.coupon-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.coupon-form-group label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #100E34;
+    margin-bottom: 8px;
+}
+
+.coupon-form-group input:not([type="checkbox"]),
+.coupon-form-group select {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #fff;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.coupon-form-group input:focus,
+.coupon-form-group select:focus {
+    border-color: #a2001d;
+}
+
+/* Toggle switch styling */
+.toggle-switch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #a2001d;
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+.slider.round {
+    border-radius: 26px;
+}
+
+.toggle-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Modal Footer */
+.coupon-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 40px;
+    padding-top: 25px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.btn-coupon-cancel {
+    padding: 12px 30px;
+    border-radius: 6px;
+    background: #fff;
+    border: 1px solid #100E34;
+    color: #100E34;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-coupon-cancel:hover {
+    background: #f8f9fa;
+}
+
+.btn-coupon-create {
+    padding: 12px 30px;
+    border-radius: 6px;
+    background: #a2001d;
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-coupon-create:hover {
+    background: #8a0018;
+}

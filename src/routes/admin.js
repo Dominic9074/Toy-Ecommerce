@@ -3,6 +3,7 @@ const router=express.Router();
 import adminController from '../controllers/adminController.js'
 import check from '../middleware/adminMiddleware.js'
 import upload from '../middleware/upload.js'
+import couponController from '../controllers/couponController.js'
 
 router.get('/admin/users',check.isLogedin,adminController.loadUsers)
 router.patch("/admin/users/:id/:action", adminController.toggleUserStatus);
@@ -31,6 +32,12 @@ router.get('/admin/orders',check.isLogedin,adminController.loadOrders)
 router.get('/admin/orders/:id',check.isLogedin,adminController.loadOrderDetails)
 router.post('/admin/orders/:id/status',check.isLogedin,adminController.updateOrderStatus)
 router.post('/admin/update-return-status',adminController.updateReturnStatus)
+
+//coupon
+router.get('/admin/coupon',couponController.loadCoupon);
+router.post('/admin/create-coupon',couponController.createCoupon);
+router.patch('/admin/coupon/status/:id',couponController.updateStatus);
+router.patch('/admin/coupon-update',couponController.updateCoupon);
 
 //logout 
 router.get('/admin/logout',adminController.logout)

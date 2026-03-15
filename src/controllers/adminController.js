@@ -392,6 +392,7 @@ try{
 }
 }
 
+
 export default {
     loadUsers,toggleUserStatus,loadSignin,adminSignin,createCategory,loadCategory,loadAddCategory,loadEditCategory,updateCategory,
     updateStatus,loadAddproduct,addProduct,loadProducts,loadEditProduct,editProduct,updateProductStatus,loadOrders,loadOrderDetails,
