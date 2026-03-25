@@ -257,8 +257,8 @@ header {
 /* Explore Section */
 .explore {
   background-color: #eff2f6;
-  padding: 60px 20px;
   text-align: center;
+  padding: 0 !important;
 }
 
 .explore-grid {
@@ -266,7 +266,6 @@ header {
   justify-content: center;
   gap: 30px;
   max-width: 1200px;
-  margin: 0 auto;
   flex-wrap: wrap;
 }
 
@@ -318,8 +317,14 @@ header {
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-  max-width: 300px;
+  max-width: 250px;
   text-align: left;
+  background: #100E34;
+}
+
+.service-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.808);
 }
 
 .service-icon {
@@ -332,7 +337,7 @@ header {
 .service-item h4 {
   margin: 0 0 10px 0;
   font-size: 16px;
-  color: #333;
+  color: white;
 }
 
 .service-item p {
@@ -403,8 +408,8 @@ header {
 
 /* Footer */
 footer {
-  background-color: #fff; 
-  padding: 80px 20px 20px 20px;
+  background-color: #100E34; 
+  padding: 80px 20px 0px 0px;
   font-size: 14px;
   color: #666;
 }
@@ -423,7 +428,7 @@ footer {
 }
 
 .footer-col h4 {
-  color: var(--secondary-color);
+  color: white;
   margin-bottom: 25px;
   font-size: 18px;
   font-weight: 700;
@@ -1221,10 +1226,6 @@ footer {
 .btn-edit {
     background-color: #100E34;
     color: #fff;
-}
-
-.btn-edit:hover {
-    background-color: #100E34;
 }
 
 
@@ -3253,7 +3254,6 @@ footer {
 .explore-wrapper {
   width: 100%;
   overflow: hidden !important;
-  padding: 20px 0;
   position: relative;
 }
 
@@ -3305,7 +3305,7 @@ footer {
 .explore-wrapper {
   width: 100%;
   overflow: hidden !important;
-  padding: 20px 0;
+  padding: 20px 0 !important;
   position: relative;
 }
 
@@ -3642,9 +3642,6 @@ footer {
     background: #f9f9f9;
 }
 
-.btn-edit {
-    color: #1c2e4a;
-}
 
 /* Payment Methods */
 .payment-methods-list {
@@ -6012,3 +6009,10 @@ font-weight:600;
         flex-direction: column;
     }
 }
+
+.wallet-balance{
+    font-size:12px;
+    color:#666;
+    margin-left:6px;
+}
+

@@ -86,6 +86,9 @@ router.get('/payment-failure',paymentController.loadPaymentFailure)
 //wallet
 router.get('/wallet',paymentController.loadWallet)
 
+//refer and earn
+router.get('/refer',userController.loadReferAndEarn)
+
 
 
 // 🔐 Google Auth

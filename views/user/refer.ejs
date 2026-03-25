@@ -30,7 +30,7 @@
 
     <% if (typeof user !== "undefined" && user) { %>
       <a href="/user/profile" class="profile-avatar">
-        <%= user.username ? user.username.charAt(0).toUpperCase() : 'U' %>
+        <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
       </a>
     <% } else { %>
       <a href="/signin" class="sign-in-btn">Sign In</a>
@@ -46,7 +46,7 @@
                <i class="fa-solid fa-user"></i>
             </div>
             <div class="w-user-info">
-               <div class="w-name"><%= typeof user !== 'undefined' && user && user.username ? user.username.toUpperCase() : 'JHON WICK' %></div>
+               <div class="w-name"><%= typeof user !== 'undefined' && user && user.name ? user.name.toUpperCase() : 'JHON WICK' %></div>
                <div class="w-email"><%= typeof user !== 'undefined' && user && user.email ? user.email : 'Jhonwick@Gmail.Com' %></div>
             </div>
         </div>
@@ -78,7 +78,10 @@
             <div class="refer-code-card">
                 <h2 class="r-card-title">Your Unique Referal Code</h2>
                 <div class="r-code-display"><%= typeof user !== 'undefined' && user && user.referralCode ? user.referralCode : 'LUX-7832' %></div>
-                <button class="r-btn-copy" onclick="copyReferralCode('<%= typeof user !== &quot;undefined&quot; && user && user.referralCode ? user.referralCode : &quot;LUX-7832&quot; %>')">COPY CODE</button>
+                <button class="r-btn-copy"
+                onclick="copyReferralCode('<%= typeof user !== 'undefined' && user && user.referralCode ? user.referralCode : 'LUX-7832' %>')">
+                COPY CODE
+                </button>
             </div>
 
             <!-- Right Card -->

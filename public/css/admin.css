@@ -2071,3 +2071,342 @@ input:checked + .slider:before {
 .btn-coupon-create:hover {
     background: #8a0018;
 }
+
+/* =========================================
+   SALES AND REVENUE STYLES
+   ========================================= */
+
+.sales-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.sales-filter-box {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background: #fff;
+    padding: 15px 20px;
+}
+
+.filter-header-text {
+    font-size: 14px;
+    font-weight: 800;
+    color: #100E34;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-controls .filter-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #666;
+    margin-right: 10px;
+    text-transform: uppercase;
+}
+
+.sales-filter-btn {
+    padding: 6px 15px;
+    font-size: 10px; /* matched to image button text size */
+    font-weight: 700;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px; /* extra rounded corners as per image */
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.sales-filter-btn.active {
+    background: #100E34;
+    color: #fff;
+    border-color: #100E34;
+}
+
+.stats-cards-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 0px; /* strictly squared like image */
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.stat-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #888;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.stat-icon {
+    color: #A2001D;
+    font-size: 20px;
+    /* In the image, icon has no background, just red outline box */
+    /* Wait, the image shows a box icon */
+    background: none;
+    padding: 0;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #100E34;
+}
+
+.stat-value.text-normal {
+    font-size: 16px;
+    font-weight: 700;
+    color: #100E34;
+}
+
+.year-dropdown-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.year-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    border: 1px solid #d0d0d0;
+    padding: 10px 20px;
+    border-radius: 0px; /* squared based on image */
+    background: #fff;
+    font-size: 20px;
+    font-weight: 800;
+    color: #100E34;
+    cursor: pointer;
+}
+
+.year-dropdown i {
+    color: #a0a0a0;
+}
+
+.sales-table-container {
+    background: #fff;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    overflow: hidden; /* for border-radius */
+}
+
+.table-header-title {
+    padding: 20px 25px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #100E34;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.sales-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sales-table th {
+    text-align: left;
+    padding: 15px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #666;
+    border-bottom: 1px solid #d0d0d0;
+    text-transform: uppercase;
+}
+
+.sales-table td {
+    padding: 15px 25px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.sales-table tr:last-child td {
+    border-bottom: none;
+}
+
+.sales-DownloadBtnDiv{
+    display:flex;
+    margin-top: 50px;
+    gap:20px;
+}
+.sales-DownloadBtn{
+    width: 150px;
+    color: white;
+    font-size: 15px;
+    background: #A2001D;
+    border-radius: 5px;
+    border:none;
+    height:40px;
+    cursor: pointer;
+}
+
+/* =========================================
+   DASHBOARD PAGE STYLES
+   ========================================= */
+
+.dashboard-header {
+    margin-bottom: 30px;
+}
+
+.dashboard-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #100E34;
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.dashboard-subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+.dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 20px 25px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.01);
+}
+
+.stat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.stat-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: #888;
+    text-transform: uppercase;
+    line-height: 1.4;
+    letter-spacing: 0.5px;
+}
+
+.stat-icon {
+    color: #A2001D; 
+    font-size: 22px;
+}
+
+.stat-value {
+    font-size: 38px;
+    font-weight: 800;
+    color: #100E34;
+}
+
+/* Filter Section */
+.dashboard-filter {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    display: inline-flex;
+    flex-direction: column;
+    padding: 15px 20px;
+    margin-bottom: 40px;
+}
+
+.df-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #100E34;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
+
+.df-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.df-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #100E34;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.df-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-df {
+    background: #fff;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #888;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+}
+
+.btn-df:hover {
+    background: #f5f5f5;
+}
+
+.btn-df.active {
+    background: #100E34;
+    color: #fff;
+    border-color: #100E34;
+}
+
+/* Charts Grid */
+.dashboard-charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    height: 350px;
+}
+
+.chart-card {
+    background: #fff;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}

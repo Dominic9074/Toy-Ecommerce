@@ -239,10 +239,7 @@
         });
 
         clearBtn.addEventListener("click", function () {
-            searchInput.value = "";
-            clearBtn.style.display = "none";
-            filter.search=''
-            searchInput.focus();
+            window.location.reload();
         });
         const categoryContainer = document.querySelector(".category-pills");
 

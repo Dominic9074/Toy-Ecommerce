@@ -5,6 +5,7 @@ import ejs from 'ejs'
 import path from 'path'
 import Product from '../models/productSchema.js'
 import couponServices from '../services/couponServices.js';
+import paymentServices from '../services/paymentServices.js';
 
 
 //shop
@@ -170,6 +171,8 @@ const loadCheckout=async (req,res)=>{
      const user=await userProductServices.getUserInfo(req.session.user?.userId);
      const temporaryCheckout = req.session.cartProducts;
      const products=await userProductServices.getCheckoutProducts(temporaryCheckout);
+     const wallet=await paymentServices.getWalletById(user._id);
+     const walletBalance=wallet.balance;
      let subTotal=0;
      for(let item of products){
         const price=item.product.price;
@@ -179,7 +182,7 @@ const loadCheckout=async (req,res)=>{
      };
      const coupons=await couponServices.getCheckoutCoupons(subTotal);
      
-    res.render('user/checkout',{title:'checkout',bodyClass:'',cssFile:'style.css',addresses:user.address,products,coupons})
+    res.render('user/checkout',{title:'checkout',bodyClass:'',cssFile:'style.css',addresses:user.address,products,coupons,walletBalance})
    }catch(error){
     console.log(error);
    }

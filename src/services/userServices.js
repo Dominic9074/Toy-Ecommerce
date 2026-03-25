@@ -1,5 +1,7 @@
 import User from "../models/userModal.js"
 import bcrypt from 'bcrypt'
+import Wallet from "../models/walletSchema.js";
+import paymentServices from "./paymentServices.js";
 const saltround=10;
 
 const signup=async (data)=>{
@@ -12,16 +14,36 @@ const signup=async (data)=>{
     
 }
 
-const createUserAfterVerification=async (username,email,password,)=>{
+const createUserAfterVerification=async (username,email,password,referral)=>{
 
     const hashedPassword=await bcrypt.hash(password,saltround)
 
-    const user=await User.create({
+    const newUser=await User.create({
         name:username,
         email,
         password:hashedPassword
     })
 
+    const user=await User.findOne({referralCode:referral});
+
+    if(user){
+        const userWallet=await paymentServices.getWalletById(user._id);
+        userWallet.balance+=50;
+        userWallet.transactions.push({
+            type:'credit',
+            amount:50,
+            reason:'user referral'
+        })
+       await userWallet.save();
+       const newUserWallet=await paymentServices.getWalletById(newUser._id);
+       newUserWallet.balance+=20;
+       newUserWallet.transactions.push({
+            type:'credit',
+            amount:50,
+            reason:'user referral'
+        })
+        await newUserWallet.save();
+    }
 
 }
 
@@ -134,8 +156,13 @@ const removeAddress=async (userId,addressId)=>{
   return true;
 }
 
+const getUserById=async (userId)=>{
+    const user=await User.findById(userId);
+    return user;
+}
+
 export default {signup,createUserAfterVerification,signIn,checkUser,resetPassword,findUser,updateProfile,updateUserName,
-    comparePasswordAndUpdate,addAddress,findUserById,removeAddress
+    comparePasswordAndUpdate,addAddress,findUserById,removeAddress,getUserById
 }
 
 

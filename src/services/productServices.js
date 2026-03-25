@@ -351,19 +351,38 @@ const updateReturnStatus=async (data)=>{
     item.returnStatus=status;
     if(status==='Approved'){
         item.refundStatus='Processed'
-    }else if(status==='Completed'){
-        item.refundStatus='Success'
-        const wallet= await paymentServices.getWalletById(userId);
-        wallet.balance+=item.itemTotal;
+    }else if(status === 'Completed'){
+
+        item.refundStatus = 'Success'
+
+        const wallet = await paymentServices.getWalletById(userId);
+
+        const orderSubtotal = order.subtotal;
+        const couponDiscount = order.discount || 0;
+
+        let refundAmount = item.itemTotal;
+
+        if(couponDiscount > 0){
+            const itemCouponShare =
+                (item.itemTotal / orderSubtotal) * couponDiscount;
+
+            refundAmount = Math.round(item.itemTotal - itemCouponShare);
+
+        }
+
+        wallet.balance += refundAmount;
+
         wallet.transactions.push({
             type:'credit',
-            amount:item.itemTotal,
+            amount:refundAmount,
             reason:'Order Return Refund',
             orderId:orderId
         })
-        const productId=item.product;
-        const product=await Product.findById(productId);
-        product.stock+=item.quantity;
+
+        const product = await Product.findById(item.product);
+
+        product.stock += item.quantity;
+
         await product.save();
         await wallet.save();
     }else if(status==='Rejected'){

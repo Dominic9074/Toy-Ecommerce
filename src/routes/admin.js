@@ -31,13 +31,19 @@ router.patch('/admin/addProduct/status/:id',check.isLogedin,adminController.upda
 router.get('/admin/orders',check.isLogedin,adminController.loadOrders)
 router.get('/admin/orders/:id',check.isLogedin,adminController.loadOrderDetails)
 router.post('/admin/orders/:id/status',check.isLogedin,adminController.updateOrderStatus)
-router.post('/admin/update-return-status',adminController.updateReturnStatus)
+router.post('/admin/update-return-status',check.isLogedin,adminController.updateReturnStatus)
 
 //coupon
-router.get('/admin/coupon',couponController.loadCoupon);
-router.post('/admin/create-coupon',couponController.createCoupon);
-router.patch('/admin/coupon/status/:id',couponController.updateStatus);
-router.patch('/admin/coupon-update',couponController.updateCoupon);
+router.get('/admin/coupons',check.isLogedin,couponController.loadCoupon);
+router.post('/admin/create-coupon',check.isLogedin,couponController.createCoupon);
+router.patch('/admin/coupon/status/:id',check.isLogedin,couponController.updateStatus);
+router.patch('/admin/coupon-update',check.isLogedin,couponController.updateCoupon);
+
+//dashboard
+router.get('/admin/dashboard',check.isLogedin,adminController.loadDashboard)
+
+//sales and report
+router.get('/admin/sales',check.isLogedin,adminController.loadSales)
 
 //logout 
 router.get('/admin/logout',adminController.logout)

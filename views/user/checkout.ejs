@@ -103,9 +103,12 @@
                 </label>
 
                 <label class="payment-method-card">
-                    <input type="radio" name="payment" value="wallet" class="custom-radio">
+                    <input type="radio" name="payment" value="Wallet" class="custom-radio">
                     <div class="payment-label">
                         <span class="pay-icon wallet-icon">⚪</span> WALLET PAY
+                        <span class="wallet-balance">
+                            (Balance: ₹<%= typeof walletBalance !== 'undefined' ? walletBalance.toLocaleString('en-IN') : 0 %>)
+                        </span>
                     </div>
                 </label>
             </div>
@@ -295,7 +298,7 @@
         let url=''
         let couponCode=selectedCoupon?.code;
                 
-        if(paymentMethod ==='COD'){
+        if(paymentMethod ==='COD'||paymentMethod==='Wallet'){
              fetch('/placeOrder',{
             method:'POST',
             headers:{

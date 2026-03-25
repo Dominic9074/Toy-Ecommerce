@@ -23,7 +23,7 @@ const getFilterProducts=async (filter,userId)=>{
     const query={isActive:true};
     const sort={};
     const page=parseInt(filter.page) || 1;
-    const limit=10;
+    const limit=3;
     const skip = (page - 1) * limit >= 0 ? (page - 1) * limit : 0;
     
     let wishlistProductIds=[];
@@ -251,8 +251,12 @@ const placeOrder = async (data, userId) => {
     const user = await User.findById(userId);
 
     const address = user.address.find(obj => {
-        return obj._id.toString() === addressId
+        return obj._id.toString() === addressId;
     });
+
+    if (!address) {
+        throw new Error("Address not found");
+    }
 
     let newOrderId = generateOrderId();
 
@@ -268,7 +272,7 @@ const placeOrder = async (data, userId) => {
     for (const item of products) {
 
         if (item.quantity > item.product.stock) {
-            throw new Error(`Insufficient Stock Quantity For ${item.product.shortName}`)
+            throw new Error(`Insufficient Stock Quantity For ${item.product.shortName}`);
         }
 
         const discountedPrice =
@@ -289,6 +293,7 @@ const placeOrder = async (data, userId) => {
         });
     }
 
+    // COUPON CALCULATION
     if (coupon) {
 
         if (coupon.discountType === "percentage") {
@@ -321,6 +326,39 @@ const placeOrder = async (data, userId) => {
         addressType: address.addressType
     };
 
+    let paymentStatus = 'Pending';
+
+    // WALLET PAYMENT LOGIC
+    if (paymentMethod === 'Wallet') {
+
+        const wallet = await paymentServices.getWalletById(userId);
+
+        if (wallet.balance < finalAmount) {
+            throw new Error("Insufficient wallet balance");
+        }
+
+        wallet.balance -= finalAmount;
+
+        wallet.transactions.push({
+            type: 'debit',
+            amount: finalAmount,
+            reason: 'Order Payment'
+        });
+
+        await wallet.save();
+
+        paymentStatus = 'Paid';
+    }
+
+    if(paymentMethod==='Razorpay'){
+        paymentStatus='Paid'
+    }
+
+    // COD → payment pending
+    if (paymentMethod === 'COD') {
+        paymentStatus = 'Pending';
+    }
+
     const order = await Order.create({
         user: user._id,
         orderId: newOrderId,
@@ -331,9 +369,10 @@ const placeOrder = async (data, userId) => {
         couponCode: couponCode || null,
         finalAmount,
         paymentMethod,
-        paymentStatus: paymentMethod === 'COD' ? 'Pending' : 'Paid'
+        paymentStatus
     });
 
+    // UPDATE STOCK
     for (const item of products) {
         await Product.updateOne(
             { _id: item.product._id },
@@ -342,7 +381,7 @@ const placeOrder = async (data, userId) => {
     }
 
     return order;
-}
+};
 
 const getAllUserOrders=async (userId,query)=>{
     const user=await User.findById(userId);
@@ -417,6 +456,7 @@ const cancelOrder=async (reason,details,orderId,userId)=>{
             reason:'Order Cancel Refund',
             orderId:order._id
         })
+        console.log('wallet cancel wrking')
         await wallet.save();
     }
     order.cancelReason=reason;

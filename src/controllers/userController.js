@@ -67,9 +67,9 @@ const loadSignup=(req,res)=>{
     res.render('user/authentication/register',{title: "Register",bodyClass: "register-body",cssFile: "style.css"})
 }
 
-const signup=async (req,res,next)=>{
+const signup=async (req,res)=>{
     try{
-        const {username,email,password}=req.body;
+        const {username,email,password,referral}=req.body;
 
         await userServices.signup(req.body)
 
@@ -79,10 +79,11 @@ const signup=async (req,res,next)=>{
         if(!emailSent){
             return res.json("email-error")
         }
+        
 
         req.session.userOtp=otp;
         req.session.otpExpires = Date.now() + (2 * 60 * 1000);
-        req.session.userdata={username,email}
+        req.session.userdata={username,email,referral,password}
 
         console.log('OTP SENT:',otp)
        return res.redirect('/otppage?purpose=signup')
@@ -124,17 +125,18 @@ const verifyOtp=async (req,res)=>{
         })
     }
 
-    const {username,email,password}=req.session.userdata;
+    const {username,email,password,referral}=req.session.userdata;
 
-    await userServices.createUserAfterVerification(username,email,password);
+    await userServices.createUserAfterVerification(username,email,password,referral);
 
     req.session.userOtp=null;
     req.session.userdata=null;
     req.session.otpExpires=null;
+    req.session.referral=null;
 
     return res.json({
         success:true,
-        message:'Accound Created Successfully'
+        message:'Account Created Successfully'
     })
 
 }
@@ -578,8 +580,14 @@ const updateAddress=async (req,res)=>{
 
 }
 
+const loadReferAndEarn=async (req,res)=>{
+    const userId=req.session.user?.userId;
+    const user=await userServices.getUserById(userId)
+    res.render('user/refer',{title:'Refer',bodyClass:'',cssFile:'style.css',user})
+}
+
 
 export default {loadSignin,loadSignup,signup,verifyOtp,signIn,loadHome,resendOtp,loadForget,
     loadForgetOtp,verifyForgotOtp,loadNewPassword,resetPassword,loadProfile,updateProfile,verifyEmail,loadOtp,
-    changePassword,loadAddress,addAddress,removeAddress,logoutUser,updateAddress,loadEditAddress
+    changePassword,loadAddress,addAddress,removeAddress,logoutUser,updateAddress,loadEditAddress,loadReferAndEarn
 }

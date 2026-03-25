@@ -75,6 +75,7 @@ const adminSignin=(req,res)=>{
     if(password!=process.env.ADMIN_PASSWORD){
         return res.render('admin/signin',{title:'admin signin',bodyClass:'signin-body',cssFile:'style.css',error:'Password Does Not Match'})
     }
+    
     req.session.admin={
         email:email
     }
@@ -392,11 +393,34 @@ try{
 }
 }
 
+const loadSales=async (req,res)=>{
+    try{
+        const filter=req.query.filter || 'year';
+        const { totalRevenue, totalOrders, deliveryRate, bestSellingProductShortName,monthlyBreakdown} =await adminServices.getSalesInformation(filter);
+        res.render('admin/sales',{title:'Sales',bodyClass:'',cssFile:'admin.css',totalRevenue,totalOrders,deliveryRate,bestSellingProductShortName,filter,monthlyBreakdown});
+    }catch(error){
+        console.log(error);
+    }
+}
+
+const loadDashboard=async (req,res)=>{
+  try{
+    const filter=req.query.filter || 'year';
+      const {totalProduct,todaysOrder,todaysRevenue,totalUsers}=await adminServices.getDashboardInfo();
+      const  chartData=await adminServices.getChartData(filter);
+      const stockData=await adminServices.getStockData();
+    res.render('admin/dashboard',{title:'dashboard',bodyClass:'',cssFile:'admin.css',totalProduct,todaysOrder,todaysRevenue,totalUsers,filter,chartData,stockData})
+  }catch(err){
+    console.log(err);
+    throw new Error(err)
+  }
+}
+
 
 export default {
     loadUsers,toggleUserStatus,loadSignin,adminSignin,createCategory,loadCategory,loadAddCategory,loadEditCategory,updateCategory,
     updateStatus,loadAddproduct,addProduct,loadProducts,loadEditProduct,editProduct,updateProductStatus,loadOrders,loadOrderDetails,
-    updateOrderStatus,logout,updateReturnStatus
+    updateOrderStatus,logout,updateReturnStatus,loadSales,loadDashboard
 }
 
 

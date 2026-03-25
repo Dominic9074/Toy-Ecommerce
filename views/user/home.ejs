@@ -68,7 +68,7 @@
         <% if (categories && categories.length > 0) { %>
           <% categories.forEach(category => { %>
             <div class="explore-card">
-              <h3><%= category.name %></h3>
+              <h3 style="color: #100E34;"><%= category.name %></h3>
               <div class="card-image-box">
                 <img 
                   src="<%= category.imageUrl || '/images/default-category.jpg' %>" 
@@ -95,7 +95,7 @@
       </p>
 
       <div class="service-grid">
-        <div class="service-item">
+        <div class="service-item" data-aos='fade-up' >
           <div class="service-icon"><i class="fa-solid fa-car"></i></div>
           <h4>Top Buy & Sell Car</h4>
           <p>
@@ -103,7 +103,7 @@
             best benefits here.
           </p>
         </div>
-        <div class="service-item">
+        <div class="service-item" data-aos='fade-up'>
           <div class="service-icon"><i class="fa-solid fa-wallet"></i></div>
           <h4>Easy Payment</h4>
           <p>
@@ -111,7 +111,7 @@
             best benefits here.
           </p>
         </div>
-        <div class="service-item">
+        <div class="service-item" data-aos='fade-up' data-aos-duration="800">
           <div class="service-icon">
             <i class="fa-solid fa-file-invoice"></i>
           </div>
@@ -129,24 +129,23 @@
       <div class="promo-image">
         <img
           src="images/Hoonigang.avif"
-          alt="Promo Car"
+          alt="Promo Car" data-aos='fade-left' data-aos-duration="1000"
         />
       </div>
       <div class="promo-content">
-        <h2>Buy Best Remote Control Cars</h2>
-        <p>
+        <h2 data-aos='fade-up'>Buy Best Remote Control Cars</h2>
+        <p data-aos='fade-up'>
           We provide many of the best services for you and you will get the best
           benefits here.
         </p>
         <a href="#" class="btn-primary" style="background-color: #1c2e4a"
-          >Book Now ></a
-        >
+          data-aos='fade-up'>Book Now ></a>
       </div>
     </section>
 
     <!-- Footer -->
     <footer>
-      <div class="footer-grid">
+      <div class="footer-grid" data-aos='fade-up'>
         <div class="footer-col">
           <h4>Links</h4>
           <ul>
