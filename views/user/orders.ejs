@@ -1,5 +1,8 @@
 <!-- HEADER -->
 <header class="cart-header">
+    <button class="hamburger" id="hamburger" type="button">
+    <i class="fa-solid fa-bars"></i>
+    </button>
     <ul class="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="/shop">Shop</a></li>
@@ -133,7 +136,6 @@
                 
                 <!-- Bottom Actions -->
                 <div class="order-card-footer">
-                    <button class="btn-primary-action">Buy it again</button>
                     <button class="btn-secondary-action" onclick='window.location.href="/orderDetails/<%= order._id %>"'>Track package</button>
                 </div>
 

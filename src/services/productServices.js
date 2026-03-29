@@ -392,8 +392,47 @@ const updateReturnStatus=async (data)=>{
     return order;
 }
 
+const cancelProductOrder=async (orderId,itemId,userId)=>{
+    const order =await Order.findById(orderId);
+    if(!order){
+        throw new Error('Order Not Found')
+    };
+    const item = order.items.id(itemId);
+    if(!item) throw new Error('Item Not Found');
+
+    
+    if(!['Placed', 'Confirmed'].includes(order.orderStatus)) {
+        throw new Error('Item cannot be cancelled at this stage');
+    }
+    if(item.itemStatus === 'Cancelled') {
+        throw new Error('Item is already cancelled');
+    }
+
+    item.itemStatus = 'Cancelled';
+
+    order.finalAmount = order.finalAmount - item.itemTotal;
+
+    const allCancelled = order.items.every(i => i.itemStatus === 'Cancelled');
+    if(allCancelled) order.orderStatus = 'Cancelled';
+
+    if(order.paymentStatus === 'Paid' && order.paymentMethod !== 'COD') {
+        const wallet =await paymentServices.getWalletById(userId);
+        wallet.balance += item.itemTotal;
+        wallet.transactions.push({
+            type:'credit',
+            amount:item.itemTotal,
+            reason:'Order Cancel Refund',
+            orderId:orderId
+        })
+        await wallet.save();
+    }
+
+    await order.save();
+    return order;
+}
+
 export default {
     createCategory,find,findCategoryById,updateCategory,getAllActiveCategories,createProduct,getFilterProducts,findProductById,
-    editProduct,updateProductStatus,updateOrderStatus,updateReturnStatus
+    editProduct,updateProductStatus,updateOrderStatus,updateReturnStatus,cancelProductOrder
 }
 

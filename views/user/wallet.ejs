@@ -1,14 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Wallet - Wheelz</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="wallet-page-body">
 
 <header>
   <!-- Hamburger Button (Mobile Only) -->
@@ -41,6 +30,9 @@
 <div class="wallet-layout">
     <!-- Sidebar -->
     <aside class="w-sidebar">
+        <div class="w-drawer-close" style="display:none;">
+            <button id="drawerClose" aria-label="Close menu">&#x2715;</button>
+            </div>
         <div class="w-user-profile">
             <div class="w-avatar">
                <i class="fa-solid fa-user"></i>
@@ -54,7 +46,6 @@
         <nav class="w-menu">
             <a href="/user/profile" class="w-menu-item">DASHBOARD</a>
             <a href="/orders" class="w-menu-item">MY ORDERS</a>
-            <a href="/coupon" class="w-menu-item">MY COUPON</a>
             <a href="/wallet" class="w-menu-item active">WALLET</a>
             <a href="/wishlist" class="w-menu-item">WISHLIST</a>
             <a href="/refer" class="w-menu-item">REFER AND EARN</a>
@@ -90,47 +81,69 @@
 
         <div class="w-transactions">
             <h3 class="w-tx-title">Recent Transactions</h3>
-            <div class="w-table-container">
-                <table class="w-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 25%">DATE</th>
-                            <th style="width: 35%">DISCRIPTION</th>
-                            <th style="width: 20%">STATUS</th>
-                            <th style="width: 20%">AMOUND</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if(typeof wallet.transactions !== 'undefined' && wallet.transactions.length > 0) { %>
-                            <% wallet.transactions.forEach(tx => { %>
-                                <tr>
-                                    <td><%= new Date(tx.createdAt).toLocaleDateString("en-IN") %></td>
-                                    <td style="font-weight: 700;"><%= tx.reason %></td>
-                                    <td style="font-weight: 700;"><%= tx.type %></td>
-                                    <td style="font-weight: 700;">₹<%= tx.amount %></td>
-                                </tr>
-                            <% }) %>
-                        <% } else { %>
-                            <p style="font-weight: bold; color: #1a1a1a;">No Transactions</p>
-                        <% } %>
-                        <tr class="w-filler-row">
-                            <td colspan="4"></td>
-                        </tr>
-                    </tbody>
-                </table>
+           <div class="w-table-container">
+            <table class="w-table">
+                <thead>
+                <tr>
+                    <th style="width: 25%">DATE</th>
+                    <th style="width: 35%">DESCRIPTION</th>
+                    <th style="width: 20%">STATUS</th>
+                    <th style="width: 20%">AMOUNT</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <% const transactions = wallet.transactions ? [...wallet.transactions].reverse() : []; %>
+
+                <% if (transactions.length > 0) { %>
+                    <% transactions.forEach(tx => { %>
+                    <tr>
+                        <td><%= new Date(tx.createdAt).toLocaleDateString("en-IN") %></td>
+
+                        <td style="font-weight: 600;">
+                        <%= tx.reason %>
+                        </td>
+
+                        <td style="font-weight: 600; color: <%= tx.type === 'credit' ? '#16a34a' : '#dc2626' %>;">
+                        <%= tx.type %>
+                        </td>
+
+                        <td style="font-weight: 600;">
+                        ₹<%= tx.amount %>
+                        </td>
+                    </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                    <td colspan="4" style="text-align: center; padding: 20px; color: #6b7280;">
+                        No Transactions
+                    </td>
+                    </tr>
+                <% } %>
+                </tbody>
+            </table>
             </div>
 
-            <!-- Pagination -->
-            <div class="w-pagination">
-                <button class="w-page-btn w-icon">&lt;</button>
-                <button class="w-page-btn active">1</button>
-                <button class="w-page-btn">2</button>
-                <button class="w-page-btn w-dots">...</button>
-                <button class="w-page-btn w-icon">&gt;</button>
-            </div>
         </div>
     </main>
 </div>
+<div class="w-sidebar-overlay" id="sidebarOverlay"></div>
+<script>
+  // Only keep the close button — hamburger is handled by public.js now
+  const closeBtn = document.getElementById('drawerClose');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function () {
+      document.querySelector('.w-sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  }
 
-</body>
-</html>
+  document.querySelectorAll('.w-menu-item').forEach(item => {
+    item.addEventListener('click', function () {
+      document.querySelector('.w-sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  });
+</script>

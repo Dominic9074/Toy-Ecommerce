@@ -76,6 +76,7 @@ router.get('/orderDetails/:id', userMiddleware.isLoggedIn,productController.load
 //return order & cancel order
 router.post('/returnOrder', userMiddleware.isLoggedIn,productController.returnOrder)
 router.post('/cancelOrder', userMiddleware.isLoggedIn,productController.cancelOrder)
+router.post('/cancel-productOrder',productController.cancelProductOrder)
 
 //invoice
 router.get('/invoice/:id', userMiddleware.isLoggedIn,productController.downloadInvoice);

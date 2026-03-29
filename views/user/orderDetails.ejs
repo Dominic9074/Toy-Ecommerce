@@ -148,7 +148,13 @@
 
                             </div>
 
-                        <% } %>
+                        <% } else if((order.orderStatus === "Placed" || order.orderStatus === "Confirmed") && item.itemStatus !== "Cancelled"){ %>
+                                <button 
+                                    class="cancel-item-btn"
+                                    onclick="cancelSpecificProduct('<%= order._id %>','<%= item._id %>')">
+                                    Cancel
+                                </button>
+                            <% } %>
 
                     </div>
 
@@ -371,6 +377,36 @@
         
     }
 
+    function cancelSpecificProduct(orderId,itemId){
+        Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, Cancel it!"
+        }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/cancel-productOrder',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({orderId,itemId})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                showSuccess(data.message)
+                setTimeout(()=>{window.location.reload()},1000)
+            }else{
+                showError(data.message)
+            }
+        })
+        }
+        });
+        
+    }
 
 </script>
 

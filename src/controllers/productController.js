@@ -6,6 +6,7 @@ import path from 'path'
 import Product from '../models/productSchema.js'
 import couponServices from '../services/couponServices.js';
 import paymentServices from '../services/paymentServices.js';
+import productServices from '../services/productServices.js';
 
 
 //shop
@@ -359,8 +360,29 @@ const cancelOrder=async (req,res)=>{
     
 }
 
+const cancelProductOrder=async(req,res)=>{
+    try{
+        const {orderId,itemId}=req.body;
+        const userId=req.session.user?.userId;
+        console.log(userId)
+        const order=await productServices.cancelProductOrder(orderId,itemId,userId)
+        if(!order){
+            throw new Error('Order Not Found')
+        }
+        return res.json({
+            success:true,
+            message:'Product Cancelled SuccessFully'
+        })
+    }catch(error){
+        console.log(error);
+        res.join({success:false,
+            message:error.message
+        })
+    }
+}
+
 export default {loadShop,loadProductDetails,loadCartPage,loadWishlist,addWishlist,addToCart,UpdateQuantityCount,removeCart,
     loadCheckout,addOrder,placeOrder,loadOrderSuccess,loadOrders,loadOrderDetails,returnOrder,loadInvoice,downloadInvoice,
-    cancelOrder
+    cancelOrder,cancelProductOrder
 
 }
