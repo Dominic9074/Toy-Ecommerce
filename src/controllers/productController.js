@@ -4,6 +4,9 @@ import pdf from 'html-pdf-node'
 import ejs from 'ejs'
 import path from 'path'
 import Product from '../models/productSchema.js'
+import couponServices from '../services/couponServices.js';
+import paymentServices from '../services/paymentServices.js';
+import productServices from '../services/productServices.js';
 
 
 //shop
@@ -53,9 +56,9 @@ const loadShop=async (req,res)=>{
 const loadProductDetails=async (req,res)=>{
 try{
     const slug=req.params.slug
-    const {product,RelatedProducts}=await userProductServices.findProductById(slug);
+    const {product,RelatedProducts,wishlistProductIds}=await userProductServices.findProductById(slug,req.session.user?.userId);
 
-    res.render('user/productDetails',{title:'Product',bodyClass:"",cssFile:'style.css',product,RelatedProducts})
+    res.render('user/productDetails',{title:'Product',bodyClass:"",cssFile:'style.css',product,RelatedProducts,wishlistProductIds})
 }catch(error){
     console.log(error)
 }
@@ -169,9 +172,18 @@ const loadCheckout=async (req,res)=>{
      const user=await userProductServices.getUserInfo(req.session.user?.userId);
      const temporaryCheckout = req.session.cartProducts;
      const products=await userProductServices.getCheckoutProducts(temporaryCheckout);
-     req.session.cartProducts=null;
-
-    res.render('user/checkout',{title:'checkout',bodyClass:'',cssFile:'style.css',addresses:user.address,products})
+     const wallet=await paymentServices.getWalletById(user._id);
+     const walletBalance=wallet.balance;
+     let subTotal=0;
+     for(let item of products){
+        const price=item.product.price;
+        const offer=item.product.offer
+        const effectivePrice = price * (1 - (offer/ 100));
+        subTotal+=Math.ceil(effectivePrice*item.quantity)
+     };
+     const coupons=await couponServices.getCheckoutCoupons(subTotal);
+     
+    res.render('user/checkout',{title:'checkout',bodyClass:'',cssFile:'style.css',addresses:user.address,products,coupons,walletBalance})
    }catch(error){
     console.log(error);
    }
@@ -244,6 +256,7 @@ const placeOrder=async (req,res)=>{
             paymentMethod:order.paymentMethod,
             totalAmount:amount
         }
+        req.session.cartProducts=null;
         return res.json({
             success:true,
             message:'Order Placed Successfully'
@@ -287,9 +300,16 @@ const returnOrder=async (req,res)=>{
         const details=req.body.details;
         const itemId=req.body.currentItemId;
         const order=await userProductServices.returnOrder(orderId,reason,details,itemId);
-
+        return res.json({
+            success:true,
+            message:'Product Requested To Return'
+        })
     }catch(error){
         console.log(error)
+        return res.json({
+            success:false,
+            message:error.message
+        })
     }
     
 }
@@ -319,7 +339,8 @@ const downloadInvoice=async (req,res)=>{
 const cancelOrder=async (req,res)=>{
   try{
       const {reason,details,orderId}=req.body;
-      const order=await userProductServices.cancelOrder(reason,details,orderId);
+      const userId=req.session.user?.userId;
+      const order=await userProductServices.cancelOrder(reason,details,orderId,userId);
       if(!order){
         return res.json({
             success:false,
@@ -339,8 +360,29 @@ const cancelOrder=async (req,res)=>{
     
 }
 
+const cancelProductOrder=async(req,res)=>{
+    try{
+        const {orderId,itemId}=req.body;
+        const userId=req.session.user?.userId;
+        console.log(userId)
+        const order=await productServices.cancelProductOrder(orderId,itemId,userId)
+        if(!order){
+            throw new Error('Order Not Found')
+        }
+        return res.json({
+            success:true,
+            message:'Product Cancelled SuccessFully'
+        })
+    }catch(error){
+        console.log(error);
+        res.join({success:false,
+            message:error.message
+        })
+    }
+}
+
 export default {loadShop,loadProductDetails,loadCartPage,loadWishlist,addWishlist,addToCart,UpdateQuantityCount,removeCart,
     loadCheckout,addOrder,placeOrder,loadOrderSuccess,loadOrders,loadOrderDetails,returnOrder,loadInvoice,downloadInvoice,
-    cancelOrder
+    cancelOrder,cancelProductOrder
 
 }

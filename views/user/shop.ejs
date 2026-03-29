@@ -120,7 +120,6 @@
 
                     <div class="upc-details">
                     <div class="upc-header">
-                        <span class="upc-title"><%= product?.category?.name %></span>
 
                         <% if (product.offerPercentage && product.offerPercentage > 0) { %>
                         <span class="upc-discount">
@@ -239,10 +238,7 @@
         });
 
         clearBtn.addEventListener("click", function () {
-            searchInput.value = "";
-            clearBtn.style.display = "none";
-            filter.search=''
-            searchInput.focus();
+            window.location.reload();
         });
         const categoryContainer = document.querySelector(".category-pills");
 

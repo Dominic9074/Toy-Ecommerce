@@ -52,6 +52,7 @@ app.use(passport.session())
 app.use((req, res, next) => {
   res.locals.error = null;
   res.locals.success = null;
+  res.locals.webhookUrl = process.env.N8N_WEBHOOK_URL;
   next();
 });
 

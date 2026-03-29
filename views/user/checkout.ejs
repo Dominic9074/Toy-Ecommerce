@@ -67,7 +67,7 @@
                             </p>
                             <p><%= address?.phone %></p>
                         </div>
-                        <a href="/editAddress/<%= address._id %>">
+                        <a href="/editAddress/<%= address._id %>?from=checkout">
                             <button class="btn-icon-edit">
                             <i class="fa-solid fa-arrow-up-right-from-square"></i>
                           </button>
@@ -79,7 +79,7 @@
 
             <!-- Add/Edit Address Buttons -->
             <div class="address-actions-row">
-                <a href="/addaddress" class="btn-outline">+ Add New Address</a>
+                <a href="/addaddress?from=checkout" class="btn-outline">+ Add New Address</a>
             </div>
         </div>
 
@@ -89,7 +89,7 @@
             
             <div class="payment-methods-list">
                 <label class="payment-method-card selected">
-                    <input type="radio" name="payment" value="razorpay" checked class="custom-radio">
+                    <input type="radio" name="payment" value="Razorpay" checked class="custom-radio">
                     <div class="payment-label">
                         <span class="pay-icon razorpay-icon">⚡</span> Razorpay
                     </div>
@@ -103,9 +103,12 @@
                 </label>
 
                 <label class="payment-method-card">
-                    <input type="radio" name="payment" value="wallet" class="custom-radio">
+                    <input type="radio" name="payment" value="Wallet" class="custom-radio">
                     <div class="payment-label">
-                        <span class="pay-icon wallet-icon">⚪</span> WALLET PAY
+                        <i class="fa-solid fa-wallet"></i> WALLET PAY
+                        <span class="wallet-balance">
+                            (Balance: ₹<%= typeof walletBalance !== 'undefined' ? walletBalance.toLocaleString('en-IN') : 0 %>)
+                        </span>
                     </div>
                 </label>
             </div>
@@ -119,9 +122,57 @@
         <!-- PROMO CODE -->
         <div class="promo-section">
             <h4 class="promo-label">PROMO CODE</h4>
-            <div class="promo-input-group">
-                <input type="text" placeholder="" class="promo-input">
-                <button class="promo-apply-btn">APPLY</button>
+
+            <div class="promo-input-group" style="position:relative;">
+
+                <!-- Coupon Input -->
+                <input 
+                type="text" 
+                id="couponInput"
+                class="promo-input"
+                placeholder="Select Coupon"
+                readonly
+                onclick="toggleCouponDropdown()"
+                >
+
+                <button class="promo-apply-btn" onclick="applyCoupon()">APPLY</button>
+
+                <!-- Coupon Dropdown -->
+                <div id="couponDropdown" class="coupon-dropdown">
+
+                    <% if(typeof coupons !== 'undefined' && coupons.length > 0){ %>
+
+                        <% coupons.forEach(coupon => { %>
+
+                            <div 
+                            class="coupon-item"
+                            onclick="selectCoupon(
+                                '<%= coupon.code %>',
+                                '<%= coupon.discountType %>',
+                                '<%= coupon.discountValue %>',
+                                '<%= coupon.maxDiscount %>'
+                            )">
+
+                                <strong><%= coupon.code %></strong>
+
+                                <% if(coupon.discountType === 'percentage'){ %>
+                                    <span><%= coupon.discountValue %>% OFF</span>
+                                <% }else{ %>
+                                    <span>₹<%= coupon.discountValue %> OFF</span>
+                                <% } %>
+
+                            </div>
+
+                        <% }) %>
+
+                    <% }else{ %>
+
+                        <div class="coupon-item">No coupons available</div>
+
+                    <% } %>
+
+                </div>
+
             </div>
         </div>
 
@@ -136,6 +187,7 @@
                 let subtotal = 0;
                 let shipping = 0;
                 let coupon = 0;
+                
 
                 if (typeof products !== 'undefined' && products.length > 0) {
                     products.forEach(item => {
@@ -216,8 +268,9 @@
     </div>
 
 </div>
-
+<% const totalAmount = subtotal + shipping - coupon %>
 <script>
+    let totalAmount=<%= totalAmount %>
     const cards = document.querySelectorAll(".address-card");
     const products = <%- JSON.stringify(products) %>;
 
@@ -239,26 +292,152 @@
         placeOrder(); 
     }
 });
-    function placeOrder(){
+    async function placeOrder(){
         const selectedAddress=document.querySelector('input[name="selectedAddress"]:checked').value
         const paymentMethod=document.querySelector('input[name="payment"]:checked').value
-        
-        fetch('/placeOrder',{
+        let url=''
+        let couponCode=selectedCoupon?.code;
+                
+        if(paymentMethod ==='COD'||paymentMethod==='Wallet'){
+             fetch('/placeOrder',{
             method:'POST',
             headers:{
                 'Content-Type':'application/json'
             },
-            body:JSON.stringify({selectedAddress,paymentMethod,products})
+            body:JSON.stringify({selectedAddress,paymentMethod,products,couponCode})
         }).then(res=>res.json())
         .then(data=>{
             if(data.success){
                 showSuccess(data.message);
                 setTimeout(()=>{
-                    window.location.href='/orderSuccess'
+                    window.location.replace('/orderSuccess')
                 },2500)
             }else{
                 showError(data.message)
             }
         })
+        }
+        if(paymentMethod === 'Razorpay'){
+           const res = await fetch('/create-razorpay-order',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({amount:totalAmount})
+            })
+            const data=await res.json();
+            const options={
+                key:'<%= process.env.RAZORPAY_KEY_ID %>',
+                amount:data.order.amount,
+                currency:'INR',
+                name:'Wheelz',
+                description:'Toy Purchase',
+                order_id:data.order.id,
+                handler:async function (response){
+                    const verifyRes=await fetch('/verify-payment',{
+                        method:'POST',
+                        headers:{
+                            'Content-Type':'application/json'
+                        },
+                        body:JSON.stringify(response)
+                    })
+                    const verifyData=await verifyRes.json();
+                    if(verifyData.success){
+                        const placeRes=await fetch('/placeOrder',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type':'application/json'
+                            },
+                            body:JSON.stringify({
+                                selectedAddress,
+                                paymentMethod,
+                                products,
+                                couponCode
+                            })
+                        })
+                        const orderData=await placeRes.json();
+                        if(orderData.success){
+                             window.location.replace('/orderSuccess')
+                        }
+                    }else{
+                        showError('Payment Verification Failed')
+                        setTimeout(()=>{
+                            window.location.href='/payment-failure'
+                        },1000)
+                    }
+                }
+            }
+            const rzp=new Razorpay(options);
+
+            rzp.on('payment.failed',function(response){
+                window.location.href=`/payment-failure?Amount=${totalAmount}`
+            })
+
+            rzp.open();
+        }
+    }
+    let selectedCoupon = null
+
+    function toggleCouponDropdown(){
+        const dropdown = document.getElementById("couponDropdown")
+
+        dropdown.style.display =
+            dropdown.style.display === "block" ? "none" : "block"
+    }
+
+    function selectCoupon(code,type,value,maxDiscount){
+
+    selectedCoupon = {
+            code: code,
+            discountType: type,
+            discountValue: Number(value),
+            maxDiscount: Number(maxDiscount)
+        }
+
+
+        document.getElementById("couponInput").value = code
+
+        document.getElementById("couponDropdown").style.display = "none"
+    }
+
+    function applyCoupon(){
+
+        if(!selectedCoupon){
+            showError("Please select a coupon");
+            return;
+        }
+        console.log(selectedCoupon)
+
+        let subtotal = <%= subtotal %>;
+        let discount = 0;
+
+        if(selectedCoupon.discountType === "percentage"){
+
+            discount = Math.round((subtotal * selectedCoupon.discountValue) / 100);
+
+            if(selectedCoupon.maxDiscount && discount > selectedCoupon.maxDiscount){
+                discount = selectedCoupon.maxDiscount;
+            }
+
+        }else{
+
+            discount = selectedCoupon.discountValue;
+
+        }
+
+        if(discount > subtotal){
+            discount = subtotal;
+        }
+
+        totalAmount= subtotal - discount;
+
+        document.querySelectorAll(".summary-row")[2]
+            .querySelector(".tot-value")
+            .innerText = "₹" + discount.toLocaleString("en-IN");
+
+        document.querySelector(".grand-total .tot-value")
+            .innerText = "₹" + totalAmount.toLocaleString("en-IN");
+
+        showSuccess("Coupon applied successfully");
     }
 </script>

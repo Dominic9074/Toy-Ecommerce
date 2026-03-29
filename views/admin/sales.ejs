@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales and Revenue - Wheelz</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">Wheelz</div>
+      <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="nav-item">
+          <i class="fa-solid fa-qrcode"></i> Dashboard
+        </a>
+        <a href="/admin/products" class="nav-item">
+          <i class="fa-solid fa-box"></i> Products
+        </a>
+        <a href="/admin/category" class="nav-item">
+          <i class="fa-solid fa-layer-group"></i> Categories
+        </a>
+        <a href="/admin/orders" class="nav-item">
+          <i class="fa-solid fa-cart-shopping"></i> Orders
+        </a>
+        <a href="/admin/sales" class="nav-item active">
+          <i class="fa-solid fa-money-bill-wave"></i> Sales & Revenue
+        </a>
+        <a href="/admin/users" class="nav-item">
+          <i class="fa-solid fa-users"></i> Users
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="/admin/logout" class="logout-link">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+      <header class="admin-header">
+        <button class="admin-hamburger" id="adminHamburger">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <h2>ADMIN PANEL</h2>
+      </header>
+
+      <div class="content-body" style="padding: 40px;">
+        
+        <!-- Header Row -->
+        <div class="sales-header-row">
+            <div class="page-title-block" style="margin-bottom: 0;">
+                <h1 class="page-main-title">SALES AND REVENUE</h1>
+                <p class="page-sub-title" style="margin-top: 5px;">SEE YOUR ALL SALES AND REVENUE</p>
+            </div>
+            
+            <div class="sales-filter-box">
+                <div class="filter-header-text">FILTER</div>
+                <div class="filter-controls">
+                    <span class="filter-label">SALES</span>
+                    <button class="sales-filter-btn <%= filter === 'year' ? 'active' : '' %>" onclick="window.location.href='/admin/sales?filter=year'">THIS YEAR</button>
+                    <button class="sales-filter-btn <%= filter === 'month' ? 'active' : '' %>" onclick="window.location.href='/admin/sales?filter=month'">THIS MONTH</button>
+                    <button class="sales-filter-btn <%= filter === 'week' ? 'active' : '' %>" onclick="window.location.href='/admin/sales?filter=week'">THIS WEEK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards Row -->
+        <div class="stats-cards-row">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">TOTAL<br>REVENUE</span>
+                    <i class="fa-solid fa-box stat-icon"></i>
+                </div>
+                <div class="stat-value"><%= totalRevenue %></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">TOTAL<br>ORDERS</span>
+                    <i class="fa-solid fa-box stat-icon"></i>
+                </div>
+                <div class="stat-value"><%= totalOrders %></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">AVARAGE ORDER<br>VALUE</span>
+                    <i class="fa-solid fa-box stat-icon"></i>
+                </div>
+                <div class="stat-value"><%= deliveryRate %>%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title" style="white-space: nowrap;">BEST SELLING<br>PRODUCT</span>
+                    <i class="fa-solid fa-box stat-icon"></i>
+                </div>
+                <!-- Adding tooltips to handle very long names if needed, but text-normal handles smaller font -->
+                <div class="stat-value text-normal" style="font-size: 16px; margin-top: 15px;"><%= bestSellingProductShortName %></div>
+            </div>
+        </div>
+
+        <!-- Year Dropdown -->
+        <div class="year-dropdown-container">
+            <div class="year-dropdown">
+                <span>2025</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="sales-table-container">
+            <div class="table-header-title">Monthly Revenue Breakdown</div>
+            <table class="sales-table">
+                <thead>
+                    <tr>
+                        <th style="width: 33%">MONTH</th>
+                        <th style="width: 33%">TOTAL ORDERS</th>
+                        <th style="width: 33%">NET REVENUE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% monthlyBreakdown.forEach(item => { %>
+                        <tr>
+                            <td><%= item.month.toUpperCase() %></td>
+                            <td><%= item.totalOrders %></td>
+                            <td>₹<%= item.totalRevenue %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+     <div class="sales-DownloadBtnDiv">
+           <button class="sales-DownloadBtn" onclick="downloadPDF()">Download PDF</button>
+        <button class="sales-DownloadBtn" onclick="downloadExcel()">Download Excel</button>
+     </div>
+
+      </div>
+    </div>
+
+    <script>
+      const hamburger = document.getElementById("adminHamburger");
+      const sidebar = document.getElementById("adminSidebar");
+      const overlay = document.getElementById("adminOverlay");
+
+      if (hamburger && sidebar && overlay) {
+        hamburger.addEventListener("click", () => {
+            sidebar.classList.add("sidebar-open");
+            overlay.classList.add("active");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("sidebar-open");
+            overlay.classList.remove("active");
+        });
+      }
+
+      function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Title
+        doc.setFontSize(18);
+        doc.text('Sales Report', 14, 20);
+
+        // Stats
+        doc.setFontSize(11);
+        doc.text(`Total Revenue: ₹<%= totalRevenue %>`, 14, 35);
+        doc.text(`Total Orders: <%= totalOrders %>`, 14, 43);
+        doc.text(`Delivery Rate: <%= deliveryRate %>%`, 14, 51);
+        doc.text(`Best Selling Product: <%= bestSellingProductShortName %>`, 14, 59);
+
+        // Monthly breakdown table
+        doc.autoTable({
+            startY: 70,
+            head: [['Month', 'Total Orders', 'Net Revenue']],
+            body: [
+                <% monthlyBreakdown.forEach(item => { %>
+                    ['<%= item.month %>', '<%= item.totalOrders %>', '<%= item.totalRevenue %>'],
+                <% }) %>
+            ]
+        });
+
+        doc.save('sales-report.pdf');
+    }
+
+
+    function downloadExcel() {
+        const wb = XLSX.utils.book_new();
+
+        // Stats sheet
+        const statsData = [
+            ['Metric', 'Value'],
+            ['Total Revenue', '₹<%= totalRevenue %>'],
+            ['Total Orders', '<%= totalOrders %>'],
+            ['Delivery Rate', '<%= deliveryRate %>%'],
+            ['Best Selling Product', '<%= bestSellingProductShortName %>']
+        ];
+        const statsSheet = XLSX.utils.aoa_to_sheet(statsData);
+        XLSX.utils.book_append_sheet(wb, statsSheet, 'Summary');
+
+        // Monthly breakdown sheet
+        const monthlyData = [
+            ['Month', 'Total Orders', 'Net Revenue'],
+            <% monthlyBreakdown.forEach(item => { %>
+                ['<%= item.month %>', <%= item.totalOrders %>, <%= item.totalRevenue %>],
+            <% }) %>
+        ];
+        const monthlySheet = XLSX.utils.aoa_to_sheet(monthlyData);
+        XLSX.utils.book_append_sheet(wb, monthlySheet, 'Monthly Breakdown');
+
+        XLSX.writeFile(wb, 'sales-report.xlsx');
+    }
+
+      
+    </script>
+</body>
+</html>

@@ -26,8 +26,7 @@
                 <button type="submit" class="otp-btn">Verify</button>
                 <div class="resent-otp">
                 <p class="resend-text">Didn't receive code?</p> 
-                <button type="button" onclick="resentOtp(event)" class="resend-link" id="resend-btn">Resend OTP</button>
-                <p id="timerText" style="display:none;" class="timerText">Resend OTP in <span id="timer">60</span>s</p>
+                <button type="button" onclick="resentOtp(event)" style="display:none" class="resend-link" id="resend-btn">Resend OTP</button>
                 </div>
             </form>
         </div>
@@ -36,6 +35,7 @@
     <script>
         const purpose='<%= purpose %>'
         // Simple auto-focus script for OTP inputs
+        const resentBtn=document.getElementById('resend-btn')
         const inputs = document.querySelectorAll('.otp-field');
         inputs.forEach((input, index) => {
             input.addEventListener('input', (e) => {
@@ -122,34 +122,13 @@
             .then(data=>{
                 if(data.success){
                     showSuccess(data.message);
-                    startTimer();
                     clearInterval(expiryInterval);
                     startOtpExpiryTimer();
+                    resentBtn.style.display='none'
                 }else{
                     showError(data.message)
                 }
             })
-
-
-            function startTimer(){
-                let timeLeft=60;
-            console.log('working')
-
-            document.getElementById('resend-btn').style.display='none';
-            document.getElementById('timerText').style.display='block'
-
-            timeInterval=setInterval(()=>{
-                timeLeft--;
-                document.getElementById('timer').innerText=timeLeft;
-
-                if(timeLeft<=0){
-                    clearInterval(timeInterval);
-                   document.getElementById('resend-btn').style.display='inline-block';
-                   document.getElementById('timerText').style.display='none'
-                }
-
-            },1000)
-            }
 
 
         }
@@ -180,6 +159,7 @@ function startOtpExpiryTimer() {
             clearInterval(expiryInterval);
             expiryDisplay.innerText = "Expired";
             otpExpired = true;
+            resentBtn.style.display='block'
         }
 
     }, 1000);

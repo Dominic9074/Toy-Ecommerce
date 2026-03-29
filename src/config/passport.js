@@ -17,6 +17,15 @@ passport.use(
           return done(null, user);
         }
 
+        user=await User.findOne({email:profile.emails[0].value})
+
+        if(user){
+          user.googleId=profile.id;
+          user.provider='google'
+          await user.save();
+          return done(null,user)
+        }
+
         user = new User({
           name: profile.displayName,
           email: profile.emails[0].value,
