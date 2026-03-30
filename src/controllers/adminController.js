@@ -396,7 +396,13 @@ try{
 const loadSales=async (req,res)=>{
     try{
         const filter=req.query.filter || 'year';
-        const { totalRevenue, totalOrders, deliveryRate, bestSellingProductShortName,monthlyBreakdown} =await adminServices.getSalesInformation(filter);
+        let startDate=null
+        let endDate=null
+        if(filter==='custom'){
+            startDate=req.query.startDate
+            endDate=req.query.endDate
+        }
+        const { totalRevenue, totalOrders, deliveryRate, bestSellingProductShortName,monthlyBreakdown} =await adminServices.getSalesInformation(filter,startDate,endDate);
         res.render('admin/sales',{title:'Sales',bodyClass:'',cssFile:'admin.css',totalRevenue,totalOrders,deliveryRate,bestSellingProductShortName,filter,monthlyBreakdown});
     }catch(error){
         console.log(error);

@@ -31,6 +31,9 @@
         <a href="/admin/users" class="nav-item">
           <i class="fa-solid fa-users"></i> Users
         </a>
+        <a href="/admin/coupons" class="nav-item">
+                <i class="fa-solid fa-ticket"></i> Coupons
+            </a>
       </div>
       <div class="sidebar-footer">
         <a href="/admin/logout" class="logout-link">
@@ -66,9 +69,28 @@
                     <button class="sales-filter-btn <%= filter === 'year' ? 'active' : '' %>" onclick="window.location.href='/admin/sales?filter=year'">THIS YEAR</button>
                     <button class="sales-filter-btn <%= filter === 'month' ? 'active' : '' %>" onclick="window.location.href='/admin/sales?filter=month'">THIS MONTH</button>
                     <button class="sales-filter-btn <%= filter === 'week' ? 'active' : '' %>" onclick="window.location.href='/admin/sales?filter=week'">THIS WEEK</button>
+                    <button class="sales-filter-btn <%= filter === 'custom' ? 'active' : '' %>" onclick="customYear()">CUSTOM</button>
                 </div>
             </div>
         </div>
+
+        <div id="customModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;padding:30px;width:380px;">
+        <h3 style="margin-bottom:20px;font-size:16px;font-weight:700;">CUSTOM DATE RANGE</h3>
+        <div style="margin-bottom:16px;">
+            <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">START DATE</label>
+            <input type="date" id="startDate" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;"/>
+        </div>
+        <div style="margin-bottom:24px;">
+            <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">END DATE</label>
+            <input type="date" id="endDate" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;"/>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <button onclick="closeCustomModal()" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-weight:600;">CANCEL</button>
+            <button onclick="applyCustomFilter()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#000;color:#fff;cursor:pointer;font-weight:600;">GET SALES</button>
+        </div>
+    </div>
+</div>
 
         <!-- Stats Cards Row -->
         <div class="stats-cards-row">
@@ -216,6 +238,28 @@
         XLSX.writeFile(wb, 'sales-report.xlsx');
     }
 
+    function customYear(){
+    const modal = document.getElementById('customModal');
+    modal.style.display = 'flex';
+    }
+
+    function closeCustomModal(){
+        document.getElementById('customModal').style.display = 'none';
+    }
+
+    function applyCustomFilter(){
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        if(!startDate || !endDate){
+            showError('Please Select Both Dates')
+            return;
+        }
+        if(new Date(startDate) > new Date(endDate)){
+            showError('Start Date Cannot Be After End Date')
+            return;
+        }
+        window.location.href = `/admin/sales?filter=custom&startDate=${startDate}&endDate=${endDate}`;
+    }
       
     </script>
 </body>

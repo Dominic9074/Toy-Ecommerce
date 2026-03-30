@@ -10,7 +10,7 @@ import paymentServices from "./paymentServices.js";
 const createCategory=async (file,data)=>{
     const {name,description}=data;
 
-    const existing=await Category.findOne({name:{$regex:`^${name}&`,$options:'i'}})
+    const existing=await Category.findOne({name:{$regex:`^${name}$`,$options:'i'}})
     if(existing){
         throw new Error('Category Already Exist')
     };

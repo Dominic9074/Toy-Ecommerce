@@ -43,29 +43,31 @@ const toggleUserStatus=async (id,newStatus)=>{
     await User.updateOne({ _id: id },{ $set: { status: newStatus }});
 }
 
-const getSalesInformation=async (filter)=>{
+const getSalesInformation=async (filter,startDate,endDate)=>{
 
-  const getDateFilter=(filter)=>{
-            const now=new Date();
-            if(filter==='week'){
-                const date=new Date();
-                date.setDate(now.getDate()-7);
-                return date;
-            };
-            if(filter==='month'){
-                return new Date(now.getFullYear(),now.getMonth(),1)
-            };
-            if(filter==='year'){
-                return new Date(now.getFullYear(),0,1)
-            }
-            return null
+  const getDateFilter = (filter) => {
+        const now = new Date();
+        if(filter === 'week'){
+            const date = new Date();
+            date.setDate(now.getDate() - 7);
+            return { $gte: date };
         }
+        if(filter === 'month') return { $gte: new Date(now.getFullYear(), now.getMonth(), 1) };
+        if(filter === 'year') return { $gte: new Date(now.getFullYear(), 0, 1) };
+        if(filter === 'custom' && startDate && endDate){
+            return {
+                $gte: new Date(startDate),
+                $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999))
+            };
+        }
+        return null;
+    }
 
-       const dateFrom = getDateFilter(filter);
-const matchStage = {
-    orderStatus: { $ne: 'Cancelled' },
-    ...(dateFrom && { createdAt: { $gte: dateFrom } })
-};
+       const dateFilter = getDateFilter(filter);
+        const matchStage = {
+            orderStatus: { $ne: 'Cancelled' },
+            ...(dateFilter && { createdAt: dateFilter })
+        };
 
 const stats = await Order.aggregate([
     { $match: matchStage },
@@ -100,13 +102,10 @@ const bestSeller = await Order.aggregate([
 const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 const monthlyStats = await Order.aggregate([
-    { $match: { 
-        orderStatus: { $ne: 'Cancelled' },
-        createdAt: { $gte: new Date(new Date().getFullYear(), 0, 1) }  // this year only
-    }},
+    { $match: matchStage },  // ✅ use matchStage instead of hardcoded year
     {
         $group: {
-            _id: { $month: '$createdAt' },  // group by month number 1-12
+            _id: { $month: '$createdAt' },
             totalOrders: { $sum: 1 },
             totalRevenue: { $sum: '$finalAmount' }
         }

@@ -1,6 +1,6 @@
 import userProductServices from '../services/userProductServices.js'
 import Wishlist from '../models/wishListSchema.js';
-import pdf from 'html-pdf-node'
+import puppeteer from 'puppeteer';
 import ejs from 'ejs'
 import path from 'path'
 import Product from '../models/productSchema.js'
@@ -319,21 +319,35 @@ const loadInvoice=async (req,res)=>{
     res.render('user/invoice',{title:'Invoice',bodyClass:'',cssFile:'style.css',order})
 }
 
-const downloadInvoice=async (req,res)=>{
-    try{
-        const order=await userProductServices.getOrderById(req.params.id);
-        const filePath=path.join(process.cwd(),'views/user/invoice.ejs');
-        const html=await ejs.renderFile(filePath,{order});
-        const options={format:'A4'};
-        const file={content:html};
-        const pdfBuffer=await pdf.generatePdf(file,options);
-        res.setHeader('Content-Type','application/pdf');
-        res.setHeader('Content-Disposition',`attachment;filename-invoice-{order.orderId}.pdf`);
-        res.send(pdfBuffer);
-    }catch(error){
-        console.log(error)
-    }
+let browser;
 
+const getBrowser = async () => {
+    if(!browser) {
+        browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+    }
+    return browser;
+}
+
+const downloadInvoice = async (req, res) => {
+    try {
+        const order = await userProductServices.getOrderById(req.params.id);
+        const filePath = path.join(process.cwd(), 'views/user/invoice.ejs');
+        const html = await ejs.renderFile(filePath, { order });
+
+        const browser = await getBrowser();  // ✅ reuses existing browser
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: 'networkidle0' });
+        const pdfBuffer = await page.pdf({ format: 'A4' });
+        await page.close();  // ✅ close page not browser
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=invoice-${order.orderId}.pdf`);
+        res.send(pdfBuffer);
+    } catch(error) {
+        console.log(error);
+    }
 }
 
 const cancelOrder=async (req,res)=>{
