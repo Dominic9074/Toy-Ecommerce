@@ -285,6 +285,7 @@ const placeOrder = async (data, userId) => {
         orderItems.push({
             product: item.product._id,
             name: item.product.name,
+            shortName:item.product.shortName,
             image: item.product.images[0].url,
             price: item.product.price,
             quantity: item.quantity,

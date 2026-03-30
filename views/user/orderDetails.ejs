@@ -458,7 +458,7 @@
             head: [['Product', 'Price', 'Qty', 'Total']],
             body: [
                 <% order.items.forEach(item => { %>
-                    ['<%= item.name %>', '₹<%= item.price.toLocaleString("en-IN") %>', '<%= item.quantity %>', '₹<%= item.itemTotal.toLocaleString("en-IN") %>'],
+                    ['<%= item.shortName %>', '<%= item.price.toLocaleString("en-IN") %>', '<%= item.quantity %>', '<%= item.itemTotal.toLocaleString("en-IN") %>'],
                 <% }) %>
             ],
             headStyles: { fillColor: [0, 0, 0] }
@@ -468,12 +468,12 @@
         const finalY = doc.lastAutoTable.finalY + 10;
         doc.setFontSize(10);
         doc.text('Subtotal:', 140, finalY);
-        doc.text('₹<%= order.subtotal.toLocaleString("en-IN") %>', 190, finalY, { align: 'right' });
+        doc.text('<%= order.subtotal.toLocaleString("en-IN") %>', 190, finalY, { align: 'right' });
         doc.text('Discount:', 140, finalY + 7);
-        doc.text('₹<%= order.discount.toLocaleString("en-IN") %>', 190, finalY + 7, { align: 'right' });
+        doc.text('<%= order.discount.toLocaleString("en-IN") %>', 190, finalY + 7, { align: 'right' });
         doc.setFont('helvetica', 'bold');
         doc.text('Total:', 140, finalY + 14);
-        doc.text('₹<%= order.finalAmount.toLocaleString("en-IN") %>', 190, finalY + 14, { align: 'right' });
+        doc.text('<%= order.finalAmount.toLocaleString("en-IN") %>', 190, finalY + 14, { align: 'right' });
 
         // Footer
         doc.setFont('helvetica', 'normal');
