@@ -80,7 +80,7 @@ const adminSignin=(req,res)=>{
         email:email
     }
     
-    return res.redirect('/admin/users')
+    return res.redirect('/admin/dashboard')
 
 }
 //LOAD CATEGORY
@@ -103,7 +103,7 @@ const loadAddCategory=async (req,res)=>{
   const purpose=req.query.purpose;
   const category=undefined;
   console.log(purpose)
-    res.render('admin/addcategory',{title:'addCategory',bodyClass:"",cssFile:'admin.css',purpose,category})
+    res.render('admin/addCategory',{title:'addCategory',bodyClass:"",cssFile:'admin.css',purpose,category})
 }
 
 //create Category

@@ -1,4 +1,5 @@
 let cropper = null;
+
 window.newImages = [];
 window.croppedImageBlob = null;
 
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
             cropModal.style.display = "flex";
 
             if (cropper) cropper.destroy();
-
+            /* global Cropper */ 
             cropper = new Cropper(cropImage, {
                 aspectRatio: 1,
                 viewMode: 1
