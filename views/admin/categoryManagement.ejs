@@ -128,7 +128,7 @@
                         <td class="user-name"><%= category?.name %></td>
                         <td><%= category?.description %></td>
                         <td><%= category?.productCount || 0 %> Unit</td>
-                        <td class="<%= category?.status ? 'status-active' : 'status-inactive' %>">
+                        <td class="<%= category?.status ? 'status-active' : 'status-inactive' %>" id="status-<%= category._id %>">
                           <%= category?.status  %>
                         </td>
                         <td style="text-align: right;">
@@ -208,9 +208,14 @@
               .then(data=>{
                 if(data.success){
                   showSuccess(data.message)
-                  setTimeout(()=>{
-                    window.location.reload();
-                  },1000)
+                  const statusTd=document.getElementById(`status-${categoryId}`)
+                  if (data.status === 'Active') {
+                        statusTd.textContent = "ACTIVE";
+                        statusTd.className = "status-active";
+                    } else {
+                        statusTd.textContent = "INACTIVE";
+                        statusTd.className = "status-inactive";
+                    }
                 }else{
                   showError(data.message)
                 }

@@ -98,7 +98,7 @@ const loadCategory=async (req,res)=>{
         console.log(error)
     }
 }
-//load Addcategory
+//load AddCategory
 const loadAddCategory=async (req,res)=>{
   const purpose=req.query.purpose;
   const category=undefined;
@@ -200,7 +200,8 @@ const updateStatus=async (req,res)=>{
         await category.save();
         return res.json({
             success:true,
-            message:'Status Updated Successfully'
+            message:'Status Updated Successfully',
+            status:category.status
         })
 
     }catch(error){
@@ -317,7 +318,8 @@ const updateProductStatus=async (req,res)=>{
         const product=await productServices.updateProductStatus(productId);
         res.json({
             success:true,
-            message:'Product Status Changed'
+            message:'Product Status Changed',
+            status:product.isActive
         });
 
     }catch(error){

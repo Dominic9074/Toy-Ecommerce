@@ -143,7 +143,7 @@
                       <%= product?.stock %> Unit
                     </td>
 
-                    <td class="<%= product?.isActive ? 'status-active-text' : 'status-inactive-text' %>">
+                    <td class="<%= product?.isActive ? 'status-active-text' : 'status-inactive-text' %>" id='status-<%= product._id %>'>
                       <%= product?.isActive ? "ACTIVE" : "INACTIVE" %>
                     </td>
 
@@ -236,9 +236,15 @@
               .then(data=>{
                 if(data.success){
                   showSuccess(data.message)
-                  setTimeout(()=>{
-                    window.location.reload();
-                  },1000)
+                  const statusTd = document.getElementById(`status-${productId}`);
+
+                    if (data.status === true) {
+                        statusTd.textContent = "ACTIVE";
+                        statusTd.className = "status-active";
+                    } else {
+                        statusTd.textContent = "INACTIVE";
+                        statusTd.className = "status-inactive";
+                    }
                 }else{
                   showError(data.message)
                 }
