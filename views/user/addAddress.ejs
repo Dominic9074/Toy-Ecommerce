@@ -274,5 +274,53 @@
     }
   }
 
+  document.getElementById('pincode').addEventListener('input',async function(){
+    
+    const pincode=this.value;
+    let isValid=true;
+   if (!pincode) {
+      pinDiv.querySelector('input').style.border = '1px solid red'
+      pinDiv.querySelector('p').style.display = 'block'
+      pinDiv.querySelector('p').innerText = 'Pin Code Required'
+      isValid = false
+  } else if (!/^\d+$/.test(pincode)) {
+      pinDiv.querySelector('input').style.border = '1px solid red'
+      pinDiv.querySelector('p').style.display = 'block'
+      pinDiv.querySelector('p').innerText = 'Only numbers are allowed'
+      isValid = false
+  } else if (pincode.length !== 6) {
+      pinDiv.querySelector('input').style.border = '1px solid red'
+      pinDiv.querySelector('p').style.display = 'block'
+      pinDiv.querySelector('p').innerText = 'Pincode must be 6 digits'
+      isValid = false
+  }
+  if(!isValid) return;
+    try{
+      const response=await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+      const data=await response.json();
+
+      if(data[0].Status==='Success'){
+        const postOffice=data[0].PostOffice;
+        const State=postOffice[0].State;
+        const District=postOffice[0].District;
+        const Town=postOffice[0].Block;
+        
+
+        document.getElementById('state').value=State;
+        document.getElementById('city').value=District;
+        document.getElementById('streetAddress').value=Town;
+
+      }else{
+        showError('Could Not Access Pincode');
+        document.getElementById('state').value = "";
+        document.getElementById('city').value = "";
+        document.getElementById('streetAddress').value="";
+      }
+    }catch(error){
+      showError(error)
+    }
+
+  })
+
 
 </script>

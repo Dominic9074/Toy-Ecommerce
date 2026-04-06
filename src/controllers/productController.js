@@ -7,7 +7,8 @@ import Product from '../models/productSchema.js'
 import couponServices from '../services/couponServices.js';
 import paymentServices from '../services/paymentServices.js';
 import productServices from '../services/productServices.js';
-
+import Reservation from '../models/reservationModel.js';
+import mongoose from 'mongoose';
 
 //shop
 const loadShop=async (req,res)=>{
@@ -189,49 +190,106 @@ const loadCheckout=async (req,res)=>{
    }
 }
 
-const addOrder=async (req,res)=>{
-  try{
-      if(!req.body.Checkout){
-        const {productId}=req.body;
-        if(!productId)return res.json({success:false,message:'Product Not Found'});
-        const product=await Product.findById(productId);
-        if(product.stock<1){
-            throw new Error('Out Of Stock')
+const addOrder = async (req, res) => {
+  try {
+
+    if (!req.session.user?.userId) return res.json({ success: false, message: 'SignIn Required' })
+
+    const userId = new mongoose.Types.ObjectId(req.session.user.userId)
+
+    if (!req.body.Checkout) {
+
+      // ─── Single product ───────────────────────────
+      const { productId } = req.body
+      if (!productId) return res.json({ success: false, message: 'Product Not Found' })
+
+      const product = await Product.findById(productId)
+      if (!product) return res.json({ success: false, message: 'Product Not Found' })
+
+      // Check how many are already held by other users
+      const result = await Reservation.aggregate([
+        { $match: { expiresAt: { $gt: new Date() } } },
+        { $unwind: '$items' },
+        { $match: { 'items.productId': new mongoose.Types.ObjectId(productId) } },
+        { $group: { _id: null, totalHeld: { $sum: '$items.quantity' } } }
+      ])
+
+      const totalHeld = result[0]?.totalHeld || 0
+      const available = product.stock - totalHeld
+
+      if (available < 1) {
+        throw new Error('Stock Temporarily Blocked')
+      }
+
+      // Reserve it for 10 minutes
+      await Reservation.findOneAndUpdate(
+        { userId },
+        {
+          userId,
+          items: [{ productId: new mongoose.Types.ObjectId(productId), quantity: 1 }],
+          expiresAt: new Date(Date.now() + 10 * 60 * 1000)
+        },
+        { upsert: true }
+      )
+
+      req.session.cartProducts = { productId, quantity: 1 }
+
+    } else {
+
+      const Checkout = req.body.Checkout
+      if (Checkout.length < 1) {
+        throw new Error('Select An Item To Order')
+      }
+
+      
+      for (const item of Checkout) {
+        const product = await Product.findById(item.productId)
+        if (!product) throw new Error('Product Not Found')
+
+        const result = await Reservation.aggregate([
+          { $match: { expiresAt: { $gt: new Date() } } },
+          { $unwind: '$items' },
+          { $match: { 'items.productId': new mongoose.Types.ObjectId(item.productId) } },
+          { $group: { _id: null, totalHeld: { $sum: '$items.quantity' } } }
+        ])
+
+        const totalHeld = result[0]?.totalHeld || 0
+        const available = product.stock - totalHeld
+
+        if (available < Number(item.quantity)) {
+          throw new Error(`"${product.name}" is Out Of Stock`)
         }
-        req.session.cartProducts={
-            productId,
-            quantity:1    
-         }
-    }else{
-        const Checkout=req.body.Checkout;
-        console.log(Checkout);
-        if(Checkout.length<1){
-            throw new Error('Select An Item To Order')
-        }
-        for(const item of Checkout){
-            const productId=item.productId
-            const product=await Product.findById(productId);
-            if(product.stock<Number(item.quantity)){
-                throw new Error('Out Of Stock')
-            }
-        }
-        req.session.cartProducts=Checkout;
+      }
+
+      
+      await Reservation.findOneAndUpdate(
+        { userId },
+        {
+          userId,
+          items: Checkout.map(item => ({
+            productId: new mongoose.Types.ObjectId(item.productId),
+            quantity: Number(item.quantity)
+          })),
+          expiresAt: new Date(Date.now() + 10 * 60 * 1000)
+        },
+        { upsert: true }
+      )
+
+      req.session.cartProducts = Checkout
     }
 
-    if(!req.session.user?.userId) return res.json({success:false,message:'SignIn Required'})
-        
     return res.json({
-        success:true,
-        message:'Session Added Successfully'
+      success: true,
+      message: 'Session Added Successfully'
     })
-  }catch(error){
-    console.log(error);
+
+  } catch (error) {
+    console.log(error)
     return res.json({
-        success:false,
-        message:error.message
+      success: false,
+      message: error.message
     })
   }
-
 }
 
 const placeOrder=async (req,res)=>{
