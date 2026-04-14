@@ -71,6 +71,61 @@ const signup=async (req,res)=>{
     try{
         const {username,email,password,referral}=req.body;
 
+        const validateSignup = ({ username, email, password, confirm }) => {
+        // trim inputs
+        username = username?.trim();
+        email = email?.trim();
+
+        // 🔹 required fields
+        if (!username || !email || !password || !confirm) {
+            return "All fields are required";
+        }
+
+        // 🔹 username length
+        if (username.length < 3) {
+            return "Username must be at least 3 characters";
+        }
+
+        // 🔹 username format
+        const validName = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/;
+        if (!validName.test(username)) {
+            return "Name should contain only letters";
+        }
+
+        // 🔹 email space check
+        if (email.includes(" ")) {
+            return "Email must not contain spaces";
+        }
+
+        // 🔹 password match
+        if (password !== confirm) {
+            return "Passwords do not match";
+        }
+
+        // 🔹 password space
+        if (password.includes(" ")) {
+            return "Password must not contain spaces";
+        }
+
+        // 🔹 password length
+        if (password.length <= 6) {
+            return "Password must be more than 6 characters";
+        }
+
+        // 🔹 uppercase check
+        if (!/[A-Z]/.test(password)) {
+            return "Password must contain at least one uppercase letter";
+        }
+
+        return null; // no error
+        };
+
+        const error = validateSignup({ username, email, password, confirm });
+
+        if (error) {
+        return res.status(400).json({ success: false, message: error });
+        }
+
         await userServices.signup(req.body)
 
         const otp=generateOtp();

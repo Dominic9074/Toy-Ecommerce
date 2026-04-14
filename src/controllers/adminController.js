@@ -146,7 +146,7 @@ const loadEditCategory=async (req,res)=>{
     const categoryId=req.params.id;
     const category=await productServices.findCategoryById(categoryId);
 
-    res.render('admin/addcategory',{title:'addCategory',bodyClass:"",cssFile:'admin.css',purpose,category})
+    res.render('admin/addCategory',{title:'addCategory',bodyClass:"",cssFile:'admin.css',purpose,category})
 
     }catch(error){
       console.log(error);

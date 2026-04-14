@@ -110,6 +110,14 @@
         userDiv.querySelector('p').innerText='Length Should Be Above 3'
       return;
     }
+    const validName = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/;
+
+    if (!validName.test(username)) {
+    e.preventDefault();
+    userDiv.querySelector('p').style.display = 'block';
+    userDiv.querySelector('p').innerText = 'Name should contain only letters';
+    return;
+    }
 
     if (password !== confirm) {
       e.preventDefault();
