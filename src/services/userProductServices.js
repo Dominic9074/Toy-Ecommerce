@@ -23,7 +23,7 @@ const getFilterProducts=async (filter,userId)=>{
     const query={isActive:true};
     const sort={};
     const page=parseInt(filter.page) || 1;
-    const limit=3;
+    const limit=10;
     const skip = (page - 1) * limit >= 0 ? (page - 1) * limit : 0;
     
     let wishlistProductIds=[];
