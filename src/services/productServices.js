@@ -184,44 +184,42 @@ const createProduct=async (files,data)=>{
     return product;
 };
 
-const getFilterProducts=async (search,status,sort,page)=>{
-    let filter={};
-    let sortOption={createdAt:-1};
-    let skiper=page-1;
-    let skip=10*skiper;
-    const limit=10;
+const getFilterProducts = async (search, status, sort, page) => {
 
-    if(search && search.trim() !== ''){
-        filter.name={$regex:search,$options:'i'}
-    }
+    let filter = {};
+    let sortOption = { createdAt: -1 };
 
-    if(status && status ==='Active'){
-        filter.isActive=true;
-    }else if(status==='Inactive'){
-        filter.isActive=false
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    if (search && search.trim() !== '') {
+        filter.name = { $regex: search, $options: 'i' };
     }
 
-    if(sort===''){
-        sortOption.createdAt=1
-    }
-    if (sort === "price_asc") {
-        sortOption.price = 1;
-    }
-
-    if (sort === "price_desc") {
-        sortOption.price = -1;
+    if (status === 'Active') {
+        filter.isActive = true;
+    } else if (status === 'Inactive') {
+        filter.isActive = false;
     }
 
-    if (sort === "stock_asc") {
-        sortOption.stock = 1;
-    }
+    if (sort === "price_asc") sortOption.price = 1;
+    if (sort === "price_desc") sortOption.price = -1;
+    if (sort === "stock_asc") sortOption.stock = 1;
+    if (sort === "stock_desc") sortOption.stock = -1;
 
-    if (sort === "stock_desc") {
-        sortOption.stock = -1;
-    }
-    const products=await Product.find(filter).populate('category','name').sort(sortOption).skip(skip).limit(limit)
-    return products;
-}
+    const totalProducts = await Product.countDocuments(filter);
+
+    const products = await Product.find(filter)
+        .populate('category', 'name')
+        .sort(sortOption)
+        .skip(skip)
+        .limit(limit);
+
+    return {
+        products,
+        totalProducts
+    };
+};
 
 const findProductById=async (id)=>{
     const product =await Product.findById(id);

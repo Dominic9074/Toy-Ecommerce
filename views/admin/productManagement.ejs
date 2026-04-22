@@ -182,20 +182,33 @@
           </table>
 
           <!-- Pagination -->
-          <div class="pagination-wrapper">
-             <div class="pagination">
-                <a href="?page=<%= page - 1 %>&search=<%= search || '' %>&status=<%= status || 'all' %>" 
-                        class="page-link">&lt;</a>
-                <a href="?page=1&search=<%= search || '' %>&status=<%= status || 'all' %>" 
-                        class="page-link <%= page === 1 ? 'active' : '' %>">1</a>
-                <a href="?page=2&search=<%= search || '' %>&status=<%= status || 'all' %>" 
-                        class="page-link <%= page === 2 ? 'active' : '' %>">2</a>
-                <a href="?page=3&search=<%= search || '' %>&status=<%= status || 'all' %>" 
-                        class="page-link <%= page === 3 ? 'active' : '' %>">3</a>
-                <a href="?page=<%= page + 1 %>&search=<%= search || '' %>&status=<%= status || 'all' %>" 
-                        class="page-link">&gt;</a>
-             </div>
-          </div>
+          <% if (totalPages > 1) { %>
+            <div class="pagination-wrapper">
+              <div class="pagination">
+
+                <!-- PREV -->
+                <% if (page > 1) { %>
+                  <a href="?page=<%= page - 1 %>&search=<%= search || '' %>&status=<%= status || 'all' %>&sort=<%= sort || '' %>" 
+                    class="page-link">&lt;</a>
+                <% } %>
+
+                <!-- PAGE NUMBERS -->
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                  <a href="?page=<%= i %>&search=<%= search || '' %>&status=<%= status || 'all' %>&sort=<%= sort || '' %>" 
+                    class="page-link <%= i === page ? 'active' : '' %>">
+                    <%= i %>
+                  </a>
+                <% } %>
+
+                <!-- NEXT -->
+                <% if (page < totalPages) { %>
+                  <a href="?page=<%= page + 1 %>&search=<%= search || '' %>&status=<%= status || 'all' %>&sort=<%= sort || '' %>" 
+                    class="page-link">&gt;</a>
+                <% } %>
+
+              </div>
+            </div>
+            <% } %>
         </div>
       </div>
     </div>

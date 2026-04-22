@@ -258,21 +258,26 @@ const addProduct=async (req,res)=>{
 }
 
 const loadProducts=async (req,res)=>{
-   try{
-       const {search,status,sort}=req.query;
-       const page=parseInt(req.query.page)|| 1 ;
+   const { search, status, sort } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
 
-       const products=await productServices.getFilterProducts(search,status,sort,page);
-       if(!products){
-           throw new Error('Products Not Fetched');
-        }
-    
-    res.render('admin/productManagement',{title:'Products',bodyClass:"",cssFile:'admin.css',products,search,status,sort,page})
+    const { products, totalProducts } =
+        await productServices.getFilterProducts(search, status, sort, page);
 
-   }catch(error){
-    console.log(error)
-    //res.render('admin/productManagement',{title:'Products',bodyClass:"",cssFile:'admin.css',error:error.message})
-   }
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.render('admin/productManagement', {
+        title: 'Products',
+        cssFile: 'admin.css',
+        bodyClass:'',
+        products,
+        search,
+        status,
+        sort,
+        page,
+        totalPages
+    });
 }
 
 const loadEditProduct=async (req,res)=>{

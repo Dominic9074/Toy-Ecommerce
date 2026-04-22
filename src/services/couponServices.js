@@ -13,9 +13,20 @@ const createCoupon=async (data)=>{
     return coupon;
 }
 
-const getFilteredCoupon=async ()=>{
-    const coupons=await Coupon.find();
-    return coupons;
+const getFilteredCoupon=async (page,limit)=>{
+    const skip = (page - 1) * limit;
+
+    const totalCoupons = await Coupon.countDocuments();
+
+    const coupons = await Coupon.find()
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 }); // optional (latest first)
+
+    return {
+        coupons,
+        totalCoupons
+    };
 }
 
 const updateCouponStatus=async (couponCode)=>{

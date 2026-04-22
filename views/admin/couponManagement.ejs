@@ -133,15 +133,29 @@
                 </div>
                 
                 <!-- Pagination -->
-                <div class="pagination-wrapper mb-30">
+                <% if (totalPages > 1) { %>
                     <div class="pagination">
-                        <a href="#" class="page-link prev-btn"><i class="fa-solid fa-chevron-left"></i></a>
-                        <a href="#" class="page-link active">1</a>
-                        <a href="#" class="page-link">2</a>
-                        <a href="#" class="page-link dots">...</a>
-                        <a href="#" class="page-link next-btn"><i class="fa-solid fa-chevron-right"></i></a>
+
+                    <!-- PREV -->
+                    <% if (currentPage > 1) { %>
+                        <a href="?page=<%= currentPage - 1 %>">Prev</a>
+                    <% } %>
+
+                    <!-- PAGE NUMBERS -->
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a href="?page=<%= i %>"
+                        class="<%= i === currentPage ? 'active' : '' %>">
+                        <%= i %>
+                        </a>
+                    <% } %>
+
+                    <!-- NEXT -->
+                    <% if (currentPage < totalPages) { %>
+                        <a href="?page=<%= currentPage + 1 %>">Next</a>
+                    <% } %>
+
                     </div>
-                </div>
+                    <% } %>
             </div>
 
         </div>
@@ -295,6 +309,10 @@
             if(discountValue <= 0){
                 showerror(discountValueDiv,"Discount must be greater than 0")
                 isValid=false
+            }
+            if (minOrder <= discountValue) {
+                showerror(minOrderDiv, "Minimum order must be greater than discount value")
+                isValid = false
             }
 
             if(!expiryDate){

@@ -1,8 +1,22 @@
 import couponServices from '../services/couponServices.js'
 
 const loadCoupon=async (req,res)=>{
-    const coupons=await couponServices.getFilteredCoupon();
-    res.render('admin/couponManagement',{title:'Coupon',bodyClass:'',cssFile:'admin.css',coupons})
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10; 
+
+    const { coupons, totalCoupons } =
+        await couponServices.getFilteredCoupon(page,limit);
+
+    const totalPages = Math.ceil(totalCoupons / limit);
+
+    res.render('admin/couponManagement', {
+        title: 'Coupon',
+        bodyClass:'',
+        cssFile: 'admin.css',
+        coupons,
+        currentPage: page,
+        totalPages
+    });
 }
 
 const createCoupon=async (req,res)=>{
