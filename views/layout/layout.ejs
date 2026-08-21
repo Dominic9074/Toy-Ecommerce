@@ -19,186 +19,262 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
 
 </head>
+<% if (locals.isAdmin) { %>
 <style>
-    .j-btn{position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:#000000ef;border:none;cursor:pointer;z-index:9999;padding:0;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-  .j-panel{position:fixed;bottom:110px;right:32px;width:360px;height:500px;background:#0d0d0d;border:1px solid #222;border-radius:16px;display:flex;flex-direction:column;z-index:9998;transform:scale(0.85) translateY(20px);opacity:0;pointer-events:none;transition:all 0.25s cubic-bezier(.4,0,.2,1);}
-  .j-panel.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all;}
-  .j-header{padding:16px 18px 12px;border-bottom:1px solid #1e1e1e;display:flex;align-items:center;gap:10px;}
-  .j-avatar{width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fc42ff,#42fcff);flex-shrink:0;}
-  .j-name{font-family:monospace;font-size:13px;color:#fc42ff;letter-spacing:1px;}
-  .j-status{font-size:11px;color:#555;letter-spacing:0.5px;}
-  .j-messages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:#222 transparent;}
-  .j-msg{max-width:82%;padding:10px 13px;border-radius:12px;font-size:13px;line-height:1.5;}
-  .j-msg.bot{background:#141414;border:1px solid #1e1e1e;color:#ccc;align-self:flex-start;border-bottom-left-radius:4px;}
-  .j-msg.user{background:#2a0a3a;border:1px solid #6a1a9a;color:#f0e0ff;align-self:flex-end;border-bottom-right-radius:4px;}
-  .j-typing{display:flex;align-items:center;gap:5px;padding:10px 13px;background:#141414;border:1px solid #1e1e1e;border-radius:12px;border-bottom-left-radius:4px;align-self:flex-start;}
-  .j-dot{width:6px;height:6px;border-radius:50%;background:#fc42ff;animation:blink 1.2s ease-in-out infinite;}
-  .j-dot:nth-child(2){animation-delay:0.2s;}.j-dot:nth-child(3){animation-delay:0.4s;}
-  @keyframes blink{0%,80%,100%{opacity:0.2;}40%{opacity:1;}}
-  .j-input-row{padding:12px 14px;border-top:1px solid #1a1a1a;display:flex;gap:8px;}
-  .j-input{flex:1;background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:9px 12px;color:#ddd;font-size:13px;outline:none;font-family:monospace;}
-  .j-input:focus{border-color:#fc42ff;}
-  .j-send{width:36px;height:36px;border-radius:8px;background:#2a0a3a;border:1px solid #6a1a9a;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .j-send:hover{background:#3a1050;}
-  .j-send svg{width:16px;height:16px;fill:#fc42ff;}
-  
-  .j-icon{position:absolute;font-size:22px;color:#fff;z-index:1;pointer-events:none;filter:drop-shadow(0 0 6px #fc42ff);}
+  /* ---- Jarvis wake animation: screen-edge glow, admin only ---- */
+  #jarvis-edge-glow {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  body.jarvis-waking #jarvis-edge-glow { opacity: 1; animation: jarvis-pulse-in 0.9s ease-out; }
+  body.jarvis-waking #jarvis-edge-glow::before { animation: jarvis-spin-angle 1.6s linear infinite; }
+  body.jarvis-listening #jarvis-edge-glow { opacity: 0.85; }
+  body.jarvis-listening #jarvis-edge-glow::before { animation: jarvis-spin-angle 4s linear infinite; }
+  body.jarvis-thinking #jarvis-edge-glow { opacity: 1; }
+  body.jarvis-thinking #jarvis-edge-glow::before { animation: jarvis-spin-angle 1s linear infinite; }
+  body.jarvis-thinking #jarvis-edge-glow::after { animation-duration: 1.5s; }
+
+  #jarvis-edge-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity 0.4s ease;
+}
+#jarvis-edge-glow .j-edge {
+  position: absolute;
+  filter: blur(45px);
+  opacity: 0.65;
+}
+#jarvis-edge-glow .j-edge-top,
+#jarvis-edge-glow .j-edge-bottom {
+  left: -10%;
+  width: 120%;
+  height: 90px;
+  background: linear-gradient(90deg, #4f8cff, #7b5cff, #ff6bd6, #35d1c9, #4f8cff);
+  background-size: 300% 100%;
+  animation: jarvis-wave-h 5s linear infinite;
+}
+#jarvis-edge-glow .j-edge-top { top: -60px; }
+#jarvis-edge-glow .j-edge-bottom { bottom: -60px; animation-direction: reverse; }
+
+#jarvis-edge-glow .j-edge-left,
+#jarvis-edge-glow .j-edge-right {
+  top: -10%;
+  height: 120%;
+  width: 60px;
+  background: linear-gradient(180deg, #4f8cff, #7b5cff, #ff6bd6, #35d1c9, #4f8cff);
+  background-size: 100% 300%;
+  animation: jarvis-wave-v 5s linear infinite;
+}
+#jarvis-edge-glow .j-edge-left { left: -60px; }
+#jarvis-edge-glow .j-edge-right { right: -60px; animation-direction: reverse; }
+
+@keyframes jarvis-wave-h { to { background-position: 300% 0; } }
+@keyframes jarvis-wave-v { to { background-position: 0 300%; } }
+
+body.jarvis-waking #jarvis-edge-glow .j-edge { animation-duration: 1.8s; }
+body.jarvis-thinking #jarvis-edge-glow .j-edge { animation-duration: 1.2s; opacity: 0.85; }
+
+#jarvis-edge-glow .j-blob:nth-child(1) { background: #4f8cff; top: -18vw; left: -18vw; animation: jarvis-float-a 7s ease-in-out infinite; }
+#jarvis-edge-glow .j-blob:nth-child(2) { background: #ff6bd6; top: -18vw; right: -18vw; animation: jarvis-float-b 8s ease-in-out infinite; }
+#jarvis-edge-glow .j-blob:nth-child(3) { background: #35d1c9; bottom: -18vw; left: -18vw; animation: jarvis-float-c 6.5s ease-in-out infinite; }
+#jarvis-edge-glow .j-blob:nth-child(4) { background: #7b5cff; bottom: -18vw; right: -18vw; animation: jarvis-float-d 7.5s ease-in-out infinite; }
+
+/* @keyframes jarvis-float-a { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(6vw,4vw) scale(1.25); } }
+@keyframes jarvis-float-b { 0%,100% { transform: translate(0,0) scale(1.1); } 50% { transform: translate(-5vw,6vw) scale(0.9); } }
+@keyframes jarvis-float-c { 0%,100% { transform: translate(0,0) scale(0.95); } 50% { transform: translate(5vw,-5vw) scale(1.2); } }
+@keyframes jarvis-float-d { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-6vw,-4vw) scale(1.15); } } */
+
+body.jarvis-waking #jarvis-edge-glow,
+body.jarvis-listening #jarvis-edge-glow,
+body.jarvis-thinking #jarvis-edge-glow { opacity: 1; }
+
+body.jarvis-waking #jarvis-edge-glow .j-blob { animation-duration: 1.6s; }
+body.jarvis-thinking #jarvis-edge-glow .j-blob { animation-duration: 2.2s; opacity: 0.75; }
+  /* small mic trigger, replaces the old floating chat button */
+  .j-mic-btn {
+    position: fixed; bottom: 32px; right: 32px;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: #14161c; border: 1px solid #262a33;
+    color: #8b909c; cursor: pointer; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; transition: color 0.3s ease, border-color 0.3s ease;
+  }
+  .j-mic-btn.active { color: #35d1c9; border-color: #35d1c9; }
+
+  .j-toast {
+    position: fixed; bottom: 96px; left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: #14161c; border: 1px solid #262a33; color: #b8bdc7;
+    font-size: 13px; padding: 10px 18px; border-radius: 999px;
+    z-index: 9999; opacity: 0; pointer-events: none; max-width: 70vw;
+    text-align: center; transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .j-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
+<% } %>
 
 <body class="<%= bodyClass || '' %>">
 
     <!-- PAGE CONTENT COMES HERE -->
     <%- body %>
-    
+
     <% if (locals.isAdmin) { %>
-   <button class="j-btn" onclick="toggleChat()" id="jBtn">
-    <canvas id="jCanvas" width="64" height="64" style="width:64px;height:64px;border-radius:50%;position:absolute;top:0;left:3px;"></canvas>
-    <span class="j-icon">✦</span>
-    </button>
-<% } %>
- 
-
-<div class="j-panel" id="jPanel">
-  <div class="j-header">
-    <div class="j-avatar"></div>
-    <div>
-      <div class="j-name">J.A.R.V.I.S</div>
-      <div class="j-status">ADMIN INTELLIGENCE ONLINE</div>
+    <div id="jarvis-edge-glow">
+      <div class="j-edge j-edge-top"></div>
+      <div class="j-edge j-edge-bottom"></div>
+      <div class="j-edge j-edge-left"></div>
+      <div class="j-edge j-edge-right"></div>
     </div>
-  </div>
-  <div class="j-messages" id="jMessages">
-    <div class="j-msg bot">Good day. I'm ready to assist with store intelligence. What would you like to know?</div>
-  </div>
-  <div class="j-input-row">
-    <input class="j-input" id="jInput" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')sendMsg()"/>
-    <button class="j-send" onclick="sendMsg()">
-      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    <div class="j-toast" id="jToast"></div>
+    <button class="j-mic-btn" id="jMicBtn" title="Say &quot;Jarvis&quot; or click to talk">
+      <i class="fa-solid fa-microphone"></i>
     </button>
-  </div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-const WEBHOOK = '<%= webhookUrl %>';
-let chatOpen = false;
+    <script>
+    (function () {
+      const WEBHOOK = '<%= webhookUrl %>';
+      const body = document.body;
+      const micBtn = document.getElementById('jMicBtn');
+      const toast = document.getElementById('jToast');
+      const WAKE_PHRASES = ['jarvis', 'hey jarvis', 'jarvis wake up'];
+      let silenceTimer = null;
 
-function toggleChat(){
-  chatOpen = !chatOpen;
-  document.getElementById('jPanel').classList.toggle('open', chatOpen);
-  if(chatOpen) document.getElementById('jInput').focus();
-}
+      function setState(state) {
+        body.classList.remove('jarvis-waking', 'jarvis-listening', 'jarvis-thinking');
+        micBtn.classList.toggle('active', state !== 'idle');
+        if (state !== 'idle') body.classList.add('jarvis-' + state);
+      }
 
-(function initRings(){
-  const canvas = document.getElementById('jCanvas');
-  const W = 64, H = 64;
-  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.setSize(W,H);
-  renderer.setClearColor(0x000000,0);
-  const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-0.5,0.5,0.5,-0.5,0.1,10);
-  camera.position.z=1;
+      function showToast(text) {
+        toast.textContent = text || '';
+        toast.classList.toggle('show', !!text);
+      }
 
-  const vert = `void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
-  const frag = `
-  precision highp float;
-  uniform float uTime,uAttenuation,uLineThickness,uBaseRadius,uRadiusStep,uScaleRate,uOpacity,uNoiseAmount,uRotation,uRingGap,uFadeIn,uFadeOut,uBurst;
-  uniform vec2 uResolution;
-  uniform vec3 uColor,uColorTwo;
-  uniform int uRingCount;
-  const float HP=1.5707963;const float CYCLE=3.45;
-  float fade(float t){return t<uFadeIn?smoothstep(0.0,uFadeIn,t):1.0-smoothstep(uFadeOut,CYCLE-0.2,t);}
-  float ring(vec2 p,float ri,float cut,float t0,float px){
-    float t=mod(uTime+t0,CYCLE);
-    float r=ri+t/CYCLE*uScaleRate;
-    float d=abs(length(p)-r);
-    float a=atan(abs(p.y),abs(p.x))/HP;
-    float th=max(1.0-a,0.5)*px*uLineThickness;
-    float h=(1.0-smoothstep(th,th*1.5,d))+1.0;
-    d+=pow(cut*a,3.0)*r;
-    return h*exp(-uAttenuation*d)*fade(t);
-  }
-  void main(){
-    float px=1.0/min(uResolution.x,uResolution.y);
-    vec2 p=(gl_FragCoord.xy-0.5*uResolution.xy)*px;
-    float cr=cos(uRotation),sr=sin(uRotation);
-    p=mat2(cr,-sr,sr,cr)*p;
-    vec3 c=vec3(0.0);
-    float rcf=max(float(uRingCount)-1.0,1.0);
-    for(int i=0;i<10;i++){
-      if(i>=uRingCount)break;
-      float fi=float(i);
-      vec3 rc=mix(uColor,uColorTwo,fi/rcf);
-      c=mix(c,rc,vec3(ring(p,uBaseRadius+fi*uRadiusStep,pow(uRingGap,fi),i==0?0.0:2.95*fi,px)));
-    }
-    c*=1.0+uBurst*2.0;
-    float n=fract(sin(dot(gl_FragCoord.xy+uTime*100.0,vec2(12.9898,78.233)))*43758.5453);
-    c+=(n-0.5)*uNoiseAmount;
-    gl_FragColor=vec4(c,max(c.r,max(c.g,c.b))*uOpacity);
-  }`;
+      const JarvisGlow = {
+        wake() {
+          setState('waking');
+          setTimeout(() => setState('listening'), 900);
+          clearTimeout(silenceTimer);
+          silenceTimer = setTimeout(() => JarvisGlow.idle(), 7000);
+        },
+        listen() {
+          setState('listening');
+          clearTimeout(silenceTimer);
+          silenceTimer = setTimeout(() => JarvisGlow.idle(), 7000);
+        },
+        think() {
+          clearTimeout(silenceTimer);
+          setState('thinking');
+        },
+        idle() {
+          clearTimeout(silenceTimer);
+          setState('idle');
+        }
+      };
 
-  const uniforms={
-    uTime:{value:0},uAttenuation:{value:10},uResolution:{value:new THREE.Vector2(W,H)},
-    uColor:{value:new THREE.Color('#fc42ff')},uColorTwo:{value:new THREE.Color('#42fcff')},
-    uLineThickness:{value:2},uBaseRadius:{value:0.2},uRadiusStep:{value:0.1},
-    uScaleRate:{value:0.1},uRingCount:{value:6},uOpacity:{value:1},uNoiseAmount:{value:0.1},
-    uRotation:{value:0},uRingGap:{value:1.5},uFadeIn:{value:0.7},uFadeOut:{value:0.5},uBurst:{value:0}
-  };
+      async function sendCommand(text) {
+        JarvisGlow.think();
+        try {
+          const res = await fetch(WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text })
+          });
+          const data = await res.json();
+          showToast(data.output || (Array.isArray(data) && data[0]?.output) || 'I encountered an issue, sir.');
+        } catch (e) {
+          showToast('Connection lost, sir. Please check the system.');
+        }
+        JarvisGlow.listen();
+        setTimeout(() => showToast(''), 5000);
+      }
 
-  const mat = new THREE.ShaderMaterial({vertexShader:vert,fragmentShader:frag,uniforms,transparent:true});
-  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(1,1),mat));
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      let listening = false;
+      let recognition;
+      let commandBuffer = '';
+      let commandTimer = null;
 
-  let burst=0;
-  document.getElementById('jBtn').addEventListener('click',()=>{burst=1;});
+      if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
 
-  (function animate(t){
-    requestAnimationFrame(animate);
-    burst*=0.95; if(burst<0.001)burst=0;
-    uniforms.uTime.value=t*0.001;
-    uniforms.uBurst.value=burst;
-    renderer.render(scene,camera);
-  })(0);
-})();
+        recognition.onresult = (event) => {
+          let transcript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          const lower = transcript.toLowerCase().trim();
+          showToast(transcript);
+            console.log('[jarvis] heard:', lower);
 
-function addMsg(text,type){
-  const box=document.getElementById('jMessages');
-  const d=document.createElement('div');
-  d.className='j-msg '+type;
-  d.textContent=text;
-  box.appendChild(d);
-  box.scrollTop=box.scrollHeight;
-}
-function showTyping(){
-  const box=document.getElementById('jMessages');
-  const d=document.createElement('div');
-  d.className='j-typing';d.id='jTyping';
-  d.innerHTML='<div class="j-dot"></div><div class="j-dot"></div><div class="j-dot"></div>';
-  box.appendChild(d);box.scrollTop=box.scrollHeight;
-}
-function removeTyping(){const t=document.getElementById('jTyping');if(t)t.remove();}
+          const heardWakeWord = WAKE_PHRASES.some(p => lower.includes(p));
+          if (heardWakeWord) {
+            JarvisGlow.wake();
+            commandBuffer = '';
+          } else if (lower.length > 0 && body.classList.contains('jarvis-listening')) {
+            commandBuffer = transcript;
+            clearTimeout(commandTimer);
+            commandTimer = setTimeout(() => {
+              if (commandBuffer.trim()) sendCommand(commandBuffer.trim());
+              commandBuffer = '';
+            }, 1200);
+          }
+        };
 
-async function sendMsg(){
-  const input=document.getElementById('jInput');
-  const msg=input.value.trim();
-  if(!msg)return;
-  input.value='';
-  addMsg(msg,'user');
-  showTyping();
-  try{
-    const res=await fetch(WEBHOOK,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:msg})
-    });
-    const data=await res.json();
-    removeTyping();
-    addMsg(data.output||data[0]?.output||'I encountered an issue, sir.','bot');
-  }catch(e){
-    removeTyping();
-    addMsg('Connection lost, sir. Please check the system.','bot');
-  }
-}
-</script>
+          let restarting = false;
+
+          recognition.onend = () => {
+            console.log('[jarvis] recognition ended, listening =', listening);
+            if (listening && !restarting) {
+              restarting = true;
+              setTimeout(() => {
+                restarting = false;
+                try { recognition.start(); } catch (e) { console.log('[jarvis] restart failed:', e.message); }
+              }, 250);
+            }
+          };
+
+          recognition.onerror = (event) => {
+            console.log('[jarvis] error:', event.error);
+            if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+              listening = false;
+              micBtn.title = 'Click to allow microphone access';
+            }
+          };
+
+          try {
+            recognition.start();
+            listening = true;
+          } catch (e) { console.log('[jarvis] initial start failed:', e.message); }
+      } else {
+        micBtn.title = 'Speech recognition not supported in this browser';
+      }
+
+      micBtn.addEventListener('click', () => {
+        if (!SpeechRecognition) return;
+        if (listening) {
+          recognition.stop();
+          listening = false;
+          JarvisGlow.idle();
+        } else {
+          recognition.start();
+          listening = true;
+        }
+      });
+    })();
+    </script>
+    <% } %>
 
     <!-- Notyf JS -->
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
@@ -218,7 +294,7 @@ async function sendMsg(){
     showSuccess(<%- JSON.stringify(success) %>);
     <% } %>
 
-    
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <!-- 3. Your custom JS -->
