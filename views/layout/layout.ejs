@@ -17,7 +17,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+    <% if (isAdminPage) { %>
 
+        <link rel="stylesheet" href="/css/jarvis.css">
+
+    <% } %>
 </head>
 <style>
     .j-btn{position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:#000000ef;border:none;cursor:pointer;z-index:9999;padding:0;overflow:hidden;display:flex;align-items:center;justify-content:center;}
@@ -76,6 +80,95 @@
     </button>
   </div>
 </div>
+
+<!-- =========================================
+     JARVIS VOICE ASSISTANT
+========================================= -->
+
+<div id="jarvis-overlay">
+
+    <!-- Animated edge glow -->
+    <div id="jarvis-edge-glow"></div>
+
+    <!-- Center assistant -->
+    <div id="jarvis-core">
+
+        <div id="jarvis-orb">
+            <div class="jarvis-orb-inner"></div>
+        </div>
+
+        <div id="jarvis-name">
+            JARVIS
+        </div>
+
+        <div id="jarvis-state">
+            Sleeping
+        </div>
+
+        <div id="jarvis-message"></div>
+
+    </div>
+
+</div>
+
+
+<!-- Voice status -->
+<div id="jarvis-voice-status">
+
+    <div id="jarvis-voice-dot"></div>
+
+    <span id="jarvis-voice-status-text">
+        Jarvis
+    </span>
+
+</div>
+
+
+<script src="/js/jarvis.js"></script>
+
+<% if (isAdminPage) { %>
+
+    <div id="jarvis-overlay">
+
+        <div id="jarvis-edge-glow"></div>
+
+        <div id="jarvis-core">
+
+            <div id="jarvis-orb">
+                <div class="jarvis-orb-inner"></div>
+            </div>
+
+            <div id="jarvis-name">
+                JARVIS
+            </div>
+
+            <div id="jarvis-state">
+                Sleeping
+            </div>
+
+            <div id="jarvis-message"></div>
+
+        </div>
+
+    </div>
+
+
+    <div id="jarvis-voice-status">
+
+        <div id="jarvis-voice-dot"></div>
+
+        <span id="jarvis-voice-status-text">
+            Jarvis
+        </span>
+
+    </div>
+
+
+    <script src="/js/jarvis.js"></script>
+
+<% } %>
+
+<!---------->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>

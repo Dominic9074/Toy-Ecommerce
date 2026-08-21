@@ -61,10 +61,15 @@ app.use((req,res,next)=>{
   next();
 })
 
+app.use((req, res, next) => {
+    res.locals.isAdminPage = req.path.startsWith("/admin");
+    next();
+});
+
 
 //routes
 app.use('/',userRoute)
-app.use('/',adminRoute)
+app.use('/admin',adminRoute)
 
 app.use((err, req, res, next) => {
   console.error("Error:", err);
