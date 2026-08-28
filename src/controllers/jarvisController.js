@@ -13,12 +13,13 @@ export async function processJarvisCommand(req, res) {
 
         console.log("[Jarvis] Command:", message);
 
+        // Send command to Langflow
         const result = await sendToLangflow(
             message,
             sessionId || "jarvis-admin"
         );
 
-        // Extract the final AI response from Langflow
+        // Extract final AI response
         const aiResponse =
             result?.outputs?.[0]
                 ?.outputs?.[0]
@@ -38,6 +39,7 @@ export async function processJarvisCommand(req, res) {
 
         console.log("[Jarvis] AI:", aiResponse);
 
+        // Send ONLY text to browser
         return res.json({
             success: true,
             response: aiResponse
@@ -45,7 +47,7 @@ export async function processJarvisCommand(req, res) {
 
     } catch (error) {
         console.error(
-            "[Jarvis] Langflow error:",
+            "[Jarvis] Command error:",
             error
         );
 
