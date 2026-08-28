@@ -134,9 +134,6 @@ body.jarvis-thinking #jarvis-edge-glow .j-blob { animation-duration: 2.2s; opaci
       <div class="j-edge j-edge-right"></div>
     </div>
     <div class="j-toast" id="jToast"></div>
-    <button class="j-mic-btn" id="jMicBtn" title="Say &quot;Jarvis&quot; or click to talk">
-      <i class="fa-solid fa-microphone"></i>
-    </button>
 
     <% } %>
 
@@ -171,16 +168,9 @@ body.jarvis-thinking #jarvis-edge-glow .j-blob { animation-duration: 2.2s; opaci
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script src="/js/jarvis/jarvis.js"></script>
     <script src="/js/jarvis/speech.js"></script>
 
-    <script>
-        const micButton = document.getElementById("jMicBtn");
-
-        if (micButton) {
-            micButton.addEventListener("click", () => {
-                window.jarvisSpeech?.start();
-            });
-        }
-    </script>
 </body>
 </html>

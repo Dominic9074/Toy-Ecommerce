@@ -2,7 +2,7 @@ const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if (!SpeechRecognition) {
-    console.log("[Jarvis] Speech Recognition is not supported.");
+    console.error("[Jarvis] Speech Recognition is not supported.");
 } else {
     const recognition = new SpeechRecognition();
 
@@ -10,8 +10,13 @@ if (!SpeechRecognition) {
     recognition.interimResults = false;
     recognition.lang = "en-US";
 
+    let isRunning = false;
+    let shouldListen = true;
+
     recognition.onstart = () => {
-        console.log("[Jarvis] Listening...");
+        isRunning = true;
+
+        console.log("[Jarvis] Wake-word listening started.");
     };
 
     recognition.onresult = (event) => {
@@ -19,28 +24,66 @@ if (!SpeechRecognition) {
 
         console.log("[Jarvis] Heard:", transcript);
 
-        const text = transcript.toLowerCase();
-
-        if (text.includes("jarvis")) {
-            console.log("[Jarvis] WAKE WORD DETECTED!");
-        }
+        Jarvis.handleSpeech(transcript);
     };
 
     recognition.onerror = (event) => {
         console.error("[Jarvis] Speech error:", event.error);
+
+        isRunning = false;
+
+        // These errors mean we should stop trying automatically.
+        if (
+            event.error === "not-allowed" ||
+            event.error === "service-not-allowed"
+        ) {
+            shouldListen = false;
+            console.error(
+                "[Jarvis] Microphone permission/service unavailable."
+            );
+        }
     };
 
     recognition.onend = () => {
-        console.log("[Jarvis] Recognition ended.");
-    };
+        isRunning = false;
 
-    window.jarvisSpeech = {
-        start() {
-            try {
-                recognition.start();
-            } catch (error) {
-                console.error("[Jarvis] Could not start:", error);
-            }
+        console.log("[Jarvis] Recognition ended.");
+
+        if (shouldListen) {
+            setTimeout(() => {
+                startRecognition();
+            }, 300);
         }
     };
+
+    function startRecognition() {
+        if (!shouldListen || isRunning) {
+            return;
+        }
+
+        try {
+            recognition.start();
+        } catch (error) {
+            console.log(
+                "[Jarvis] Could not start recognition:",
+                error.message
+            );
+        }
+    }
+
+    function stopRecognition() {
+        shouldListen = false;
+
+        if (isRunning) {
+            recognition.stop();
+        }
+    }
+
+    window.jarvisSpeech = {
+        start: startRecognition,
+        stop: stopRecognition
+    };
+
+    // Start automatically when the admin page loads.
+    startRecognition();
 }
