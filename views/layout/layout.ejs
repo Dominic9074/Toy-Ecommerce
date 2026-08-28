@@ -138,142 +138,6 @@ body.jarvis-thinking #jarvis-edge-glow .j-blob { animation-duration: 2.2s; opaci
       <i class="fa-solid fa-microphone"></i>
     </button>
 
-    <script>
-    (function () {
-      const WEBHOOK = '<%= webhookUrl %>';
-      const body = document.body;
-      const micBtn = document.getElementById('jMicBtn');
-      const toast = document.getElementById('jToast');
-      const WAKE_PHRASES = ['jarvis', 'hey jarvis', 'jarvis wake up'];
-      let silenceTimer = null;
-
-      function setState(state) {
-        body.classList.remove('jarvis-waking', 'jarvis-listening', 'jarvis-thinking');
-        micBtn.classList.toggle('active', state !== 'idle');
-        if (state !== 'idle') body.classList.add('jarvis-' + state);
-      }
-
-      function showToast(text) {
-        toast.textContent = text || '';
-        toast.classList.toggle('show', !!text);
-      }
-
-      const JarvisGlow = {
-        wake() {
-          setState('waking');
-          setTimeout(() => setState('listening'), 900);
-          clearTimeout(silenceTimer);
-          silenceTimer = setTimeout(() => JarvisGlow.idle(), 7000);
-        },
-        listen() {
-          setState('listening');
-          clearTimeout(silenceTimer);
-          silenceTimer = setTimeout(() => JarvisGlow.idle(), 7000);
-        },
-        think() {
-          clearTimeout(silenceTimer);
-          setState('thinking');
-        },
-        idle() {
-          clearTimeout(silenceTimer);
-          setState('idle');
-        }
-      };
-
-      async function sendCommand(text) {
-        JarvisGlow.think();
-        try {
-          const res = await fetch(WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: text })
-          });
-          const data = await res.json();
-          showToast(data.output || (Array.isArray(data) && data[0]?.output) || 'I encountered an issue, sir.');
-        } catch (e) {
-          showToast('Connection lost, sir. Please check the system.');
-        }
-        JarvisGlow.listen();
-        setTimeout(() => showToast(''), 5000);
-      }
-
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      let listening = false;
-      let recognition;
-      let commandBuffer = '';
-      let commandTimer = null;
-
-      if (SpeechRecognition) {
-        recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
-
-        recognition.onresult = (event) => {
-          let transcript = '';
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            transcript += event.results[i][0].transcript;
-          }
-          const lower = transcript.toLowerCase().trim();
-          showToast(transcript);
-            console.log('[jarvis] heard:', lower);
-
-          const heardWakeWord = WAKE_PHRASES.some(p => lower.includes(p));
-          if (heardWakeWord) {
-            JarvisGlow.wake();
-            commandBuffer = '';
-          } else if (lower.length > 0 && body.classList.contains('jarvis-listening')) {
-            commandBuffer = transcript;
-            clearTimeout(commandTimer);
-            commandTimer = setTimeout(() => {
-              if (commandBuffer.trim()) sendCommand(commandBuffer.trim());
-              commandBuffer = '';
-            }, 1200);
-          }
-        };
-
-          let restarting = false;
-
-          recognition.onend = () => {
-            console.log('[jarvis] recognition ended, listening =', listening);
-            if (listening && !restarting) {
-              restarting = true;
-              setTimeout(() => {
-                restarting = false;
-                try { recognition.start(); } catch (e) { console.log('[jarvis] restart failed:', e.message); }
-              }, 250);
-            }
-          };
-
-          recognition.onerror = (event) => {
-            console.log('[jarvis] error:', event.error);
-            if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-              listening = false;
-              micBtn.title = 'Click to allow microphone access';
-            }
-          };
-
-          try {
-            recognition.start();
-            listening = true;
-          } catch (e) { console.log('[jarvis] initial start failed:', e.message); }
-      } else {
-        micBtn.title = 'Speech recognition not supported in this browser';
-      }
-
-      micBtn.addEventListener('click', () => {
-        if (!SpeechRecognition) return;
-        if (listening) {
-          recognition.stop();
-          listening = false;
-          JarvisGlow.idle();
-        } else {
-          recognition.start();
-          listening = true;
-        }
-      });
-    })();
-    </script>
     <% } %>
 
     <!-- Notyf JS -->
@@ -307,5 +171,16 @@ body.jarvis-thinking #jarvis-edge-glow .j-blob { animation-duration: 2.2s; opaci
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="/js/jarvis/speech.js"></script>
+
+    <script>
+        const micButton = document.getElementById("jMicBtn");
+
+        if (micButton) {
+            micButton.addEventListener("click", () => {
+                window.jarvisSpeech?.start();
+            });
+        }
+    </script>
 </body>
 </html>
