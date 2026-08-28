@@ -17,7 +17,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+    <% if (isAdminPage) { %>
 
+        <link rel="stylesheet" href="/css/jarvis.css">
+
+    <% } %>
 </head>
 <% if (locals.isAdmin) { %>
 <style>
@@ -133,6 +137,7 @@ body.jarvis-thinking #jarvis-edge-glow .j-blob { animation-duration: 2.2s; opaci
       <div class="j-edge j-edge-left"></div>
       <div class="j-edge j-edge-right"></div>
     </div>
+
     <div class="j-toast" id="jToast"></div>
 
     <% } %>
