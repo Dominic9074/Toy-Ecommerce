@@ -9,6 +9,7 @@ import session from "express-session";
 import passport from "./src/config/passport.js";
 import adminRoute from './src/routes/admin.js'
 import nocache from "nocache";
+import jarvisRoute from "./src/routes/jarvis.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -65,6 +66,7 @@ app.use((req,res,next)=>{
 //routes
 app.use('/',userRoute)
 app.use('/',adminRoute)
+app.use("/", jarvisRoute);
 
 app.use((err, req, res, next) => {
   console.error("Error:", err);
