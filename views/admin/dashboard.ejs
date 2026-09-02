@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Wheelz</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            Wheelz
+        </div>
+        
+        <nav class="sidebar-menu">
+            <a href="/admin/dashboard" class="nav-item active">
+                <i class="fa-solid fa-qrcode"></i> Dashboard
+            </a>
+            <a href="/admin/products" class="nav-item">
+                <i class="fa-solid fa-box"></i> Products
+            </a>
+            <a href="/admin/category" class="nav-item">
+                <i class="fa-solid fa-layer-group"></i> Categories
+            </a>
+            <a href="/admin/orders" class="nav-item">
+                <i class="fa-solid fa-cart-shopping"></i> Orders
+            </a>
+            <a href="/admin/sales" class="nav-item">
+                <i class="fa-solid fa-money-bill-wave"></i> Sales & Revenue
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fa-solid fa-users"></i> Users
+            </a>
+            <a href="/admin/coupons" class="nav-item">
+                <i class="fa-solid fa-ticket"></i> Coupons
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="/admin/logout" class="logout-link">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </a>
+        </div>
+    </aside>
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+        <!-- Top Header -->
+        <header class="admin-header">
+            <button class="admin-hamburger" id="adminHamburger">
+            <i class="fa-solid fa-bars"></i>
+            </button>
+            <h2>ADMIN PANEL</h2>
+        </header>
+
+        <!-- Page Content -->
+        <div class="content-body">
+            
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">DASHBOARD</h1>
+                <p class="dashboard-subtitle">Welcome Back Here's What Happening With Yur Store Today.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="dashboard-stats-grid">
+                <!-- Card 1 -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-title">TOTAL<br>PRODUCTS</div>
+                        <i class="fa-solid fa-box stat-icon"></i>
+                    </div>
+                    <div class="stat-value"><%= totalProduct %></div>
+                </div>
+                <!-- Card 2 -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-title">TODAYS<br>ORDERS</div>
+                        <i class="fa-solid fa-cart-shopping stat-icon"></i>
+                    </div>
+                    <div class="stat-value"><%= todaysOrder %></div>
+                </div>
+                <!-- Card 3 -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-title">TOTAL<br>USERS</div>
+                        <i class="fa-regular fa-circle-user stat-icon"></i>
+                    </div>
+                    <div class="stat-value"><%= totalUsers %></div>
+                </div>
+                <!-- Card 4 -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-title">TODAYS<br>REVENUE</div>
+                        <i class="fa-solid fa-chart-line stat-icon"></i>
+                    </div>
+                    <div class="stat-value"><%= todaysRevenue[0]?.totalRevenue %></div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="dashboard-filter">
+                <div class="df-title">FILTER</div>
+                <div class="df-controls">
+                    <div class="df-label">SALES</div>
+                    <div class="df-buttons">
+                        <button class="btn-df <%= filter === 'year' ? 'active' : '' %>" onclick="window.location.href='?filter=year'">THIS YEAR</button>
+                        <button class="btn-df <%= filter === 'month' ? 'active' : '' %>" onclick="window.location.href='?filter=month'">THIS MONTH</button>
+                        <button class="btn-df <%= filter === 'week' ? 'active' : '' %>" onclick="window.location.href='?filter=week'">THIS WEEK</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="dashboard-charts-grid">
+                <div class="chart-card">
+                    <canvas id="salesChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <canvas id="stockChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const adminHamburger = document.getElementById("adminHamburger");
+        const adminSidebar = document.getElementById("adminSidebar");
+        const adminOverlay = document.getElementById("adminOverlay");
+
+        adminHamburger.addEventListener("click", () => {
+            adminSidebar.classList.add("sidebar-open");
+            adminOverlay.classList.add("active");
+        });
+
+        adminOverlay.addEventListener("click", () => {
+            adminSidebar.classList.remove("sidebar-open");
+            adminOverlay.classList.remove("active");
+        });
+
+        // ==========================
+        // CHART.JS INITIALIZATION
+        // ==========================
+
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        const stockCtx = document.getElementById('stockChart').getContext('2d');
+
+        new Chart(salesCtx, {
+            type: 'bar',
+            data: {
+                labels: <%- JSON.stringify(chartData.labels) %>,
+                datasets: [{
+                    label: '2025',
+                    data: <%- JSON.stringify(chartData.data) %>,
+                    backgroundColor: '#8da2ff',
+                    borderRadius: 4,
+                    barThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 1500,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 8,
+                            font: { size: 11, family: 'Inter', weight: 'bold' },
+                            color: '#666'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20,
+                            color: '#999',
+                            font: { size: 10, family: 'Inter' }
+                        },
+                        grid: {
+                            color: '#f0f0f0',
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#666',
+                            font: { size: 10, family: 'Inter', weight: 'bold' }
+                        },
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(stockCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['in stock', 'low stock', 'out of stock'],
+                datasets: [{
+                    data:<%- JSON.stringify(stockData.data) %>,
+                    backgroundColor: [
+                        '#8da2ff', // Purple for in stock
+                        '#ff8989', // Red for low stock
+                        '#42cfdf'  // Cyan for out of stock
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                    duration: 1500,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 8,
+                            padding: 20,
+                            font: { size: 11, family: 'Inter' },
+                            color: '#666'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

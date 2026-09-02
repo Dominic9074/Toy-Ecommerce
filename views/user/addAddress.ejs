@@ -1,0 +1,326 @@
+
+<header>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions">
+    <span>Order</span>
+    <span>Cart</span>
+    <span>Wish List</span>
+
+    <a href="/profile" class="profile-avatar">
+       <i class="fa-solid fa-user"></i>
+    </a>
+  </div>
+</header>
+
+<div class="container add-address-page">
+    <h1 class="page-title">ADD NEW ADDRESS</h1>
+
+    <div class="address-form-box">
+        <form>
+            <div class="form-row full-width" id="nameDiv">
+                <label class="form-label">FULL NAME</label>
+                <input type="text" value='<%= address?.fullname||''%>' id="fullname" class="form-control" name="fullName">
+                <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;">Name Required</p>
+            </div>
+
+            <div class="form-row two-col" id="numberDiv">
+                <div class="col-group">
+                    <label class="form-label" >PHONE NUMBER</label>
+                    <input type="text" value='<%= address?.phone||''%>' id="phone" class="form-control" name="phone">
+                    <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                </div>
+                <div class="col-group" id="pinDiv">
+                    <label class="form-label">PIN CODE</label>
+                    <input type="text" id="pincode" value='<%= address?.pincode||''%>' class="form-control" name="pincode">
+                    <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                </div>
+            </div>
+            <input type="hidden" id="addressId" value="<%= address?._id || '' %>">
+
+            <div class="form-row full-width" id="streetDiv">
+                <label class="form-label">STREET ADDRESS</label>
+                <input type="text" id="streetAddress" value='<%= address?.street||''%>' class="form-control" name="streetAddress">
+                <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+            </div>
+
+            <div class="form-row two-col" id="stateDiv">
+                <div class="col-group">
+                    <label class="form-label">STATE</label>
+                    <input type="text" id="state" value='<%= address?.state||''%>' class="form-control" name="state">
+                    <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                </div>
+                <div class="col-group" id="districtDiv">
+                    <label class="form-label">DISTRICT</label>
+                    <input type="text" id="city" value='<%= address?.city||''%>' class="form-control" name="city">
+                    <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                </div>
+            </div>
+
+            <div class="form-row full-width" id="typeDiv">
+            <label class="form-label">ADDRESS TYPE</label>
+            <select id="addressType" class="form-control" name="addressType">
+                <option value="home" <%= address?.addressType === 'home' ? 'selected' : '' %>>
+                    Home
+                </option>
+                <option value="work" <%= address?.addressType === 'work' ? 'selected' : '' %>>
+                    Work
+                </option>
+            </select>
+            <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+        </div>
+
+
+            <div class="form-actions">
+              <% if (isEdit) { %>
+                <button type="button" class="btn-save-address" onclick="formValidation(event)">UPDATE ADDRESS</button>
+                <button type="button" onclick="addressCancel()" class="btn-cancel-address">CANCEL</button>
+              <% } else { %>
+                <button type="button" class="btn-save-address" onclick="formValidation(event)">SAVE ADDRESS</button>
+                <button type="button" onclick="addressCancel()" class="btn-cancel-address">CANCEL</button>
+              <% } %>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+  const from=<%- JSON.stringify(from) %>;
+ async function formValidation(e){
+    const isEdit = <%= typeof isEdit !== 'undefined' && isEdit ? 'true' : 'false' %>;
+    const fullname=document.getElementById('fullname').value;
+    const phone=document.getElementById('phone').value;
+    const pincode=document.getElementById('pincode').value;
+    const street=document.getElementById('streetAddress').value;
+    const state=document.getElementById('state').value;
+    const city=document.getElementById('city').value;
+    const addressType = document.getElementById('addressType').value;
+
+
+    const nameDiv=document.getElementById('nameDiv')
+    const numberDiv=document.getElementById('numberDiv')
+    const pinDiv=document.getElementById('pinDiv')
+    const streetDiv=document.getElementById('streetDiv')
+    const stateDiv=document.getElementById('stateDiv')
+    const districtDiv=document.getElementById('districtDiv')
+
+    let isValid=true;
+
+    if(!fullname){
+      nameDiv.querySelector('input').style.border='1px solid red'
+      nameDiv.querySelector('p').style.display='block'
+      nameDiv.querySelector('p').innerText='FullName Required'
+      isValid=false
+    }
+    if(fullname.length<3){
+      nameDiv.querySelector('input').style.border='1px solid red'
+      nameDiv.querySelector('p').style.display='block'
+      nameDiv.querySelector('p').innerText='Length Should Be Above 3'
+      isValid=false
+    }
+    if(!phone){
+      numberDiv.querySelector('input').style.border='1px solid red'
+      numberDiv.querySelector('p').style.display='block'
+      numberDiv.querySelector('p').innerText='Phone Number Required'
+     isValid=false
+    }
+    if(!pincode){
+      pinDiv.querySelector('input').style.border='1px solid red'
+      pinDiv.querySelector('p').style.display='block'
+      pinDiv.querySelector('p').innerText='Pin Code Required'
+      isValid=false
+    }
+    if(!street){
+      streetDiv.querySelector('input').style.border='1px solid red'
+      streetDiv.querySelector('p').style.display='block'
+      streetDiv.querySelector('p').innerText='Street Address Required'
+     isValid=false
+    }
+    if(!state){
+      stateDiv.querySelector('input').style.border='1px solid red'
+      stateDiv.querySelector('p').style.display='block'
+      stateDiv.querySelector('p').innerText='Pin Code Required'
+      isValid=false
+    }
+    if(!city){
+      districtDiv.querySelector('input').style.border='1px solid red'
+      districtDiv.querySelector('p').style.display='block'
+      districtDiv.querySelector('p').innerText='District Required'
+      isValid=false
+    }
+
+    if(phone.includes(' ')){
+      numberDiv.querySelector('input').style.border='1px solid red'
+      numberDiv.querySelector('p').style.display='block'
+      numberDiv.querySelector('p').innerText='Remove Spaces'
+      isValid=false
+    }
+    if(!/^\d{10}$/.test(phone)){
+      numberDiv.querySelector('input').style.border='1px solid red'
+      numberDiv.querySelector('p').style.display='block'
+      numberDiv.querySelector('p').innerText='Only Numbers Allowed'
+     isValid=false
+    }
+    if(!/^\d{6}$/.test(pincode)){
+    pinDiv.querySelector('input').style.border='1px solid red'
+    pinDiv.querySelector('p').style.display='block'
+    pinDiv.querySelector('p').innerText='Enter valid 6 digit pincode'
+    isValid = false;
+   }
+   console.log('asdasdasd')
+
+   if(isValid){
+    try{
+      const response=await fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+      const data=await response.json();
+      
+      if(data[0].Status!=='Success'){
+        pinDiv.querySelector('input').style.border='1px solid red'
+        pinDiv.querySelector('p').style.display='block'
+        pinDiv.querySelector('p').innerText='Invalid Pincode'
+        showError('Invalid Pincode')
+        isValid=false;
+        return;
+      }else{
+
+        const postOffice=data[0].PostOffice[0];
+        const apiState=postOffice.State.toLowerCase().trim()
+        const apiDistrict=postOffice.District.toLowerCase().trim()
+        if(apiState!==state.toLowerCase()||apiDistrict!==city.toLowerCase()){
+          pinDiv.querySelector('input').style.border='1px solid red'
+          pinDiv.querySelector('p').style.display='block'
+          pinDiv.querySelector('p').innerText='Pincode Does Not Match State/District'
+          showError('Pincode Does Not Match State/District')
+          isValid=false;
+          return;
+        }
+      }
+
+    }catch(error){
+      console.log(error)
+    }
+   }
+
+
+    if(!isValid){
+      showError('Please Fill The Highlighted Fields');
+      return;
+    }
+    if(!isEdit){
+    fetchAddAddress(fullname,phone,pincode,street,state,city,addressType)
+    }else{
+      fetchUpdateAddress(fullname,phone,pincode,street,state,city,addressType)
+    }
+
+  }
+  function fetchAddAddress(fullname,phone,pincode,street,state,city,addressType){
+    fetch('/addAddress',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({fullname,phone,pincode,street,state,city,addressType})
+    }).then(res=>res.json())
+    .then(data=>{
+      if(data.success){
+        showSuccess(data.message)
+        setTimeout(()=>{
+          if(from ==='checkout'){
+            window.location.href='/checkout'
+          }else{
+          window.location.href='/user/profile'
+          }
+        },1000)
+      }else{
+        showError(data.message);
+      }
+    })
+  }
+
+  function fetchUpdateAddress(fullname,phone,pincode,street,state,city,addressType){
+    const addressId=document.getElementById('addressId').value;
+    fetch(`/updateAddress/${addressId}`,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },body:JSON.stringify({fullname,phone,pincode,street,state,city,addressType})
+    }).then(res=>res.json())
+      .then(data=>{
+        if(data.success){
+          showSuccess(data.message)
+          setTimeout(()=>{
+            if(from ==='checkout'){
+            window.location.href='/checkout'
+            }else{
+            window.location.href='/user/profile'
+            }
+          },1000)
+        }else{
+          showError(data.message);
+        }
+    })
+  }
+
+  function addressCancel(){
+    if(from ==='checkout'){
+      window.location.href='/checkout'
+    }else{
+      window.location.href-'/user/profile'
+    }
+  }
+
+  document.getElementById('pincode').addEventListener('input',async function(){
+    
+    const pincode=this.value;
+    let isValid=true;
+   if (!pincode) {
+      pinDiv.querySelector('input').style.border = '1px solid red'
+      pinDiv.querySelector('p').style.display = 'block'
+      pinDiv.querySelector('p').innerText = 'Pin Code Required'
+      isValid = false
+  } else if (!/^\d+$/.test(pincode)) {
+      pinDiv.querySelector('input').style.border = '1px solid red'
+      pinDiv.querySelector('p').style.display = 'block'
+      pinDiv.querySelector('p').innerText = 'Only numbers are allowed'
+      isValid = false
+  } else if (pincode.length !== 6) {
+      pinDiv.querySelector('input').style.border = '1px solid red'
+      pinDiv.querySelector('p').style.display = 'block'
+      pinDiv.querySelector('p').innerText = 'Pincode must be 6 digits'
+      isValid = false
+  }
+  if(!isValid) return;
+    try{
+      const response=await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+      const data=await response.json();
+
+      if(data[0].Status==='Success'){
+        const postOffice=data[0].PostOffice;
+        const State=postOffice[0].State;
+        const District=postOffice[0].District;
+        const Town=postOffice[0].Block;
+        
+
+        document.getElementById('state').value=State;
+        document.getElementById('city').value=District;
+        document.getElementById('streetAddress').value=Town;
+
+      }else{
+        showError('Could Not Access Pincode');
+        document.getElementById('state').value = "";
+        document.getElementById('city').value = "";
+        document.getElementById('streetAddress').value="";
+      }
+    }catch(error){
+      showError(error)
+    }
+
+  })
+
+
+</script>

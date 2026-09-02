@@ -1,0 +1,175 @@
+<div class="register-container">
+    <!-- Left Side -->
+    <div class="register-left"></div>
+
+    <!-- Right Side -->
+    <div class="register-right">
+        <div class="register-card">
+            <h2 class="register-title">Create an account</h2>
+            <p class="register-subtitle">
+                Already have an account? <a href="/signin">Log in</a>
+            </p>
+
+            <form action="/signup" method="POST" class="register-form" id="registerForm">
+                <div id="userDiv" class="form-group">
+                    <label>User name</label>
+                    <input type="text" name="username" id="username">
+                    <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;">Username Required</p>
+                </div>
+
+                <div id="emailDiv" class="form-group">
+                    <label>Email address</label>
+                    <input type="email" name="email" id="email">
+                    <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;">Email Required</p>
+                </div>
+
+                <div id="passwordDiv" class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" id="password">
+                    <i class="fa-regular fa-eye-slash toggle-signUpPassword" onclick="togglePassword('password', this)"></i>
+
+                    <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;">Password Required</p>
+                </div>
+
+                <div id="confirmDiv" class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirm_password" id="confirm_password">
+                    <i class="fa-regular fa-eye-slash toggle-signUpPassword"onclick="togglePassword('confirm_password', this)"></i>
+                    <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;">Confirm Password Required</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Referral Code</label>
+                    <input type="text" name="referral" placeholder="Optional">
+                </div>
+
+                <button type="submit" class="register-btn">
+                    Create an account
+                </button>
+
+                <p class="bottom-login">
+                    Already have an account? <a href="/signin">Log in</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+  document.getElementById("registerForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const confirm = document.getElementById("confirm_password").value.trim();
+
+    const userDiv=document.getElementById('userDiv');
+    const emailDiv=document.getElementById('emailDiv');
+    const passwordDiv=document.getElementById('passwordDiv');
+    const confirmDiv=document.getElementById('confirmDiv');
+
+    if(!email){
+        emailDiv.querySelector('input').style.border='1px solid red'
+        emailDiv.querySelector('p').style.display='block'
+    }else{
+        emailDiv.querySelector('input').style.border='1px solid gray'
+        emailDiv.querySelector('p').style.display='none'
+    }
+    if(!username){
+        userDiv.querySelector('input').style.border='1px solid red'
+        userDiv.querySelector('p').style.display='block'
+    }else{
+        userDiv.querySelector('input').style.border='1px solid gray'
+        userDiv.querySelector('p').style.display='none'
+    }
+    if(!password){
+        passwordDiv.querySelector('input').style.border='1px solid red'
+        passwordDiv.querySelector('p').style.display='block'
+    }else{
+        passwordDiv.querySelector('input').style.border='1px solid gray'
+        passwordDiv.querySelector('p').style.display='none'
+    }
+    if(!confirm){
+        confirmDiv.querySelector('input').style.border='1px solid red'
+        confirmDiv.querySelector('p').style.display='block'
+    }else{
+        confirmDiv.querySelector('input').style.border='1px solid gray'
+        confirmDiv.querySelector('p').style.display='none'
+    }
+    
+
+    if (!username || !email || !password || !confirm) {
+      e.preventDefault();
+      showError("All fields are required");
+      return;
+    }
+    if(username.length<3){
+        e.preventDefault();
+        userDiv.querySelector('p').style.display='block'
+        userDiv.querySelector('p').innerText='Length Should Be Above 3'
+      return;
+    }
+    const validName = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/;
+
+    if (!validName.test(username)) {
+    e.preventDefault();
+    userDiv.querySelector('p').style.display = 'block';
+    userDiv.querySelector('p').innerText = 'Name should contain only letters';
+    return;
+    }
+
+    if (password !== confirm) {
+      e.preventDefault();
+      confirmDiv.querySelector('p').style.display='block'
+      confirmDiv.querySelector('p').innerText='Password Does Not Match'
+      showError("Passwords do not match");
+      return;
+    }
+    
+    if(password.includes(" ")){
+        e.preventDefault();
+        confirmDiv.querySelector('p').style.display='block'
+        confirmDiv.querySelector('p').innerText='Password Must Not Contain Any Space'
+        showError('Password Must Not Contain Any Space')
+        return;
+    }
+    if(password.length<=6){
+        e.preventDefault();
+        confirmDiv.querySelector('p').style.display='block'
+        confirmDiv.querySelector('p').innerText='password length should be above 6'
+        showError("password length should be above 6")
+        return;
+    }
+    if(email.includes(" ")){
+        e.preventDefault();
+        emailDiv.querySelector('p').style.display='block'
+        emailDiv.querySelector('p').innerText='Email Must Not Contain Any Space'
+        showError('Email Must Not Contain Any Space')
+        return;
+    }
+    if(!/[A-Z]/.test(password)){
+        e.preventDefault();
+        confirmDiv.querySelector('p').style.display='block'
+        confirmDiv.querySelector('p').innerText='Password Must Contain AtLeast One Uppercase'
+        showError('Password Must Contain AtLeast One Uppercase')
+        return;
+    }
+    this.submit()
+  });
+
+  function togglePassword(inputId, icon) {
+    const input = document.getElementById(inputId);
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    }
+}
+
+</script>

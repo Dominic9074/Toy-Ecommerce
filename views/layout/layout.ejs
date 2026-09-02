@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= title || "Toy Ecommerce" %></title>
+
+    <!-- Main project CSS -->
+    <link rel="stylesheet" href="/css/<%= cssFile || 'style.css' %>">
+
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Notyf CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+
+</head>
+<% if (locals.isAdmin) { %>
+<style>
+  /* ---- Jarvis wake animation: screen-edge glow, admin only ---- */
+  #jarvis-edge-glow {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  body.jarvis-waking #jarvis-edge-glow { opacity: 1; animation: jarvis-pulse-in 0.9s ease-out; }
+  body.jarvis-waking #jarvis-edge-glow::before { animation: jarvis-spin-angle 1.6s linear infinite; }
+  body.jarvis-listening #jarvis-edge-glow { opacity: 0.85; }
+  body.jarvis-listening #jarvis-edge-glow::before { animation: jarvis-spin-angle 4s linear infinite; }
+  body.jarvis-thinking #jarvis-edge-glow { opacity: 1; }
+  body.jarvis-thinking #jarvis-edge-glow::before { animation: jarvis-spin-angle 1s linear infinite; }
+  body.jarvis-thinking #jarvis-edge-glow::after { animation-duration: 1.5s; }
+
+  body.jarvis-speaking #jarvis-edge-glow {
+    opacity: 1;
+  }
+
+  body.jarvis-speaking #jarvis-edge-glow .j-edge {
+    animation-duration: 0.8s;
+  }
+
+  #jarvis-edge-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity 0.4s ease;
+}
+#jarvis-edge-glow .j-edge {
+  position: absolute;
+  filter: blur(45px);
+  opacity: 0.65;
+}
+#jarvis-edge-glow .j-edge-top,
+#jarvis-edge-glow .j-edge-bottom {
+  left: -10%;
+  width: 120%;
+  height: 90px;
+  background: linear-gradient(90deg, #4f8cff, #7b5cff, #ff6bd6, #35d1c9, #4f8cff);
+  background-size: 300% 100%;
+  animation: jarvis-wave-h 5s linear infinite;
+}
+#jarvis-edge-glow .j-edge-top { top: -60px; }
+#jarvis-edge-glow .j-edge-bottom { bottom: -60px; animation-direction: reverse; }
+
+#jarvis-edge-glow .j-edge-left,
+#jarvis-edge-glow .j-edge-right {
+  top: -10%;
+  height: 120%;
+  width: 60px;
+  background: linear-gradient(180deg, #4f8cff, #7b5cff, #ff6bd6, #35d1c9, #4f8cff);
+  background-size: 100% 300%;
+  animation: jarvis-wave-v 5s linear infinite;
+}
+#jarvis-edge-glow .j-edge-left { left: -60px; }
+#jarvis-edge-glow .j-edge-right { right: -60px; animation-direction: reverse; }
+
+@keyframes jarvis-wave-h { to { background-position: 300% 0; } }
+@keyframes jarvis-wave-v { to { background-position: 0 300%; } }
+
+body.jarvis-waking #jarvis-edge-glow .j-edge { animation-duration: 1.8s; }
+body.jarvis-thinking #jarvis-edge-glow .j-edge { animation-duration: 1.2s; opacity: 0.85; }
+
+#jarvis-edge-glow .j-blob:nth-child(1) { background: #4f8cff; top: -18vw; left: -18vw; animation: jarvis-float-a 7s ease-in-out infinite; }
+#jarvis-edge-glow .j-blob:nth-child(2) { background: #ff6bd6; top: -18vw; right: -18vw; animation: jarvis-float-b 8s ease-in-out infinite; }
+#jarvis-edge-glow .j-blob:nth-child(3) { background: #35d1c9; bottom: -18vw; left: -18vw; animation: jarvis-float-c 6.5s ease-in-out infinite; }
+#jarvis-edge-glow .j-blob:nth-child(4) { background: #7b5cff; bottom: -18vw; right: -18vw; animation: jarvis-float-d 7.5s ease-in-out infinite; }
+
+/* @keyframes jarvis-float-a { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(6vw,4vw) scale(1.25); } }
+@keyframes jarvis-float-b { 0%,100% { transform: translate(0,0) scale(1.1); } 50% { transform: translate(-5vw,6vw) scale(0.9); } }
+@keyframes jarvis-float-c { 0%,100% { transform: translate(0,0) scale(0.95); } 50% { transform: translate(5vw,-5vw) scale(1.2); } }
+@keyframes jarvis-float-d { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-6vw,-4vw) scale(1.15); } } */
+
+body.jarvis-waking #jarvis-edge-glow,
+body.jarvis-listening #jarvis-edge-glow,
+body.jarvis-thinking #jarvis-edge-glow { opacity: 1; }
+
+body.jarvis-waking #jarvis-edge-glow .j-blob { animation-duration: 1.6s; }
+body.jarvis-thinking #jarvis-edge-glow .j-blob { animation-duration: 2.2s; opacity: 0.75; }
+  /* small mic trigger, replaces the old floating chat button */
+  .j-mic-btn {
+    position: fixed; bottom: 32px; right: 32px;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: #14161c; border: 1px solid #262a33;
+    color: #8b909c; cursor: pointer; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; transition: color 0.3s ease, border-color 0.3s ease;
+  }
+  .j-mic-btn.active { color: #35d1c9; border-color: #35d1c9; }
+
+  .j-toast {
+    position: fixed; bottom: 96px; left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: #14161c; border: 1px solid #262a33; color: #b8bdc7;
+    font-size: 13px; padding: 10px 18px; border-radius: 999px;
+    z-index: 9999; opacity: 0; pointer-events: none; max-width: 70vw;
+    text-align: center; transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .j-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+<% } %>
+
+<body class="<%= bodyClass || '' %>">
+
+    <!-- PAGE CONTENT COMES HERE -->
+    <%- body %>
+
+    <% if (locals.isAdmin) { %>
+    <div id="jarvis-edge-glow">
+      <div class="j-edge j-edge-top"></div>
+      <div class="j-edge j-edge-bottom"></div>
+      <div class="j-edge j-edge-left"></div>
+      <div class="j-edge j-edge-right"></div>
+    </div>
+    <div class="j-toast" id="jToast"></div>
+
+    <% } %>
+
+    <!-- Notyf JS -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+    <!-- sweet alert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Toast helper -->
+    <script src="/js/toast.js"></script>
+    <script src="/js/index.js" ></script>
+    <script>
+    <% if (error) { %>
+    showError(<%- JSON.stringify(error) %>);
+    <% } %>
+
+    <% if (success) { %>
+    showSuccess(<%- JSON.stringify(success) %>);
+    <% } %>
+
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <!-- 3. Your custom JS -->
+    <script src="/js/cropper.js"></script>
+    <!-- razorpay -->
+     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init();</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <% if (locals.isAdmin) { %>
+        <script src="/js/jarvis/jarvis.js"></script>
+        <script src="/js/jarvis/speech.js"></script>
+    <% } %>
+
+</body>
+</html>

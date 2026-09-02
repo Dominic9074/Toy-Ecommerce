@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - Wheelz</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">Wheelz</div>
+      <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="nav-item">
+          <i class="fa-solid fa-border-all"></i> Dashboard
+        </a>
+        <a href="/admin/products" class="nav-item">
+          <i class="fa-solid fa-box"></i> Products
+        </a>
+        <a href="/admin/category" class="nav-item">
+          <i class="fa-solid fa-layer-group"></i> Categories
+        </a>
+        <a href="/admin/orders" class="nav-item active">
+          <i class="fa-solid fa-cart-shopping"></i> Orders
+        </a>
+        <a href="/admin/sales" class="nav-item">
+            <i class="fa-solid fa-money-bill-wave"></i> Sales & Revenue
+        </a>
+        <a href="/admin/users" class="nav-item">
+          <i class="fa-solid fa-user-group"></i> Users
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="/admin/logout" class="logout-link">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+      <!-- Header -->
+      <header class="admin-header">
+        <button class="admin-hamburger" id="adminHamburger">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <h2 style="font-size: 18px; color: #100E34; font-weight: 700; text-transform: uppercase;">Manage Order</h2>
+      </header>
+
+      <div class="content-body" style="background-color: #f8f9fa;">
+        
+        <div class="page-title-block" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 class="page-main-title">Order <%= typeof order !== 'undefined' ? order.orderId : 'ORD-2094' %></h1>
+                <p class="page-sub-title">Placed on <%= typeof order !== 'undefined' ? new Date(order.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Oct 28, 2025 at 10:30 AM' %></p>
+            </div>
+            <a href="/admin/orders" class="btn-cancel-form" style="padding: 10px 20px; font-size: 13px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Orders
+            </a>
+        </div>
+
+        <div class="order-details-layout">
+            
+            <!-- Left Column: Items and Returns -->
+            <div class="order-main-col">
+                
+                <!-- Ordered Items -->
+                <div class="detail-card">
+                    <h3 class="detail-card-title">Order Items</h3>
+                    <div class="ordered-items-list">
+                        <% if(typeof order !== 'undefined' && order.items && order.items.length > 0) { %>
+                            <% order.items.forEach(item => { %>
+                                <div class="ordered-item">
+                                    <div class="item-img-placeholder">
+                                        <img src="<%= item.image %>" alt="" >
+                                    </div>
+                                    <div class="item-details">
+                                        <h4><%= item.product ? item.name : 'Product Name' %></h4>
+                                        <p>Qty: <%= item.quantity %> &times; ₹<%= item.price %></p>
+                                    </div>
+                                    <div class="item-total">
+                                        ₹<%= (item.quantity * item.price).toLocaleString() %>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                    <div class="order-summary-totals">
+                        <div class="summary-line">
+                            <span>Subtotal</span>
+                            <span>₹<%=  order.subtotal.toLocaleString() %></span>
+                        </div>
+                        <div class="summary-line total-line">
+                            <span>Total Amount</span>
+                            <span>₹<%= order.finalAmount.toLocaleString() %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Returned Products Section -->
+                <div class="detail-card">
+                    <h3 class="detail-card-title" style="color: #A2001D;">
+                        <i class="fa-solid fa-arrow-rotate-left"></i> Return Requests
+                    </h3>
+                    
+                    <% 
+                    let hasReturns = false;
+                    if(typeof order !== 'undefined' && order.items) {
+                        hasReturns = order.items.some(item => item.itemStatus === 'Returned');
+                    }
+                    %>
+                    
+                    <% if (hasReturns || typeof order === 'undefined') { %>
+                        <div class="returned-items-list">
+                            <% if(typeof order !== 'undefined') { %>
+                                <% order.items.filter(item => item.itemStatus === 'Returned').forEach(item => { %>
+                                    <div class="returned-item">
+                                        <div class="returned-item-info">
+                                            <h4><%= item.name %></h4>
+                                            <p>Reason: <%= item.returnReason  %></p>
+                                        </div>
+                                        <div class="returned-item-status">
+
+                                        <select 
+                                            class="return-status-select"
+                                            onchange="updateReturnStatus('<%= order._id %>','<%= item._id %>',this.value)"
+                                        >
+                                            <option value="" disabled <%= !item.returnStatus || item.returnStatus === 'Requested' ? 'selected' : '' %>>
+                                                Return Requested
+                                            </option>
+
+                                            <option value="Approved" <%= item.returnStatus === 'Approved' ? 'selected' : '' %>>
+                                                Approved
+                                            </option>
+
+                                            <option value="Completed" <%= item.returnStatus === 'Completed' ? 'selected' : '' %>>
+                                                Completed
+                                            </option>
+
+                                            <option value="Rejected" <%= item.returnStatus === 'Rejected' ? 'selected' : '' %>>
+                                                Rejected
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <!-- Mock Data for returns -->
+                                <div class="returned-item">
+                                    <div class="returned-item-info">
+                                        <h4>Creative Block Set</h4>
+                                        <p>Qty: 1 | Reason: Damaged during shipping</p>
+                                    </div>
+                                    <div class="returned-item-status">
+                                        <span class="status-badge return">Returned</span>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% } else { %>
+                        <div class="no-returns-message">
+                            <i class="fa-regular fa-face-smile"></i> No products returned in this order.
+                        </div>
+                    <% } %>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Status and Customer details -->
+            <div class="order-side-col">
+                
+                <!-- Order Status Update Form -->
+                <div class="detail-card status-card">
+                    <h3 class="detail-card-title">Order Status</h3>
+                    
+                    <div class="current-status-display">
+                        <span class="status-label">Current Status:</span>
+                        <% 
+                        let currentStatus = typeof order !== 'undefined' ? order.orderStatus : 'Pending';
+                        let statusClass = 'status-badge ' + currentStatus.toLowerCase();
+                        %>
+                        <span class="<%= statusClass %>"><%= currentStatus.toUpperCase() %></span>
+                    </div>
+
+                    <form  id="statusUpdateForm">
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="orderStatus">Update Status</label>
+                            <select name="orderStatus" id="orderStatus" class="status-select">
+
+                                <% const status = order?.orderStatus %>
+
+                                <% if(status === "Placed"){ %>
+                                    <option value="Placed" selected>Pending</option>
+                                    <option value="Shipped">Shipped</option>
+                                <% } %>
+
+                                <% if(status === "Shipped"){ %>
+                                    <option value="Shipped" selected>Shipped</option>
+                                    <option value="Out For Delivery">Out For Delivery</option>
+                                <% } %>
+
+                                <% if(status === "Out For Delivery"){ %>
+                                    <option value="Out For Delivery" selected>Out For Delivery</option>
+                                    <option value="Delivered">Delivered</option>
+                                <% } %>
+
+                                <% if(status === "Delivered"){ %>
+                                    <option value="Delivered" selected>Delivered</option>
+                                <% } %>
+
+                            </select>
+                        </div>
+                        <button type="button" class="btn-update-status" onclick="updateOrderStatus()">
+                            Update Status
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Shipping Address -->
+                <div class="detail-card">
+                    <h3 class="detail-card-title">Shipping Address</h3>
+                    <div class="address-details">
+                        <% if(typeof order !== 'undefined' && order.addressSnapshot) { %>
+                            <p class="customer-name"><%= order.addressSnapshot.name %></p>
+                            <p><%= order.addressSnapshot.city %>, <%= order.addressSnapshot.state %></p>
+                            <p><%= order.addressSnapshot.pincode %></p>
+                            <p class="customer-phone"><i class="fa-solid fa-phone"></i> <%= order.addressSnapshot.phone %></p>
+                        <% } else { %>
+                            <!-- Mock Data -->
+                            <p class="customer-name">Marcus Sterling</p>
+                            <p>123 Commerce St, Suite 400</p>
+                            <p>Metropolis, NY, 10001</p>
+                            <p class="customer-phone"><i class="fa-solid fa-phone"></i> +1 (555) 123-4567</p>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Customer Details -->
+                <div class="detail-card">
+                    <h3 class="detail-card-title">Customer Details</h3>
+                    <div class="customer-info-box">
+                        <div class="customer-avatar"><i class="fa-solid fa-user"></i></div>
+                        <div class="customer-info">
+                            <h5><%= typeof order !== 'undefined' && order.user ? order.user.name : 'Marcus Sterling' %></h5>
+                            <p><%= typeof order !== 'undefined' && order.user ? order.user.email : 'marcus@example.com' %></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+      // Sidebar Toggle Logic
+      const hamburger = document.getElementById("adminHamburger");
+      const sidebar = document.getElementById("adminSidebar");
+      const overlay = document.getElementById("adminOverlay");
+
+      if (hamburger && sidebar && overlay) {
+        hamburger.addEventListener("click", () => {
+            sidebar.classList.add("sidebar-open");
+            overlay.classList.add("active");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("sidebar-open");
+            overlay.classList.remove("active");
+        });
+      }
+
+      function updateOrderStatus() {
+          const form = document.getElementById('statusUpdateForm');
+          const newStatus = document.getElementById('orderStatus').value;
+
+          Swal.fire({
+            title: "Update Order Status?",
+            text: `Are you sure you want to change status to ${newStatus}?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#100E34",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, update it!"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              const orderId = "<%= typeof order !== 'undefined' ? order._id : 'dummy_id' %>";
+              
+              fetch(`/admin/orders/${orderId}/status`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ orderStatus: newStatus })
+              })
+              .then(res => res.json())
+              .then(data => {
+                  if (data.success) {
+                      showSuccess(data.message)
+                      setTimeout(()=>{window.location.reload()},1500)
+                  } else {
+                     showError(data.message)
+                  }
+              })
+              .catch(err => {
+                  console.error(err);
+                  form.submit(); // submit form normally as fallback
+              });
+            }
+          });
+      }
+
+      function updateReturnStatus(orderId,itemId,status){
+        fetch('/admin/update-return-status',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({orderId,itemId,status})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                showSuccess(data.message);
+                setTimeout(()=>{window.location.reload()},1500)
+            }else{
+                showError(data.message)
+            }
+        })
+      }
+    </script>
+</body>
+</html>

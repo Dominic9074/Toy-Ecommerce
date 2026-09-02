@@ -1,0 +1,406 @@
+
+      <header>
+  
+  <!-- Hamburger Button (Mobile Only) -->
+  <button class="hamburger" id="hamburger" type="button">
+  <i class="fa-solid fa-bars"></i>
+  </button>
+
+  <ul class="nav-links" id="mobileMenu">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions nav-links" style="list-style-type: none; padding-left: 0; margin: 0;">
+    <li><a href="/orders">Order</a></li>
+    <li><a href="/cart">Cart</a></li>
+    <li><a href="/wishlist">Wishlist</a></li>
+
+    <% if (user) { %>
+      <a href="/user/profile" class="profile-avatar">
+        <%= user.username.charAt(0).toUpperCase() %>
+      </a>
+    <% } else { %>
+      <a href="/signin" class="sign-in-btn">Sign In</a>
+    <% } %>
+  </div>
+
+</header>
+
+    <!-- Product Details Main Container -->
+    <div class="pd-container">
+      
+      <!-- Breadcrumbs -->
+      <nav class="pd-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> 
+        <a href="/shop">Shop</a> <span>/</span> 
+
+        <% if (product.category) { %>
+            <a href="/shop?category=<%= product.category._id %>">
+                <%= product.category.name %>
+            </a> 
+            <span>/</span>
+        <% } %>
+
+        <span class="current"><%= product.shortName %></span>
+    </nav>
+
+      <!-- Top Section: Gallery & Info -->
+      <div class="pd-top-section">
+        <!-- Left: Gallery -->
+        <div class="pd-gallery">
+            <div class="pd-thumbnails">
+                <% if (product.images && product.images.length > 0) { %>
+
+                    <% product.images.forEach((img, index) => { %>
+                        <div class="pd-thumb <%= index === 0 ? 'active' : '' %>">
+                            <img src="<%= img.url %>" 
+                                alt="Thumb <%= index + 1 %>">
+                        </div>
+                    <% }) %>
+
+                <% } %>
+            </div>
+
+            <div class="pd-main-image">
+                <img src="<%= product.images && product.images.length ? product.images[0].url : '' %>" 
+                alt="<%= product.name %>" 
+                id="mainImage">
+            </div>
+            <i class="fa-solid fa-heart <%= wishlistProductIds.includes(product._id.toString()) ? 'active-heart':'' %>"
+                     onclick="addToWishlist('<%= product._id %>',this)"></i>
+        </div>
+
+        <!-- Right: Info -->
+        <div class="pd-info">
+        <h1 class="pd-title"><%= product.name %></h1>
+        
+        <ul class="pd-features">
+           
+            <% if (product.specifications && product.specifications.length > 0) { %>
+                <% product.specifications.forEach(feature => { %>
+                    <li> <i class="fa-solid fa-circle bullet-icon"></i><%= feature %></li>
+                <% }) %>
+            <% } %>
+        </ul>
+
+        <div class="pd-price-row">
+            <% 
+                const originalPrice = product.price;
+                const offer = product.offer || 0;
+                const discountedPrice = offer > 0 
+                    ? Math.round(originalPrice - (originalPrice * offer / 100)) 
+                    : originalPrice;
+            %>
+
+            <span class="pd-price">₹<%= discountedPrice %></span>
+
+            <% if (offer > 0) { %>
+                <span class="pd-old-price">₹<%= originalPrice %></span>
+                <span class="pd-discount"><%= offer %>%OFF</span>
+            <% } %>
+        </div>
+
+        <div class="pd-meta-row">
+            <span class="pd-stock">
+                Stock Left: 
+                <span class="stock-count"><%= product.stock %></span>
+            </span>
+
+            <span class="pd-rating">
+                Rating: <%= product.rating || 0 %> 
+                <i class="fa-solid fa-star"></i>
+            </span>
+        </div>
+
+        <div class="pd-actions">
+            <button class="pd-btn btn-order" onclick="Checkout('<%= product._id %>')" >Order Now</button>
+            <button class="pd-btn btn-cart" onclick="addToCart('<%= product._id %>')" >Add To Cart</button>
+        </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- Description Section (Full Width Dark) -->
+    <section class="pd-description-section">
+        <div class="section-title-center">Description</div>
+        <div class="pd-desc-content">
+            <p><%= product.description %></p>
+        </div>
+    </section>
+
+    <!-- Related Products -->
+    <section class="pd-related-section">
+        <h2 class="related-title">RELATED PRODUCT</h2>
+        <div class="user-product-grid">
+
+            <% if (RelatedProducts && RelatedProducts.length > 0) { %>
+
+                <% RelatedProducts.forEach(product => { %>
+
+                <div class="user-product-card" style="width:250px; 
+                    min-height:380px; 
+                    display:flex; 
+                    flex-direction:column; 
+                    justify-content:space-between;">
+                    <div class="upc-heart">
+                    <i class="fa-solid fa-heart"></i>
+                    <span class="discount-badge">
+                        <%= product.offer %>% OFF
+                    </span>
+                    </div>
+
+                    <div class="upc-image">
+                    <img src="<%= product?.images[0].url %>" 
+                        alt="<%= product?.name %>">
+                    </div>
+
+                    <div class="upc-details">
+                    <div class="upc-header">
+                        <span class="upc-title"><%= product?.category?.name %></span>
+
+                        <% if (product.offerPercentage && product.offerPercentage > 0) { %>
+                        <span class="upc-discount">
+                            <%= product.offerPercentage %>%OFF
+                        </span>
+                        <% } %>
+                    </div>
+
+                    <p class="upc-desc" 
+                    style="display:-webkit-box;
+                            -webkit-line-clamp:2;
+                            -webkit-box-orient:vertical;
+                            overflow:hidden;
+                            text-overflow:ellipsis;
+                            line-height:20px;
+                            max-height:40px;">
+                        <%= product?.name %>
+                    </p>
+
+                    <div class="upc-footer">
+
+                    <% 
+                        const originalPrice = product.price;
+                        const offer = product.offer || 0;
+                        const discountedPrice = Math.round(
+                        originalPrice - (originalPrice * offer / 100)
+                        );
+                    %>
+
+                    <% if (offer > 0) { %>
+                        
+                        <div class="price-wrapper">
+                        <span class="original-price">
+                            ₹<%= originalPrice %>
+                        </span>
+
+                        <span class="upc-price">
+                            ₹<%= discountedPrice %>
+                        </span>
+                        </div>
+
+                    <% } else { %>
+
+                        <span class="upc-price">
+                        ₹<%= originalPrice %>
+                        </span>
+
+                    <% } %>
+
+                    <button class="upc-order-btn" onclick="productDetails(`<%= product.slug %>`)" >Order Now</button>
+
+                    </div>
+                    </div>
+                </div>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <p style="grid-column:1/-1;text-align:center;">
+                    No related products
+                </p>
+
+            <% } %>
+
+        </div>
+        <div class="related-arrows" id="related-arrows" style="display: none;">
+            <button class="related-arrow-btn" id="relatedPrev">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="related-arrow-btn" id="relatedNext">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </section>
+  
+
+    <script>
+      const hamburger = document.getElementById("hamburger");
+const navLinks = document.querySelector(".nav-links");
+const userActions = document.querySelector(".user-actions");
+
+hamburger.addEventListener("click", () => {
+  navLinks.classList.toggle("active");
+  userActions.classList.toggle("active");
+});
+
+/* ================= MOBILE CAROUSELS ================= */
+
+if (window.innerWidth <= 768) {
+
+  /* ===== AUTO REVIEW SCROLL ===== */
+  const reviewContainer = document.querySelector(".pd-reviews-grid");
+  const reviewCards = document.querySelectorAll(".pd-review-card");
+
+  let reviewIndex = 0;
+
+  setInterval(() => {
+
+    reviewIndex++;
+    if (reviewIndex >= reviewCards.length) {
+      reviewIndex = 0;
+    }
+
+    const cardWidth = reviewCards[0].offsetWidth;
+
+    reviewContainer.scrollTo({
+      left: reviewIndex * cardWidth +20,
+      behavior: "smooth"
+    });
+
+  }, 2500); // changed from 800 (800 is too fast)
+
+  /* ===== RELATED PRODUCTS ARROWS ===== */
+  const relatedContainer = document.querySelector(".pd-related-section .user-product-grid");
+  const relatedCards = document.querySelectorAll(".pd-related-section .user-product-card");
+  const relatedArrows=document.getElementById('related-arrows')
+  relatedArrows.style.display='block';
+  let relatedIndex = 0;
+
+  const cardWidth = relatedCards[0].offsetWidth;
+
+  document.getElementById("relatedNext").addEventListener("click", () => {
+    if (relatedIndex < relatedCards.length - 1) {
+      relatedIndex++;
+    }
+    relatedContainer.scrollTo({
+      left: relatedIndex * cardWidth,
+      behavior: "smooth"
+    });
+  });
+
+  document.getElementById("relatedPrev").addEventListener("click", () => {
+    if (relatedIndex > 0) {
+      relatedIndex--;
+    }
+    relatedContainer.scrollTo({
+      left: relatedIndex * cardWidth,
+      behavior: "smooth"
+    });
+  });
+}
+    function productDetails(productId){
+            window.location.href=`/product/${productId}`
+        }
+
+        document.querySelectorAll('.pd-thumb').forEach(thumb => {
+
+         thumb.addEventListener('click', function () {
+
+        // Remove active from all thumbnails
+        document.querySelectorAll('.pd-thumb').forEach(t => {
+            t.classList.remove('active');
+        });
+
+        // Add active to clicked thumbnail
+        this.classList.add('active');
+
+        // Get clicked image src
+        const newSrc = this.querySelector('img').getAttribute('src');
+
+        // Change main image
+        document.getElementById('mainImage').setAttribute('src', newSrc);
+
+    });
+
+});
+
+    const mainImageContainer = document.querySelector('.pd-main-image');
+    const mainImage = document.getElementById('mainImage');
+
+    mainImageContainer.addEventListener('mousemove', function(e) {
+
+        const rect = this.getBoundingClientRect();
+
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const xPercent = (x / rect.width) * 100;
+        const yPercent = (y / rect.height) * 100;
+
+        mainImage.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+        mainImage.style.transform = "scale(1.5)";
+
+    });
+
+    mainImageContainer.addEventListener('mouseleave', function() {
+        mainImage.style.transform = "scale(1)";
+        mainImage.style.transformOrigin = "center center";
+    });
+
+    function addToCart(productId){
+        fetch('/cart',{
+            method:'post',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                showSuccess(data.message)
+            }else{
+                showError(data.message)
+            }
+        })
+    }
+
+    function Checkout(productId){
+        console.log('asd')
+        fetch('/addOrder',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                window.location.href='/checkout'
+            }else{
+                showError(data.message)
+            }
+        })
+    }
+    function addToWishlist(productId,icon){
+        fetch('/addWishlist',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId})
+        }).then(res => res.json())
+        .then(data =>{
+            if(data.success){
+                showSuccess(data.message);
+                icon.classList.toggle('active-heart');
+            }else{
+                showError(data.message)
+            }
+        })
+    }
+
+    </script>

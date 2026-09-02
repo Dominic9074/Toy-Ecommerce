@@ -1,0 +1,156 @@
+
+<header>
+  <!-- Hamburger Button (Mobile Only) -->
+  <button class="hamburger" id="hamburger" type="button">
+  <i class="fa-solid fa-bars"></i>
+  </button>
+
+  <ul class="nav-links" id="mobileMenu">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions nav-links" style="list-style-type: none; padding-left: 0; margin: 0;">
+    <li><a href="/orders">Order</a></li>
+    <li><a href="/cart">Cart</a></li>
+    <li><a href="/wishlist">Wishlist</a></li>
+
+    <% if (typeof user !== "undefined" && user) { %>
+      <a href="/user/profile" class="profile-avatar">
+        <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+      </a>
+    <% } else { %>
+      <a href="/signin" class="sign-in-btn">Sign In</a>
+    <% } %>
+  </div>
+</header>
+
+<div class="wallet-layout">
+    <!-- Sidebar -->
+    <aside class="w-sidebar">
+        <div class="w-drawer-close" style="display:none;">
+        <button id="drawerClose" aria-label="Close menu">&#x2715;</button>
+        </div>
+        <div class="w-user-profile">
+            <div class="w-avatar">
+               <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="w-user-info">
+               <div class="w-name"><%= typeof user !== 'undefined' && user && user.name ? user.name.toUpperCase() : 'JHON WICK' %></div>
+               <div class="w-email"><%= typeof user !== 'undefined' && user && user.email ? user.email : 'Jhonwick@Gmail.Com' %></div>
+            </div>
+        </div>
+        
+        <nav class="w-menu">
+            <a href="/user/profile" class="w-menu-item">DASHBOARD</a>
+            <a href="/orders" class="w-menu-item">MY ORDERS</a>
+            <a href="/wallet" class="w-menu-item">WALLET</a>
+            <a href="/wishlist" class="w-menu-item">WISHLIST</a>
+            <a href="/refer" class="w-menu-item active">REFER AND EARN</a>
+        </nav>
+
+        <div class="w-logout-container" style="margin-top: 20px;">
+           <a href="/logout" class="btn-logout-sidebar">LOGOUT</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="w-main-content">
+        <div class="refer-header-section">
+            <h1 class="refer-main-title">REFER AND EARN</h1>
+            <p class="refer-sub-title">HERE YOU CAN MANAGE THE REFER AND EARN</p>
+            <hr class="refer-divider-line">
+        </div>
+
+        <div class="refer-cards-wrapper">
+            <!-- Left Card -->
+            <div class="refer-code-card">
+                <h2 class="r-card-title">Your Unique Referal Code</h2>
+                <div class="r-code-display"><%= typeof user !== 'undefined' && user && user.referralCode ? user.referralCode : 'LUX-7832' %></div>
+                <button class="r-btn-copy"
+                onclick="copyReferralCode('<%= typeof user !== 'undefined' && user && user.referralCode ? user.referralCode : 'LUX-7832' %>')">
+                COPY CODE
+                </button>
+            </div>
+
+            <!-- Right Card -->
+            <div class="refer-how-it-works-card">
+                <h2 class="r-card-title text-center">HOW IT WORK</h2>
+                
+                <div class="r-timeline">
+                    <!-- Step 1 -->
+                    <div class="r-timeline-item">
+                        <div class="r-timeline-marker">1</div>
+                        <div class="r-timeline-content">
+                            <h3>SHARE YOUR CODE</h3>
+                            <p>Send Your Unique Link Or Code To Friends</p>
+                        </div>
+                    </div>
+                    <div class="r-timeline-line"></div>
+                    
+                    <!-- Step 2 -->
+                    <div class="r-timeline-item">
+                        <div class="r-timeline-marker">2</div>
+                        <div class="r-timeline-content">
+                            <h3>FRIEND SIGN UP $ SHOPS</h3>
+                            <p>You Get An Amount And Will Be Stored To The Wallet</p>
+                        </div>
+                    </div>
+                    <div class="r-timeline-line"></div>
+                    
+                    <!-- Step 3 -->
+                    <div class="r-timeline-item">
+                        <div class="r-timeline-marker">3</div>
+                        <div class="r-timeline-content">
+                            <h3>YOU GET THE REWARD</h3>
+                            <p>You Get Reward To Your Wallet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<div class="w-sidebar-overlay" id="sidebarOverlay"></div>
+<!-- SweetAlert for copy notification -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function copyReferralCode(code) {
+        navigator.clipboard.writeText(code).then(() => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: 'Referral code copied to clipboard.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Failed to copy code!'
+            });
+        });
+    }
+
+    const closeBtn = document.getElementById('drawerClose');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function () {
+      document.querySelector('.w-sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  }
+
+  document.querySelectorAll('.w-menu-item').forEach(item => {
+    item.addEventListener('click', function () {
+      document.querySelector('.w-sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+

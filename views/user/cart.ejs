@@ -1,0 +1,241 @@
+<!-- HEADER -->
+
+      <header>
+  
+  <!-- Hamburger Button (Mobile Only) -->
+  <button class="hamburger" id="hamburger" type="button">
+  <i class="fa-solid fa-bars"></i>
+  </button>
+
+  <ul class="nav-links" id="mobileMenu">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions nav-links" style="list-style-type: none; padding-left: 0; margin: 0;">
+    <li><a href="/orders">Order</a></li>
+    <li><a href="/cart">Cart</a></li>
+    <li><a href="/wishlist">Wishlist</a></li>
+
+    <% if (user) { %>
+      <a href="/user/profile" class="profile-avatar">
+        <%= user.username.charAt(0).toUpperCase() %>
+      </a>
+    <% } else { %>
+      <a href="/signin" class="sign-in-btn">Sign In</a>
+    <% } %>
+  </div>
+
+</header>
+
+<!-- PAGE TITLE -->
+<div class="cart-page-title">
+    <h1>SHOPPING CART</h1>
+</div>
+
+<!-- CART CONTAINER -->
+<div class="cart-container">
+
+    <!-- LEFT SIDE ITEMS -->
+    <div class="cart-items">
+
+        <% if (cartProducts && cartProducts.length > 0) { %>
+
+            <% cartProducts.forEach(item => { 
+                const product = item.product;
+                const offer = product.offer || 0;
+                const originalPrice = product.price;
+                const discountedPrice = offer > 0
+                    ? Math.round(originalPrice - (originalPrice * offer / 100))
+                    : originalPrice;
+            %>
+
+            <div class="cart-item">
+                <div class="item-left">
+                    <input type="checkbox"
+                        class="item-checkbox"
+                        data-id="<%= product._id %>"
+                        data-price="<%= discountedPrice %>"
+                        data-quantity="<%= item.quantity %>"
+                        onchange="updateSubtotal(),addToCheckoutArray(this.dataset.id,this.dataset.quantity,this)">
+                    <img src="<%= product.images?.[0]?.url || '' %>" alt="<%= product.name %>">
+                </div>
+
+                <div class="item-middle">
+                    <h3><%= product.name %></h3>
+
+                    <% if (product.stock > 0) { %>
+                        <p class="stock">In stock</p>
+                    <% } else { %>
+                        <p class="stock" style="color:red;">Out of stock</p>
+                    <% } %>
+
+                    
+
+                    <div class="item-actions">
+                        <div class="quantity-box">
+                            <button onclick="updateQuantity('<%= item.product._id %>', -1)">-</button>
+                            <span id="qty-<%= item.product._id %>"><%= item.quantity %></span>
+                            <button onclick="updateQuantity('<%= item.product._id %>', 1)">+</button>
+                        </div>
+
+                        <button onclick="deleteCart('<%= item.product._id %>')" class="cartDelete-btn">Delete</button>
+                    </div>
+                </div>
+
+                <div class="item-right">
+                    <div class="price">₹<%= discountedPrice %></div>
+
+                    <% if (offer > 0) { %>
+                        <div class="mrp">₹<%= originalPrice %></div>
+                        <div class="discount">-<%= offer %>%</div>
+                    <% } %>
+                </div>
+            </div>
+
+            <% }) %>
+
+        <% } else { %>
+
+            <p style="text-align:center;">Your cart is empty</p>
+
+        <% } %>
+
+    </div>
+
+    <!-- RIGHT SIDE SUMMARY -->
+        <%
+        let subtotal = 0;
+        let totalItems = 0;
+
+        if (cartProducts && cartProducts.length > 0) {
+            cartProducts.forEach(item => {
+                const product = item.product;
+                const offer = product.offer || 0;
+
+                const discountedPrice = offer > 0
+                    ? Math.round(product.price - (product.price * offer / 100))
+                    : product.price;
+
+                subtotal += discountedPrice * item.quantity;
+                totalItems += item.quantity;
+            });
+        }
+    %>
+
+    <div class="cart-summary">
+        <h3 id="subtotalCount" >Subtotal (<%= totalItems %> items)</h3>
+        <div id="subtotalPrice" class="subtotal-price">₹<%= subtotal %></div>
+        <button class="checkout-btn" onclick="addToCart()">Proceed to Checkout</button>
+    </div>
+
+</div>
+
+<script>
+    
+    function updateQuantity(productId,change){
+        fetch('/updateProductQuantity',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId,change})
+        }).then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+               showError(data.message)
+            }
+        });
+    }
+
+    function updateSubtotal() {
+
+    let subtotal = 0;
+    let totalItems = 0;
+
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+
+    checkboxes.forEach(cb => {
+        if (cb.checked) {
+            const price = parseFloat(cb.dataset.price);
+            const quantity = parseInt(cb.dataset.quantity);
+
+            subtotal += price * quantity;
+            totalItems += quantity;
+        }
+    });
+
+    document.getElementById('subtotalPrice').innerText = "₹" + subtotal;
+    document.getElementById('subtotalCount').innerText ="Subtotal (" + totalItems + " items)";
+}
+
+    function deleteCart(productId){
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/removeCart',{
+            method:"DELETE",
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({productId})
+        }).then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess(data.message)
+                setTimeout(()=>{location.reload()},1000)
+            } else {
+               showError(data.message)
+            }
+        });
+            }
+            });
+        
+    }
+
+    const Checkout=[];
+
+    function addToCheckoutArray(productId,quantity,input){
+        if(input.checked){
+            Checkout.push({productId,quantity})
+        }else{
+            const index=Checkout.findIndex(obj=>{
+                return obj.productId === productId
+            });
+            if(index>-1){
+                Checkout.splice(index,1)
+            }
+        }
+        console.log(Checkout)
+    }
+
+    function addToCart(){
+        fetch('/addOrder',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({Checkout})
+        }).then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                window.location.href='/checkout'
+            }else{
+                console.log('-------')
+                showError(data.message)
+            }
+        })
+    }
+    
+</script>

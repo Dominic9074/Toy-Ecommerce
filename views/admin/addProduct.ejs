@@ -1,0 +1,394 @@
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">Wheelz</div>
+      <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="nav-item">
+          <i class="fa-solid fa-qrcode"></i> Dashboard
+        </a>
+        <a href="/admin/products" class="nav-item active">
+          <i class="fa-solid fa-box"></i> Products
+        </a>
+        <a href="/admin/categories" class="nav-item">
+          <i class="fa-solid fa-layer-group"></i> Categories
+        </a>
+        <a href="/admin/orders" class="nav-item">
+          <i class="fa-solid fa-cart-shopping"></i> Orders
+        </a>
+        <a href="/admin/sales" class="nav-item">
+            <i class="fa-solid fa-money-bill-wave"></i> Sales & Revenue
+        </a>
+        <a href="/admin/users" class="nav-item">
+          <i class="fa-solid fa-user-group"></i> Users
+        </a>
+        <a href="/admin/coupons" class="nav-item">
+           <i class="fa-solid fa-ticket"></i> Coupons
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="/admin/logout" class="logout-link">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+      <!-- Header -->
+      <header class="admin-header">
+        <button class="admin-hamburger" id="adminHamburger">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <h2>ADMIN PANEL</h2>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- Title Section -->
+        <div class="page-title-block">
+            <h1 class="page-main-title">ADD NEW PRODUCT</h1>
+            <p class="page-sub-title">ADD NEW PRODUCT</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <h2 class="form-card-title">Add Product</h2>
+            <p class="form-card-subtitle">Create a new listing for the toy car collection.</p>
+            
+            <form class="add-product-form" enctype="multipart/form-data">
+                <div class="form-dual-layout">
+                    <!-- Left Column -->
+                    <div class="form-column">
+                        <div class="form-group" id="nameDiv">
+                            <label for="productName">Product Name</label>
+                            <input type="text" id="productName" name="name" placeholder="e.g. Speedster Pro Gen 2" value="<%= product?.name || '' %>">
+                            <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                        </div>
+                        
+                        <div class="form-group" id="categoryDiv">
+                            <label for="category">Category</label>
+                            <select id="category" name="category" class="categorySelect">
+                                <option value="" disabled <%= !product?.category ? 'selected' : '' %>>Select Category</option>
+
+                                <% if (categories && categories.length > 0) { %>
+                                    <% categories.forEach(category => { %>
+                                        <option value="<%= category?._id %>" <%= product?.category?.toString() === category?._id?.toString() ? 'selected' : '' %>>
+                                            <%= category?.name %>
+                                        </option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                            <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                        </div>
+
+                        <div class="form-row-inline">
+                            <div class="form-group flex-1" id="priceDiv">
+                                <label for="price">Price </label>
+                                <input type="number" id="price" name="price" value="<%= product?.price || '' %>">
+                                <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                            </div>
+                            <div class="form-group flex-1" id="stockDiv">
+                                <label for="stock">Stock Quantity</label>
+                                <input type="number" id="stock" name="stock" placeholder="0" value="<%= product?.stock || '' %>">
+                                <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="offerDiv">
+                            <label for="offer">offer(%)</label>
+                            <input type="text" id="offer" name="offer" placeholder="" value="<%= product?.offer || '' %>">
+                            <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                        </div>
+
+                        <div class="form-group" id="specificationDiv">
+                            <label for="specifications">Specifications</label>
+                            <textarea id="specifications" name="specifications" placeholder="Detailed product specifications and features..."><%= product?.specifications.join('\n') || '' %></textarea>
+                            <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="form-column">
+                        <label class="field-label">Product Images (Min 3)</label>
+
+                        <!-- Small Upload Box -->
+                        <div class="small-upload-box" id="dropZone">
+                            <i class="fa-solid fa-plus"></i>
+                            <p>Add Image</p>
+                            <input type="file"
+                                id="productImage"
+                                name="images"
+                                hidden
+                                accept="image/*">
+                        </div>
+
+                        <p class="image-error-msg" id="imageError"></p>
+
+                        <!-- Preview Grid -->
+                        <div class="preview-grid" id="previewContainer">
+                            <% if (product?.images && product?.images.length > 0) { %>
+                                <% product.images.forEach((img, index) => { %>
+                                    <div class="preview-item" data-publicid="<%= img?.publicId %>">
+                                        <img src="<%= img?.url %>" />
+                                        <button type="button" class="remove-btn">×</button>
+                                    </div>
+                                <% }) %>
+                            <% } %>
+                        </div>
+
+                        <div class="form-group mt-20">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" placeholder="Detailed product description and features..."><%= product?.description || '' %></textarea>
+                            <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                        </div>
+
+                        <div class="form-group" id="shortnameDiv">
+                            <label for="shortName">Short Name</label>
+                            <input type="text" id="shortName" name="shortName" placeholder="" value="<%= product?.shortName || '' %>">
+                            <p style="color: red;font-size: 13px;font-weight: normal;margin-top: 2px !important;display: none;"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Footer Actions -->
+                <div class="form-footer-actions">
+                    <button type="button" class="btn-submit-product" onclick="productValidation(event)">
+                        <% if (purpose === 'edit') { %>
+                            <i class="fa-solid fa-pen"></i> Update Product
+                        <% } else { %>
+                            <i class="fa-solid fa-save"></i> Add Product
+                        <% } %>
+                    </button>
+                    <a href="/admin/products" class="btn-cancel-product">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+    <div id="cropModal" class="crop-modal">
+    <div class="crop-container">
+        <span id="closeCropModal" class="close-crop">&times;</span>
+        <div class="crop-image-wrapper">
+            <img id="cropImage">
+        </div>
+        <button type="button" id="cropBtn" class="crop-save-btn">
+            Crop & Save
+        </button>
+    </div>
+</div>
+
+    <script>
+      const purpose = "<%= purpose %>";
+      // Sidebar Toggle Logic
+      const hamburger = document.getElementById("adminHamburger");
+      const sidebar = document.getElementById("adminSidebar");
+      const overlay = document.getElementById("adminOverlay");
+
+      hamburger.addEventListener("click", () => {
+        sidebar.classList.add("sidebar-open");
+        overlay.classList.add("active");
+      });
+
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("sidebar-open");
+        overlay.classList.remove("active");
+      });
+
+      // Simple click-to-upload for the drop zone
+      const dropZone = document.getElementById("dropZone");
+        const fileInput = document.getElementById("productImage");
+        const previewContainer = document.getElementById("previewContainer");
+
+        dropZone.addEventListener("click", () => fileInput.click());
+        
+        window.newImages = [];
+        window.existingImages = [];
+
+            const previewItems = document.querySelectorAll(".preview-item");
+
+            previewItems.forEach(item => {
+                const publicId = item.dataset.publicid;
+
+                if (publicId) {
+                    window.existingImages.push({
+                        publicId,
+                        url: item.querySelector("img").src
+                    });
+                }
+            });
+
+        function productValidation(event){
+          
+           let isValid = true;
+
+          // 🔹 Get values
+          const name = document.getElementById('productName').value.trim();
+          const category = document.getElementById('category').value;
+          const price = parseFloat(document.getElementById('price').value);
+          const stock = parseInt(document.getElementById('stock').value);
+          const offer = document.getElementById('offer').value.trim();
+          const specifications = document.getElementById('specifications').value.trim();
+          const description = document.getElementById('description').value.trim();
+          const shortName=document.getElementById('shortName').value.trim();
+
+         const newImages = window.newImages || [];
+         const existingImages = window.existingImages || [];
+
+          // 🔹 Div references
+          const nameDiv = document.getElementById('nameDiv');
+          const categoryDiv = document.getElementById('categoryDiv');
+          const priceDiv = document.getElementById('priceDiv');
+          const stockDiv = document.getElementById('stockDiv');
+          const offerDiv = document.getElementById('offerDiv');
+          const specificationDiv = document.getElementById('specificationDiv');
+          const shortnameDiv=document.getElementById('shortnameDiv')
+
+          const nameError = nameDiv.querySelector('p');
+          const categoryError = categoryDiv.querySelector('p');
+          const priceError = priceDiv.querySelector('p');
+          const stockError = stockDiv.querySelector('p');
+          const offerError = offerDiv.querySelector('p');
+          const specificationError = specificationDiv.querySelector('p');
+          const shortnameError=shortnameDiv.querySelector('p');
+
+          const imageDiv = document.getElementById('dropZone');
+          const imageError = document.getElementById('imageError');
+
+          // 🔹 Reset
+          resetField(nameDiv, nameError);
+          resetField(categoryDiv, categoryError);
+          resetField(priceDiv, priceError);
+          resetField(stockDiv, stockError);
+          resetField(offerDiv, offerError);
+          resetField(specificationDiv, specificationError);
+          
+          //image 
+          imageError.style.display = 'none';
+          imageError.innerText = '';
+
+          
+          if (!name) {
+              showerror(nameDiv, nameError, "Product name is required");
+              isValid = false;
+          } else if (name.length < 3) {
+              showerror(nameDiv, nameError, "Minimum 3 characters required");
+              isValid = false;
+          }
+
+          
+          if (!category) {
+              showerror(categoryDiv, categoryError, "Category is required");
+              isValid = false;
+          }
+          
+          if (!shortName) {
+              showerror(shortnameDiv, shortnameError, "shortName is required");
+              isValid = false;
+          }
+
+          if (isNaN(price) || price <= 0) {
+              showerror(priceDiv, priceError, "Price must be greater than 0");
+              isValid = false;
+          }
+
+          
+          if (isNaN(stock) || stock < 0) {
+              showerror(stockDiv, stockError, "Stock cannot be negative");
+              isValid = false;
+          }
+
+          if (!offer) {
+              const offerNumber = parseFloat(offer);
+              if (isNaN(offerNumber) || offerNumber < 0 || offerNumber > 90) {
+                  showerror(offerDiv, offerError, "Offer must be between 0 and 90%");
+                  isValid = false;
+              }
+          }
+
+          
+          if (!specifications) {
+              showerror(specificationDiv, specificationError, "Specifications are required");
+              isValid = false;
+          }
+
+          
+          if (!description || description.length < 10) {
+              showerror(
+                  document.getElementById('description').parentElement,
+                  document.getElementById('description').parentElement.querySelector('p'),
+                  "Description must be at least 10 characters"
+              );
+              isValid = false;
+          }
+
+          
+          if ((newImages.length + existingImages.length) < 3){
+              imageError.style.display = 'block';
+              imageError.innerText = "Minimum 3 images required";
+              isValid=false;
+          }else{
+            imageError.style.display = 'none';
+            imageError.innerText = '';
+          }
+         
+
+          if (!isValid) return;
+
+          const formData=new FormData();
+          formData.append('name',name)
+          formData.append('category',category)
+          formData.append('price',price)
+          formData.append('stock',stock)
+          formData.append('offer',offer)
+          formData.append('specifications',specifications)
+          formData.append('description',description)
+          formData.append('shortName',shortName)
+          formData.append("existingImages", JSON.stringify(existingImages));
+
+        newImages.forEach((img, index) => {
+            formData.append("images", img, `product-${index}.jpg`);
+        });
+
+            if(purpose==='create'){
+              url='/admin/addProduct'
+            }else{
+              url ='/admin/editProduct/<%= product?._id %>'
+            }
+
+          fetch(url,{
+            method:'POST',
+            body:formData
+          }).then(res=>res.json())
+          .then(data=>{
+            if(data.success){
+                showSuccess(data.message)
+                setTimeout(()=>{window.location.href='/admin/products'},1000)
+            }else{
+                showError(data.message)
+            }
+          })
+        }
+        function showerror(div, errorElement, message) {
+    const field = div.querySelector('input, textarea, select');
+    if (field) field.style.border = '1px solid red';
+
+    if (errorElement) {
+        errorElement.style.display = 'block';
+        errorElement.innerText = message;
+    }
+}
+
+function resetField(div, errorElement) {
+    const field = div.querySelector('input, textarea, select');
+    if (field) field.style.border = '1px solid #ccc';
+
+    if (errorElement) {
+        errorElement.style.display = 'none';
+        errorElement.innerText = '';
+    }
+}
+    </script>

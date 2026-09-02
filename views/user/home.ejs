@@ -1,33 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wheelz - Buy Your Dream Toys</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <!-- Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-  </head>
-  <body>
-    <!-- Header -->
-    <header>
-      <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Shop</a></li>
-        <li><a href="#">Categories</a></li>
-      </ul>
-      <div class="logo">Wheelz</div>
-      <div class="user-actions">
-        <span>Order</span>
-        <span>Cart</span>
-        <span>Wish List</span>
-        <a href="#" class="sign-in-btn">Sign In</a>
-        <i class="fa-regular fa-user"></i>
-      </div>
-    </header>
+
+      <header>
+  
+  <!-- Hamburger Button (Mobile Only) -->
+  <button class="hamburger" id="hamburger" type="button">
+  <i class="fa-solid fa-bars"></i>
+  </button>
+
+  <ul class="nav-links" id="mobileMenu">
+    <li><a href="/">Home</a></li>
+    <li><a href="/shop">Shop</a></li>
+  </ul>
+
+  <div class="logo">Wheelz</div>
+
+  <div class="user-actions nav-links" style="list-style-type: none; padding-left: 0; margin: 0;">
+    <li><a href="/orders">Order</a></li>
+    <li><a href="/cart">Cart</a></li>
+    <li><a href="/wishlist">Wishlist</a></li>
+
+    <% if (user) { %>
+      <a href="/user/profile" class="profile-avatar">
+        <%= user.username.charAt(0).toUpperCase() %>
+      </a>
+    <% } else { %>
+      <a href="/signin" class="sign-in-btn">Sign In</a>
+    <% } %>
+  </div>
+
+</header>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -36,7 +36,7 @@
         <div class="hero-info">
           <h1>Buy Your Dream Toys</h1>
           <span class="subtitle">Collect The Finest Toy Cars Today.</span>
-          <a href="#" class="btn-primary">Order Now ></a>
+          <a href="/shop" class="btn-primary">Order Now ></a>
         </div>
         <div class="hero-image">
           <img
@@ -63,34 +63,26 @@
     <!-- Explore Section -->
     <section class="explore">
       <div class="section-title">Explore</div>
-      <div class="explore-grid">
-        <div class="explore-card">
-          <h3>HotWheels</h3>
-          <div class="card-image-box">
-            <img
-              src="images/hotwheel category image.jpg"
-              alt="Hot Wheels Car"
-            />
-          </div>
-        </div>
-        <div class="explore-card">
-          <h3>Remote Control Toys</h3>
-          <div class="card-image-box">
-            <img
-              src="images/remote Category.jpg"
-              alt="RC Car"
-            />
-          </div>
-        </div>
-        <div class="explore-card">
-          <h3>Building Toys(Lego)</h3>
-          <div class="card-image-box">
-            <img
-              src="images/LOGO Categoryy.png"
-              alt="Lego Car"
-            />
-          </div>
-        </div>
+      <div class="explore-wrapper">
+      <div class="explore-grid" id="categoryScroller">
+        <% if (categories && categories.length > 0) { %>
+          <% categories.forEach(category => { %>
+            <div class="explore-card">
+              <h3 style="color: #100E34;"><%= category.name %></h3>
+              <div class="card-image-box">
+                <img 
+                  src="<%= category.imageUrl || '/images/default-category.jpg' %>" 
+                  alt="<%= category.name %>"
+                  onerror="this.src='/images/default-category.jpg'"
+                />
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <!-- Fallback if no categories -->
+          <p>No categories available</p>
+        <% } %>
+      </div>
       </div>
     </section>
 
@@ -103,7 +95,7 @@
       </p>
 
       <div class="service-grid">
-        <div class="service-item">
+        <div class="service-item" data-aos='fade-up' >
           <div class="service-icon"><i class="fa-solid fa-car"></i></div>
           <h4>Top Buy & Sell Car</h4>
           <p>
@@ -111,7 +103,7 @@
             best benefits here.
           </p>
         </div>
-        <div class="service-item">
+        <div class="service-item" data-aos='fade-up'>
           <div class="service-icon"><i class="fa-solid fa-wallet"></i></div>
           <h4>Easy Payment</h4>
           <p>
@@ -119,7 +111,7 @@
             best benefits here.
           </p>
         </div>
-        <div class="service-item">
+        <div class="service-item" data-aos='fade-up' data-aos-duration="800">
           <div class="service-icon">
             <i class="fa-solid fa-file-invoice"></i>
           </div>
@@ -137,24 +129,23 @@
       <div class="promo-image">
         <img
           src="images/Hoonigang.avif"
-          alt="Promo Car"
+          alt="Promo Car" data-aos='fade-left' data-aos-duration="1000"
         />
       </div>
       <div class="promo-content">
-        <h2>Buy Best Remote Control Cars</h2>
-        <p>
+        <h2 data-aos='fade-up'>Buy Best Remote Control Cars</h2>
+        <p data-aos='fade-up'>
           We provide many of the best services for you and you will get the best
           benefits here.
         </p>
-        <a href="#" class="btn-primary" style="background-color: #1c2e4a"
-          >Book Now ></a
-        >
+        <a href="/shop" class="btn-primary" style="background-color: #1c2e4a"
+          data-aos='fade-up'>Book Now ></a>
       </div>
     </section>
 
     <!-- Footer -->
     <footer>
-      <div class="footer-grid">
+      <div class="footer-grid" data-aos='fade-up'>
         <div class="footer-col">
           <h4>Links</h4>
           <ul>
@@ -187,5 +178,115 @@
         <span>Terms of Service Privacy Policy</span>
       </div>
     </footer>
-  </body>
-</html>
+
+ <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const scroller = document.getElementById('categoryScroller');
+  if (!scroller || scroller.children.length === 0) return;
+
+  const originals = Array.from(scroller.children);
+  for (let i = 0; i < 3; i++) {
+    originals.forEach(card => scroller.appendChild(card.cloneNode(true)));
+  }
+
+  // Dynamically measure instead of hardcoding — works at any screen size
+  function getSetWidth() {
+    const firstCard = scroller.querySelector('.explore-card');
+    const style = window.getComputedStyle(scroller);
+    const gap = parseFloat(style.columnGap) || parseFloat(style.gap) || 24;
+    const cardW = firstCard ? firstCard.offsetWidth : 160;
+    return originals.length * (cardW + gap);
+  }
+
+  let position = 0;
+  let autoSpeed = 0.8;
+  let velocity = 0;
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartPos = 0;
+  let lastX = 0;
+  let lastTime = 0;
+  let isHovered = false;
+
+  const friction = 0.92;
+  const minVelocity = 0.05;
+
+  function normalize(pos) {
+    const setWidth = getSetWidth();
+    return ((pos % setWidth) - setWidth) % setWidth;
+  }
+
+  function tick() {
+    if (!isDragging) {
+      if (Math.abs(velocity) > minVelocity) {
+        position += velocity;
+        velocity *= friction;
+      } else {
+        velocity = 0;
+        if (!isHovered) position -= autoSpeed;
+      }
+    }
+
+    position = normalize(position);
+    scroller.style.transform = `translateX(${position}px)`;
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+
+  // Mouse
+  scroller.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    velocity = 0;
+    dragStartX = e.clientX;
+    dragStartPos = position;
+    lastX = e.clientX;
+    lastTime = performance.now();
+    scroller.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const now = performance.now();
+    const dt = now - lastTime;
+    if (dt > 0) velocity = ((e.clientX - lastX) / dt) * 16;
+    lastX = e.clientX;
+    lastTime = now;
+    position = normalize(dragStartPos + (e.clientX - dragStartX));
+    scroller.style.transform = `translateX(${position}px)`;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    scroller.style.cursor = 'grab';
+  });
+
+  // Touch
+  scroller.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    velocity = 0;
+    dragStartX = e.touches[0].clientX;
+    dragStartPos = position;
+    lastX = e.touches[0].clientX;
+    lastTime = performance.now();
+  }, { passive: true });
+
+  scroller.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const now = performance.now();
+    const dt = now - lastTime;
+    if (dt > 0) velocity = ((e.touches[0].clientX - lastX) / dt) * 16;
+    lastX = e.touches[0].clientX;
+    lastTime = now;
+    position = normalize(dragStartPos + (e.touches[0].clientX - dragStartX));
+    scroller.style.transform = `translateX(${position}px)`;
+  }, { passive: true });
+
+  scroller.addEventListener('touchend', () => { isDragging = false; });
+
+  scroller.addEventListener('mouseenter', () => { isHovered = true; });
+  scroller.addEventListener('mouseleave', () => { isHovered = false; });
+});
+</script>
