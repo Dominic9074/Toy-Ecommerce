@@ -25,6 +25,8 @@ export async function processJarvisCommand(req, res) {
                 ?.outputs?.[0]
                 ?.results?.message?.text;
 
+                const cleanResponse = aiResponse?.replace(/\*\*/g, "")?.replace(/__/g, "")?.replace(/`/g, "")?.trim();
+
         if (!aiResponse) {
             console.error(
                 "[Jarvis] Could not extract AI response:",
@@ -42,7 +44,7 @@ export async function processJarvisCommand(req, res) {
         // Send ONLY text to browser
         return res.json({
             success: true,
-            response: aiResponse
+            response: cleanResponse
         });
 
     } catch (error) {

@@ -1,4 +1,4 @@
-let jarvisMode = "wake";
+let jarvisMode =sessionStorage.getItem("jarvisMode") || "wake";
 
 function createWavFile(
     pcmData,
@@ -90,7 +90,7 @@ function createWavFile(
         true
     );
 
-    // data chunk
+
     writeString(36, "data");
 
     view.setUint32(
@@ -99,7 +99,6 @@ function createWavFile(
         true
     );
 
-    // Copy PCM data
     new Uint8Array(buffer, 44).set(
         pcmData
     );
@@ -118,6 +117,7 @@ const Jarvis = {
         }
 
         jarvisMode = "command";
+        sessionStorage.setItem("jarvisMode", "command");
 
         console.log("[Jarvis] Mode: COMMAND");
 
@@ -128,8 +128,6 @@ const Jarvis = {
 
         document.body.classList.add("jarvis-waking");
 
-        // After the wake animation finishes,
-        // switch to the normal listening animation.
         setTimeout(() => {
             if (jarvisMode === "command") {
                 document.body.classList.remove("jarvis-waking");
@@ -144,15 +142,14 @@ const Jarvis = {
 
     acknowledge() {
         const responses = [
-            "Certainly, sir. I'm checking that now.",
-            "Certainly, sir. Let me check that for you.",
-            "Of course, sir. I'm looking into it.",
-            "Right away, sir. Let me check.",
-            "Certainly, sir. One moment."
+            "Certainly sir. I'm checking that now.",
+            "Sure sir. Let me check that for you.",
+            "Of course sir. I'm looking into it.",
+            "Right away sir. Let me check.",
+            "just a second sir. let me check that for you."
         ];
 
-        const response =
-            responses[Math.floor(Math.random() * responses.length)];
+        const response =responses[Math.floor(Math.random() * responses.length)];
 
         console.log("[Jarvis] Acknowledgement:", response);
 
@@ -161,6 +158,7 @@ const Jarvis = {
 
     sleep() {
         jarvisMode = "wake";
+        sessionStorage.setItem("jarvisMode", "wake");
 
         console.log("[Jarvis] Going to sleep.");
         console.log("[Jarvis] Mode: WAKE");
@@ -178,6 +176,10 @@ const Jarvis = {
         }
 
         console.log("[Jarvis] Speaking:", text);
+
+        if (window.jarvisSpeech) {
+            window.jarvisSpeech.pause();
+        }
 
         document.body.classList.remove(
             "jarvis-thinking",
@@ -216,9 +218,12 @@ const Jarvis = {
                 document.body.classList.add(
                     "jarvis-listening"
                 );
+
+                if (window.jarvisSpeech) {
+                    window.jarvisSpeech.start();
+                }
             }
         };
-
         utterance.onerror = (event) => {
             console.error(
                 "[Jarvis] Speech synthesis error:",
@@ -233,9 +238,12 @@ const Jarvis = {
                 document.body.classList.add(
                     "jarvis-listening"
                 );
+
+                if (window.jarvisSpeech) {
+                    window.jarvisSpeech.start();
+                }
             }
         };
-
         speechSynthesis.speak(utterance);
     },
 
@@ -246,13 +254,13 @@ const Jarvis = {
 
         if (hour >= 5 && hour < 12) {
             greeting =
-                "Good morning, sir. How may I assist you today?";
+                "Good morning sir. How may I assist you today?";
         } else if (hour >= 12 && hour < 17) {
             greeting =
-                "Good afternoon, sir. How may I assist you today?";
+                "Good afternoon sir. How may I assist you today?";
         } else {
             greeting =
-                "Good evening, sir. How may I assist you today?";
+                "Good evening sir. How may I assist you today?";
         }
 
         console.log("[Jarvis] Greeting:", greeting);
@@ -263,16 +271,9 @@ const Jarvis = {
     async sendCommand(text) {
         console.log("[Jarvis] Sending to AI:", text);
 
-        // --------------------------------
-        // 1. Immediately acknowledge command
-        // --------------------------------
-
         this.acknowledge();
 
-        // --------------------------------
-        // 2. Send command to Langflow
-        // --------------------------------
-
+     
         try {
             const response = await fetch("/api/jarvis/command", {
                 method: "POST",
@@ -306,9 +307,7 @@ const Jarvis = {
                 data.response
             );
 
-            // --------------------------------
-            // 3. Speak the AI response
-            // --------------------------------
+           
 
             this.speak(data.response);
 
@@ -330,11 +329,6 @@ const Jarvis = {
 
         console.log("[Jarvis] Processing:", command);
 
-        /*
-         * WAKE MODE
-         * --------------------------------
-         * Only wake phrases are accepted.
-         */
         if (jarvisMode === "wake") {
             if (
                 command.includes("jarvis") ||
@@ -345,12 +339,6 @@ const Jarvis = {
 
             return;
         }
-
-        /*
-         * COMMAND MODE
-         * --------------------------------
-         * Jarvis is already awake.
-         */
 
         // Sleep commands
         if (
@@ -368,3 +356,7 @@ const Jarvis = {
         this.sendCommand(text);
     }
 };
+
+if (jarvisMode === "command") {
+    document.body.classList.add("jarvis-listening");
+}

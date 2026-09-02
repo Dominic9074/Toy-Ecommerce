@@ -1,5 +1,4 @@
-const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
+const SpeechRecognition =window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if (!SpeechRecognition) {
     console.error("[Jarvis] Speech Recognition is not supported.");
@@ -56,8 +55,12 @@ if (!SpeechRecognition) {
         }
     };
 
-    function startRecognition() {
-        if (!shouldListen || isRunning) {
+   function startRecognition() {
+        if (
+            !shouldListen ||
+            isRunning ||
+            speechSynthesis.speaking
+        ) {
             return;
         }
 
@@ -79,9 +82,16 @@ if (!SpeechRecognition) {
         }
     }
 
+    function pauseRecognition() {
+        if (isRunning) {
+            recognition.stop();
+        }
+    }
+
     window.jarvisSpeech = {
         start: startRecognition,
-        stop: stopRecognition
+        stop: stopRecognition,
+        pause: pauseRecognition
     };
 
     // Start automatically when the admin page loads.

@@ -38,6 +38,14 @@
   body.jarvis-thinking #jarvis-edge-glow::before { animation: jarvis-spin-angle 1s linear infinite; }
   body.jarvis-thinking #jarvis-edge-glow::after { animation-duration: 1.5s; }
 
+  body.jarvis-speaking #jarvis-edge-glow {
+    opacity: 1;
+  }
+
+  body.jarvis-speaking #jarvis-edge-glow .j-edge {
+    animation-duration: 0.8s;
+  }
+
   #jarvis-edge-glow {
   position: fixed;
   inset: 0;
@@ -169,8 +177,10 @@ body.jarvis-thinking #jarvis-edge-glow .j-blob { animation-duration: 2.2s; opaci
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    <script src="/js/jarvis/jarvis.js"></script>
-    <script src="/js/jarvis/speech.js"></script>
+    <% if (locals.isAdmin) { %>
+        <script src="/js/jarvis/jarvis.js"></script>
+        <script src="/js/jarvis/speech.js"></script>
+    <% } %>
 
 </body>
 </html>
